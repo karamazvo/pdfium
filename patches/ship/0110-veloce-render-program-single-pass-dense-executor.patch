@@ -1,0 +1,761 @@
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index f0243dbfb240ead6f794f377348fa012424a2685..fc0b800e0de57dc8d224d03628c96e3d50926b3c 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1150,7 +1150,7 @@ void VeloceRenderProgramBuilder::SealPendingCommandBlock() {
+   pending_command_block_ = VeloceCommandBlock();
+ }
+ 
+-bool VeloceRenderProgramBuilder::WouldExceedRetainedBudget(
++bool VeloceRenderProgramBuilder::TryReserveRetainedBudget(
+     bool append_line,
+     bool append_fill,
+     bool needs_line_run,
+@@ -1163,43 +1163,28 @@ bool VeloceRenderProgramBuilder::WouldExceedRetainedBudget(
+     bool needs_visibility_run,
+     bool needs_clip_run,
+     bool needs_native_run,
+-    bool needs_command_block) const {
+-  const size_t next_line_count =
+-      native_lines_.size() + (append_line ? 1u : 0u);
+-  const size_t next_path_count =
+-      native_stroke_paths_.size() + (!append_line && !append_fill ? 1u : 0u);
+-  const size_t next_fill_count =
+-      native_fill_paths_.size() + (append_fill ? 1u : 0u);
+-  const size_t logical_bytes =
+-      sizeof(VeloceRenderProgram) +
+-      (native_runs_.size() + (needs_native_run ? 1u : 0u)) *
+-          sizeof(VeloceNativeRun) +
+-      next_line_count * sizeof(VeloceNativeLine) +
+-      (native_line_runs_.size() + (needs_line_run ? 1u : 0u)) *
+-          sizeof(VeloceNativeLineRun) +
+-      next_path_count * sizeof(VeloceNativeStrokePath) +
+-      next_fill_count * sizeof(VeloceNativeFillPath) +
+-      (native_fill_geometries_.size() + (needs_fill_geometry ? 1u : 0u)) *
+-          sizeof(VeloceNativeFillGeometry) +
+-      (native_stroke_path_point_count_ + path_point_count) *
+-          sizeof(CFX_Path::Point) +
+-      (native_fill_geometry_point_count_ + fill_geometry_point_count) *
+-          sizeof(CFX_Path::Point) +
+-      (opaque_path_states_.size() + (needs_state ? 1u : 0u)) *
+-          sizeof(VeloceOpaquePathState) +
+-      (path_matrices_.size() + (needs_matrix ? 1u : 0u)) *
+-          sizeof(CFX_Matrix) +
+-      (dash_values_.size() + (needs_state ? dash_count : 0u)) *
+-          sizeof(float) +
+-      (visibility_runs_.size() + (needs_visibility_run ? 1u : 0u)) *
+-          sizeof(VeloceVisibilityRun) +
+-      (clip_runs_.size() + (needs_clip_run ? 1u : 0u)) *
+-          sizeof(VeloceClipRun) +
+-      (command_blocks_.size() +
+-       (pending_command_block_.command_count != 0u ? 1u : 0u) +
+-       (needs_command_block ? 1u : 0u)) *
+-          sizeof(VeloceCommandBlock);
+-  return logical_bytes > kMaxRetainedProgramBytes;
++    bool needs_command_block) {
++  ++incremental_budget_checks_;
++  const size_t additional_bytes =
++      (needs_native_run ? sizeof(VeloceNativeRun) : 0u) +
++      (append_line ? sizeof(VeloceNativeLine) : 0u) +
++      (needs_line_run ? sizeof(VeloceNativeLineRun) : 0u) +
++      (!append_line && !append_fill ? sizeof(VeloceNativeStrokePath) : 0u) +
++      (append_fill ? sizeof(VeloceNativeFillPath) : 0u) +
++      (needs_fill_geometry ? sizeof(VeloceNativeFillGeometry) : 0u) +
++      path_point_count * sizeof(CFX_Path::Point) +
++      fill_geometry_point_count * sizeof(CFX_Path::Point) +
++      (needs_state ? sizeof(VeloceOpaquePathState) : 0u) +
++      (needs_matrix ? sizeof(CFX_Matrix) : 0u) +
++      (needs_state ? dash_count * sizeof(float) : 0u) +
++      (needs_visibility_run ? sizeof(VeloceVisibilityRun) : 0u) +
++      (needs_clip_run ? sizeof(VeloceClipRun) : 0u) +
++      (needs_command_block ? sizeof(VeloceCommandBlock) : 0u);
++  if (additional_bytes > kMaxRetainedProgramBytes - logical_retained_bytes_) {
++    return false;
++  }
++  logical_retained_bytes_ += additional_bytes;
++  return true;
+ }
+ 
+ size_t VeloceRenderProgramBuilder::EstimatedRetainedBytesWithoutSpatialIndex()
+@@ -1425,9 +1410,8 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+        command_blocks_.size() +
+                (pending_command_block_.command_count != 0u ? 1u : 0u) >=
+            kMaxCommandBlocks) ||
+-      WouldExceedRetainedBudget(append_line, /*append_fill=*/false,
+-                                needs_line_run,
+-                                path_point_count,
++      !TryReserveRetainedBudget(append_line, /*append_fill=*/false,
++                                needs_line_run, path_point_count,
+                                 /*fill_geometry_point_count=*/0u,
+                                 /*needs_fill_geometry=*/false, needs_state,
+                                 needs_matrix, dashes.size(),
+@@ -1604,7 +1588,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueFill(
+        visibility_runs_.size() >= kMaxVisibilityRuns) ||
+       (needs_clip_run && clip_runs_.size() >= kMaxClipRuns) ||
+       (needs_native_run && native_runs_.size() >= kMaxNativeRuns) ||
+-      WouldExceedRetainedBudget(
++      !TryReserveRetainedBudget(
+           /*append_line=*/false, /*append_fill=*/true,
+           /*needs_line_run=*/false,
+           /*path_point_count=*/0u, geometry_points, needs_geometry,
+@@ -1793,7 +1777,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0109 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0110 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1803,8 +1787,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0109 event=compile "
+-        "mode=ordinal_addressable_render_program "
++        "revision=r25-3-0110 event=compile "
++        "mode=single_pass_dense_render_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu fillGeometries=%zu fillGeometryPoints=%zu "
+@@ -1815,7 +1799,8 @@ VeloceRenderProgramBuilder::Finish() {
+         "mandatoryRuns=%zu "
+         "mandatoryCommands=%zu commandBlocks=%zu lineRuns=%zu "
+         "spatialCells=%zu spatialPostings=%zu spatialAlways=%zu "
+-        "spatialIndexBytes=%zu bytes=%zu nativeBudgetFallbacks=%u "
++        "spatialIndexBytes=%zu bytes=%zu logicalRetainedBytes=%zu "
++        "incrementalBudgetChecks=%u nativeBudgetFallbacks=%u "
+         "rejectNotPath=%u rejectPaint=%u rejectClip=%u rejectGeometry=%u "
+         "rejectMatrix=%u rejectTransparency=%u rejectColor=%u "
+         "rejectGraph=%u rejectVisibility=%u rejectBudget=%u "
+@@ -1845,7 +1830,8 @@ VeloceRenderProgramBuilder::Finish() {
+             ? program->spatial_index()->always_candidate_count()
+             : 0u,
+         program->SpatialIndexBytes(),
+-        program->EstimatedBytes(),
++        program->EstimatedBytes(), logical_retained_bytes_,
++        incremental_budget_checks_,
+         native_budget_fallbacks_,
+         program->rejection_count(
+             VeloceNativeLineRejectReason::kNotActivePath),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 7c99ff02eb68269b92646b441a678173e59a70d3..7639fd062271422e544f488985300a9aa57de49b 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -24,7 +24,7 @@ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 12u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 13u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -532,19 +532,19 @@ class VeloceRenderProgramBuilder final {
+                           bool bounds_known);
+   void SealPendingCommandBlock();
+   size_t EstimatedRetainedBytesWithoutSpatialIndex() const;
+-  bool WouldExceedRetainedBudget(bool append_line,
+-                                 bool append_fill,
+-                                 bool needs_line_run,
+-                                 size_t path_point_count,
+-                                 size_t fill_geometry_point_count,
+-                                 bool needs_fill_geometry,
+-                                 bool needs_state,
+-                                 bool needs_matrix,
+-                                 size_t dash_count,
+-                                 bool needs_visibility_run,
+-                                 bool needs_clip_run,
+-                                 bool needs_native_run,
+-                                 bool needs_command_block) const;
++  bool TryReserveRetainedBudget(bool append_line,
++                                bool append_fill,
++                                bool needs_line_run,
++                                size_t path_point_count,
++                                size_t fill_geometry_point_count,
++                                bool needs_fill_geometry,
++                                bool needs_state,
++                                bool needs_matrix,
++                                size_t dash_count,
++                                bool needs_visibility_run,
++                                bool needs_clip_run,
++                                bool needs_native_run,
++                                bool needs_command_block);
+ 
+   std::vector<VeloceNativeRun> native_runs_;
+   std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts_{};
+@@ -577,6 +577,8 @@ class VeloceRenderProgramBuilder final {
+   uint32_t inline_translation_line_count_ = 0;
+   size_t native_stroke_path_point_count_ = 0;
+   size_t native_fill_geometry_point_count_ = 0;
++  size_t logical_retained_bytes_ = sizeof(VeloceRenderProgram);
++  uint32_t incremental_budget_checks_ = 0;
+   uint32_t native_budget_fallbacks_ = 0;
+   uint32_t object_count_ = 0;
+   uint32_t path_object_count_ = 0;
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index b00ac5ad3e614335974afa30cc9af1c429d522a2..f849abf719c33b6387024e0300d1b3d28939dc80 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -228,6 +228,19 @@ bool IsFiniteVeloceRect(const CFX_FloatRect& rect) {
+          std::isfinite(rect.right) && std::isfinite(rect.top);
+ }
+ 
++CFX_Matrix ComposeVeloceInlineTranslation(
++    float translation_x,
++    float translation_y,
++    const CFX_Matrix& holder_to_device) {
++  return CFX_Matrix(
++      holder_to_device.a, holder_to_device.b, holder_to_device.c,
++      holder_to_device.d,
++      translation_x * holder_to_device.a +
++          translation_y * holder_to_device.c + holder_to_device.e,
++      translation_x * holder_to_device.b +
++          translation_y * holder_to_device.d + holder_to_device.f);
++}
++
+ CFX_GraphStateData BuildVeloceGraphState(
+     const VeloceOpaquePathState& source,
+     pdfium::span<const float> dash_values) {
+@@ -390,6 +403,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   CFX_GraphStateData current_graph_state;
+   CFX_FillRenderOptions current_fill_options;
+   FX_ARGB current_stroke_argb = 0;
++  size_t dense_raster_passes = 0;
++  size_t dense_disjoint_line_draws = 0;
+   static constexpr size_t kMaxLineBatch = 256u;
+   std::array<CFX_OrderedPathDraw, kMaxLineBatch> line_batch;
+   std::array<uint32_t, kMaxLineBatch> line_batch_commands_by_ordinal;
+@@ -432,13 +447,19 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       ordered_path_context_attempted = true;
+     }
+     const size_t flushed_count = line_batch_count;
++    CFX_OrderedPathBatchStats batch_stats;
+     if (device_->DrawOrderedPathBatch(
+             ordered_path_context.get(),
+             pdfium::span(line_batch).first(flushed_count),
+             &current_graph_state, current_stroke_argb,
+-            current_fill_options)) {
++            current_fill_options, &batch_stats)) {
++      CHECK_EQ(batch_stats.source_draws, flushed_count);
++      CHECK_LE(batch_stats.raster_passes, batch_stats.source_draws);
++      CHECK_LE(batch_stats.disjoint_line_draws, batch_stats.source_draws);
+       native_draws += flushed_count;
+       line_batch_commands += flushed_count;
++      dense_raster_passes += batch_stats.raster_passes;
++      dense_disjoint_line_draws += batch_stats.disjoint_line_draws;
+       ++line_batch_dispatches;
+       max_line_batch = std::max(max_line_batch, flushed_count);
+       line_batch_count = 0u;
+@@ -473,8 +494,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0109 event=replay "
+-        "mode=ordered_candidate_command_backend "
++        "revision=r25-3-0110 event=replay "
++        "mode=single_pass_dense_command_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+@@ -482,6 +503,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "blocksSkipped=%zu sourceEpochCurrent=1 "
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
++        "denseRasterPasses=%zu denseDisjointLineDraws=%zu "
+         "spatialMode=%u spatialBinsTested=%u spatialBinsSelected=%u "
+         "spatialPostings=%u spatialCandidates=%u spatialCulled=%zu "
+         "pathBoundsCulled=%zu "
+@@ -497,7 +519,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         native_darken_draws, native_darken_fallbacks, blocks_tested,
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+-        max_line_batch, native_fill_draws,
++        max_line_batch, native_fill_draws, dense_raster_passes,
++        dense_disjoint_line_draws,
+         static_cast<unsigned>(spatial_query.mode), spatial_query.bins_tested,
+         spatial_query.bins_selected, spatial_query.postings_marked,
+         spatial_query.candidate_commands, spatial_commands_culled,
+@@ -533,6 +556,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(line_batch_fallbacks);
+     static_cast<void>(max_line_batch);
+     static_cast<void>(native_fill_draws);
++    static_cast<void>(dense_raster_passes);
++    static_cast<void>(dense_disjoint_line_draws);
+     static_cast<void>(mandatory_command_count);
+     static_cast<void>(ordered_command_cursor);
+     static_cast<void>(replay_work_units);
+@@ -786,14 +811,17 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     }
+ 
+     CFX_Matrix object_path_matrix;
++    CFX_Matrix path_matrix;
+     if (matrix_index == kVeloceInlineTranslationMatrixIndex) {
+       object_path_matrix = CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f,
+                                       translation_x, translation_y);
++      path_matrix = ComposeVeloceInlineTranslation(
++          translation_x, translation_y, holder_to_device);
+     } else {
+       CHECK_LT(matrix_index, program->path_matrices().size());
+       object_path_matrix = program->path_matrices()[matrix_index];
++      path_matrix = object_path_matrix * holder_to_device;
+     }
+-    CFX_Matrix path_matrix = object_path_matrix * holder_to_device;
+     if (!IsAvailableMatrix(path_matrix)) {
+       if (!flush_line_batch()) {
+         log_result("cancelled");
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 5dad2a3c06361da39e959fe07431b0eb1a974b82..475f157e258c01dd8da7036d1b404b1d5e9dfda1 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -10,6 +10,8 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <array>
++#include <optional>
+ #include <utility>
+ 
+ #include "build/build_config.h"
+@@ -74,6 +76,100 @@ class AggOrderedPathBatchContext final
+   agg::rasterizer_scanline_aa rasterizer;
+ };
+ 
++class DisjointLinePixelGrid final {
++ public:
++  static constexpr int kColumns = 32;
++  static constexpr int kRows = 32;
++
++  DisjointLinePixelGrid(int width, int height)
++      : width_(width), height_(height) {}
++
++  void Reset() { rows_.fill(0u); }
++
++  bool TryClaim(const CFX_OrderedPathDraw& draw,
++                const CFX_GraphStateData& state) {
++    const std::optional<FX_RECT> bounds = ConservativeBounds(draw, state);
++    if (!bounds.has_value()) {
++      return false;
++    }
++    if (bounds->IsEmpty()) {
++      return true;
++    }
++
++    const auto grid_coordinate = [](int position, int extent,
++                                    int divisions) {
++      return static_cast<int>(static_cast<int64_t>(position) * divisions /
++                              extent);
++    };
++    const int first_column = std::clamp(
++        grid_coordinate(bounds->left, width_, kColumns), 0, kColumns - 1);
++    const int last_column =
++        std::clamp(grid_coordinate(bounds->right - 1, width_, kColumns), 0,
++                   kColumns - 1);
++    const int first_row = std::clamp(
++        grid_coordinate(bounds->top, height_, kRows), 0, kRows - 1);
++    const int last_row =
++        std::clamp(grid_coordinate(bounds->bottom - 1, height_, kRows), 0,
++                   kRows - 1);
++    const uint32_t column_mask =
++        last_column == kColumns - 1
++            ? (~uint32_t{0} << first_column)
++            : ((uint32_t{1} << (last_column + 1)) - 1u) &
++                  (~uint32_t{0} << first_column);
++    for (int row = first_row; row <= last_row; ++row) {
++      if ((rows_[row] & column_mask) != 0u) {
++        return false;
++      }
++    }
++    for (int row = first_row; row <= last_row; ++row) {
++      rows_[row] |= column_mask;
++    }
++    return true;
++  }
++
++ private:
++  std::optional<FX_RECT> ConservativeBounds(
++      const CFX_OrderedPathDraw& draw,
++      const CFX_GraphStateData& state) const {
++    const CFX_PointF start = draw.object_to_device.Transform(draw.line_start);
++    const CFX_PointF end = draw.object_to_device.Transform(draw.line_end);
++    const CFX_Matrix& matrix = draw.object_to_device;
++    const float matrix_norm =
++        std::max(fabs(matrix.a) + fabs(matrix.c),
++                 fabs(matrix.b) + fabs(matrix.d));
++    const float stroke_extent =
++        std::max(0.5f, 0.5f * fabs(state.line_width()) *
++                           std::max(1.0f, fabs(state.miter_limit())) *
++                           matrix_norm) +
++        2.0f;
++    if (!std::isfinite(start.x) || !std::isfinite(start.y) ||
++        !std::isfinite(end.x) || !std::isfinite(end.y) ||
++        !std::isfinite(stroke_extent)) {
++      return std::nullopt;
++    }
++    constexpr float kSafeIntegerCoordinate = 100000000.0f;
++    if (fabs(start.x) > kSafeIntegerCoordinate ||
++        fabs(start.y) > kSafeIntegerCoordinate ||
++        fabs(end.x) > kSafeIntegerCoordinate ||
++        fabs(end.y) > kSafeIntegerCoordinate ||
++        stroke_extent > kSafeIntegerCoordinate) {
++      return std::nullopt;
++    }
++
++    FX_RECT bounds(
++        static_cast<int>(floor(std::min(start.x, end.x) - stroke_extent)),
++        static_cast<int>(floor(std::min(start.y, end.y) - stroke_extent)),
++        static_cast<int>(ceil(std::max(start.x, end.x) + stroke_extent)) + 1,
++        static_cast<int>(ceil(std::max(start.y, end.y) + stroke_extent)) + 1);
++    bounds.Intersect(FX_RECT(0, 0, width_, height_));
++    return bounds;
++  }
++
++  const int width_;
++  const int height_;
++  std::array<uint32_t, kRows> rows_{};
++};
++
+ template <typename T>
+ void DoAlphaMerge(T& pixel, int src_r, int src_g, int src_b, int src_alpha) {
+   pixel.red = AlphaMerge(pixel.red, src_r, src_alpha);
+@@ -1418,7 +1514,8 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+     pdfium::span<const CFX_OrderedPathDraw> draws,
+     const CFX_GraphStateData* stroke_state,
+     uint32_t stroke_color,
+-    const CFX_FillRenderOptions& stroke_options) {
++    const CFX_FillRenderOptions& stroke_options,
++    CFX_OrderedPathBatchStats* stats) {
+   if (draws.empty()) {
+     return true;
+   }
+@@ -1464,16 +1561,87 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+   RetainPtr<CFX_DIBitmap> backdrop =
+       group_knockout_ ? backdrop_bitmap_ : nullptr;
+   auto* agg_context = static_cast<AggOrderedPathBatchContext*>(context);
+-  // A fresh rasterizer starts with nonzero fill. Restore that packet boundary
+-  // state while retaining its allocated cell storage and clip box.
+-  agg_context->rasterizer.filling_rule(agg::fill_non_zero);
++  CFX_OrderedPathBatchStats packet_stats;
++  packet_stats.source_draws = draws.size();
++  DisjointLinePixelGrid disjoint_grid(GetPixelWidth(), GetPixelHeight());
++  size_t pending_disjoint_lines = 0u;
+ 
+-  for (const CFX_OrderedPathDraw& draw : draws) {
++  const auto reset_stroke_rasterizer = [&]() {
+     agg_context->path_data.remove_all();
+     agg_context->rasterizer.reset();
++    agg_context->rasterizer.filling_rule(agg::fill_non_zero);
++  };
++  const auto append_stroke = [&](const CFX_OrderedPathDraw& draw) {
++    agg_context->path_data.remove_all();
++    if (draw.fill_options.zero_area) {
++      if (draw.path) {
++        BuildAggPathInto(*draw.path, &draw.object_to_device,
++                         &agg_context->path_data);
++      } else {
++        const CFX_StrokeLine line{draw.line_start, draw.line_end,
++                                  draw.object_to_device};
++        BuildAggStrokeLine(line, &line.object_to_device,
++                           &agg_context->path_data);
++      }
++      RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
++                      nullptr, stroke_state, 1,
++                      draw.fill_options.stroke_text_mode);
++      return;
++    }
++
++    const CFX_Matrix& object_matrix = draw.object_to_device;
++    CFX_Matrix matrix1;
++    CFX_Matrix matrix2;
++    matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
++    matrix1.d = matrix1.a;
++    matrix2 = CFX_Matrix(
++        object_matrix.a / matrix1.a, object_matrix.b / matrix1.a,
++        object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
++    matrix1 = object_matrix * matrix2.GetInverse();
++    if (draw.path) {
++      BuildAggPathInto(*draw.path, &matrix1, &agg_context->path_data);
++    } else {
++      const CFX_StrokeLine line{draw.line_start, draw.line_end,
++                                draw.object_to_device};
++      BuildAggStrokeLine(line, &matrix1, &agg_context->path_data);
++    }
++    RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
++                    &matrix2, stroke_state, matrix1.a,
++                    draw.fill_options.stroke_text_mode);
++  };
++  const auto render_pending_disjoint_lines = [&]() {
++    if (pending_disjoint_lines == 0u) {
++      return;
++    }
++    fill_options_ = stroke_options;
++    CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                             stroke_options.full_cover, rgb_byte_order_);
++    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                          renderer, stroke_options.aliased_path);
++    ++packet_stats.raster_passes;
++    if (pending_disjoint_lines > 1u) {
++      packet_stats.disjoint_line_draws += pending_disjoint_lines;
++    }
++    pending_disjoint_lines = 0u;
++    disjoint_grid.Reset();
++  };
++  const auto render_independent_stroke = [&](const CFX_OrderedPathDraw& draw) {
++    reset_stroke_rasterizer();
++    append_stroke(draw);
+     fill_options_ = draw.fill_options;
++    CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                             draw.fill_options.full_cover, rgb_byte_order_);
++    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                          renderer, draw.fill_options.aliased_path);
++    ++packet_stats.raster_passes;
++  };
++
++  for (const CFX_OrderedPathDraw& draw : draws) {
+     if (draw.path && draw.fill_options.fill_type !=
+                          CFX_FillRenderOptions::FillType::kNoFill) {
++      render_pending_disjoint_lines();
++      reset_stroke_rasterizer();
++      fill_options_ = draw.fill_options;
+       BuildAggPathInto(*draw.path, &draw.object_to_device,
+                        &agg_context->path_data);
+       agg_context->rasterizer.add_path(agg_context->path_data);
+@@ -1485,48 +1653,34 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+       agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
+                             renderer,
+                             draw.fill_options.aliased_path);
++      ++packet_stats.raster_passes;
+       continue;
+     }
+ 
+-    if (draw.fill_options.zero_area) {
+-      if (draw.path) {
+-        BuildAggPathInto(*draw.path, &draw.object_to_device,
+-                         &agg_context->path_data);
+-      } else {
+-        const CFX_StrokeLine line{draw.line_start, draw.line_end,
+-                                  draw.object_to_device};
+-        BuildAggStrokeLine(line, &line.object_to_device,
+-                           &agg_context->path_data);
++    if (!draw.path && draw.fill_options == stroke_options) {
++      if (pending_disjoint_lines == 0u) {
++        reset_stroke_rasterizer();
+       }
+-      RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
+-                      nullptr, stroke_state, 1,
+-                      draw.fill_options.stroke_text_mode);
+-    } else {
+-      const CFX_Matrix& object_matrix = draw.object_to_device;
+-      CFX_Matrix matrix1;
+-      CFX_Matrix matrix2;
+-      matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
+-      matrix1.d = matrix1.a;
+-      matrix2 = CFX_Matrix(
+-          object_matrix.a / matrix1.a, object_matrix.b / matrix1.a,
+-          object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
+-      matrix1 = object_matrix * matrix2.GetInverse();
+-      if (draw.path) {
+-        BuildAggPathInto(*draw.path, &matrix1, &agg_context->path_data);
+-      } else {
+-        const CFX_StrokeLine line{draw.line_start, draw.line_end,
+-                                  draw.object_to_device};
+-        BuildAggStrokeLine(line, &matrix1, &agg_context->path_data);
++      if (!disjoint_grid.TryClaim(draw, *stroke_state)) {
++        render_pending_disjoint_lines();
++        reset_stroke_rasterizer();
++        if (!disjoint_grid.TryClaim(draw, *stroke_state)) {
++          render_independent_stroke(draw);
++          continue;
++        }
+       }
+-      RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
+-                      &matrix2, stroke_state, matrix1.a,
+-                      draw.fill_options.stroke_text_mode);
++      append_stroke(draw);
++      ++pending_disjoint_lines;
++      continue;
+     }
+-    CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+-                             draw.fill_options.full_cover, rgb_byte_order_);
+-    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
+-                          renderer,
+-                          draw.fill_options.aliased_path);
++    render_pending_disjoint_lines();
++    render_independent_stroke(draw);
++  }
++  render_pending_disjoint_lines();
++  if (stats) {
++    stats->source_draws += packet_stats.source_draws;
++    stats->raster_passes += packet_stats.raster_passes;
++    stats->disjoint_line_draws += packet_stats.disjoint_line_draws;
+   }
+   return true;
+ }
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 7808e5d6d95ced888d5336605aa7d91ce3db65fe..01819d0f535877c7064b30c042f986be773e3d66 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -85,7 +85,8 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,
+-      const CFX_FillRenderOptions& stroke_options) override;
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats) override;
+   bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
+   FX_RECT GetClipBox() const override;
+   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index 121070a44729c7a3adb891a4a4353e79c3834def..7d3599603519134f1dc00ee4ecb9b693ee90db1e 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -156,11 +156,12 @@ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+   ASSERT_TRUE(context);
+   EXPECT_FALSE(rejected.DrawOrderedPathBatch(
+       /*context=*/nullptr, draws, &graphics_state, kStrokeColor,
+-      stroke_options));
++      stroke_options, /*stats=*/nullptr));
+   EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+   EXPECT_FALSE(rejected.DrawOrderedPathBatch(
+-      context.get(), draws, &graphics_state, kStrokeColor, stroke_options));
++      context.get(), draws, &graphics_state, kStrokeColor, stroke_options,
++      /*stats=*/nullptr));
+   EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+ 
+@@ -184,10 +185,57 @@ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+   }
+   ASSERT_TRUE(batched.DrawOrderedPathBatch(
+       context.get(), pdfium::span(draws).first(2u), &graphics_state,
+-      kStrokeColor, stroke_options));
++      kStrokeColor, stroke_options, /*stats=*/nullptr));
+   ASSERT_TRUE(batched.DrawOrderedPathBatch(
+       context.get(), pdfium::span(draws).subspan(2u), &graphics_state,
+-      kStrokeColor, stroke_options));
++      kStrokeColor, stroke_options, /*stats=*/nullptr));
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
++
++TEST(CFXDefaultRenderDeviceTest,
++     OrderedDisjointLinesShareRasterPassWithoutChangingPixels) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  batched.GetBitmap()->Clear(0xffffffff);
++
++  constexpr uint32_t kStrokeColor = 0xff204080;
++  const CFX_GraphStateData graphics_state;
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  const std::array<CFX_OrderedPathDraw, 4> draws = {
++      CFX_OrderedPathDraw{nullptr, {5.0f, 5.0f}, {10.0f, 5.0f},
++                          CFX_Matrix(), 0, stroke_options},
++      CFX_OrderedPathDraw{nullptr, {45.0f, 5.0f}, {50.0f, 5.0f},
++                          CFX_Matrix(), 0, stroke_options},
++      CFX_OrderedPathDraw{nullptr, {5.0f, 45.0f}, {10.0f, 45.0f},
++                          CFX_Matrix(), 0, stroke_options},
++      CFX_OrderedPathDraw{nullptr, {45.0f, 45.0f}, {50.0f, 45.0f},
++                          CFX_Matrix(), 0, stroke_options},
++  };
++
++  for (const CFX_OrderedPathDraw& draw : draws) {
++    CFX_Path line;
++    line.AppendLine(draw.line_start, draw.line_end);
++    ASSERT_TRUE(baseline.DrawPath(
++        line, &draw.object_to_device, &graphics_state, /*fill_color=*/0,
++        kStrokeColor, draw.fill_options));
++  }
++
++  auto context = batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), draws, &graphics_state, kStrokeColor, stroke_options,
++      &stats));
++  EXPECT_EQ(draws.size(), stats.source_draws);
++  EXPECT_EQ(1u, stats.raster_passes);
++  EXPECT_EQ(draws.size(), stats.disjoint_line_draws);
+   EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 1202bd713a953991e7c207101ecbcca0a328a564..338d99fa85091ddbdba272f1853c8f09403814ef 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -831,12 +831,13 @@ bool CFX_RenderDevice::DrawOrderedPathBatch(
+     pdfium::span<const CFX_OrderedPathDraw> draws,
+     const CFX_GraphStateData* stroke_state,
+     uint32_t stroke_color,
+-    const CFX_FillRenderOptions& stroke_options) {
++    const CFX_FillRenderOptions& stroke_options,
++    CFX_OrderedPathBatchStats* stats) {
+   if (draws.empty()) {
+     return true;
+   }
+   return device_driver_->DrawOrderedPathBatch(
+-      context, draws, stroke_state, stroke_color, stroke_options);
++      context, draws, stroke_state, stroke_color, stroke_options, stats);
+ }
+ 
+ // This can be removed once PDFium entirely relies on Skia
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 40dbac613535d641e2def0d2970620cd817d498d..64d70d7c7e7dbde456d95ca8a68bc01f07d65b6b 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -110,7 +110,8 @@ class CFX_RenderDevice {
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,
+-      const CFX_FillRenderOptions& stroke_options);
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats);
+   bool FillRect(const FX_RECT& rect, uint32_t color);
+ 
+   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index 0c947846d0d9dff5b58ffe7afbfb5671a9b9d082..f8592b438006342f2262e420c4b3206c2fb51482 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -45,7 +45,8 @@ bool RenderDeviceDriverIface::DrawOrderedPathBatch(
+     pdfium::span<const CFX_OrderedPathDraw>,
+     const CFX_GraphStateData*,
+     uint32_t,
+-    const CFX_FillRenderOptions&) {
++    const CFX_FillRenderOptions&,
++    CFX_OrderedPathBatchStats*) {
+   return false;
+ }
+ 
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index a1949970fde28fcfbc8bb739edc9f176d5ab272f..a00f603f254100823de89c3b6698a3573448f6ac 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -52,6 +52,12 @@ struct CFX_OrderedPathDraw {
+   CFX_FillRenderOptions fill_options;
+ };
+ 
++struct CFX_OrderedPathBatchStats {
++  size_t source_draws = 0;
++  size_t raster_passes = 0;
++  size_t disjoint_line_draws = 0;
++};
++
+ enum class DeviceType : bool {
+   kDisplay,
+ #if BUILDFLAG(IS_WIN)
+@@ -168,7 +174,8 @@ class RenderDeviceDriverIface {
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,
+-      const CFX_FillRenderOptions& stroke_options);
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats);
+   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
+   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                 const CFX_PointF& ptLineTo,

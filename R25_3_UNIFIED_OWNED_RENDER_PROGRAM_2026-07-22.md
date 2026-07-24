@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0109 on 2026-07-23 (Asia/Taipei)
+**Updated through:** r25-3-0110 on 2026-07-24 (Asia/Taipei)
 
 ## Decision
 
@@ -384,6 +384,65 @@ executor still walks it. This must be corrected before adding another index.
    rasterization cost, so 0109 does not claim to solve dense Q16 or full-page
    preview throughput. `11.pdf` Darken execution and ordinary full replay are
    intentionally unchanged.
+
+6. **r25-3-0110: single-pass dense RenderProgram.** The 0109 device result
+   proves that sparse command selection is no longer the dominant Q16 cost.
+   A representative sparse replay selected 140 spatial candidates plus 4,329
+   mandatory commands and completed native replay in 4,183 microseconds,
+   compared with 320,873 replay work units and 12,269 microseconds in 0108.
+   The remaining large costs are the 9,699 ms parse/lowering window and dense
+   rasterization: a full replay still executes about 3.2 million operations.
+
+   Source review corrected an earlier premise before implementation. The
+   RenderProgram was already offered each page object synchronously from
+   `CPDF_PageObjectHolder::AppendPageObject()`. There was no second
+   3.2-million-object post-parse compilation scan to remove. The avoidable
+   construction cost was the builder recomputing retained sizes and vector
+   capacities across all program containers for every accepted object.
+
+   0110 keeps that existing single parser pass and replaces the repeated full
+   accounting with exact incremental logical-byte reservation. Each accepted
+   command reserves only the bytes it is about to append, including a new
+   command block when required. Sealing still measures actual retained vector
+   capacities and rejects any program above the unchanged 96 MiB ceiling.
+   This removes redundant construction work without adding a parser,
+   classifier, cache, allocation owner, or lifecycle.
+
+   Dense replay now removes a second repeated cost. Within an existing
+   same-state, same-clip, fixed 256-operation packet, AGG may accumulate
+   consecutive simple lines into one rasterizer scan only when conservatively
+   expanded device-pixel bounds occupy disjoint cells in a fixed 32x32 stack
+   grid. Disjoint destination pixels make source-order compositing equivalent.
+   A fill, owned path, overlapping cell, uncertain or non-finite bound, state
+   boundary, clip/visibility boundary, canonical ordinal, cancellation
+   checkpoint, or packet boundary flushes first and retains independent
+   ordered rasterization. No geometry is merged across a semantic barrier.
+
+   Inline translation matrices use a direct composition with the holder
+   matrix in the same floating-point operation order as the generic matrix
+   multiply. The optimization adds no page-sized memory; its occupancy grid is
+   fixed at 128 bytes per synchronous AGG batch call.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0110 event=compile
+   mode=single_pass_dense_render_program
+   logicalRetainedBytes=... incrementalBudgetChecks=... compileWindowMs=...
+
+   revision=r25-3-0110 event=replay
+   mode=single_pass_dense_command_backend
+   lineBatchCommands=... denseRasterPasses=...
+   denseDisjointLineDraws=... replayUs=...
+   ```
+
+   `logicalRetainedBytes` and final retained bytes must stay below the same
+   cap. Dense Q16 work should show `denseRasterPasses < lineBatchCommands` and
+   nonzero `denseDisjointLineDraws`; otherwise the document geometry does not
+   expose this exact optimization and no speedup should be claimed. Acceptance
+   requires a material reduction in Q16 parse/lowering or dense replay time,
+   exact canonical-vs-batched pixel tests, and no regression for 11.pdf or
+   canonical Study Notes pages.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
