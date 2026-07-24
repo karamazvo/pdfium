@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0108 on 2026-07-23 (Asia/Taipei)
+**Updated through:** r25-3-0109 on 2026-07-23 (Asia/Taipei)
 
 ## Decision
 
@@ -325,6 +325,65 @@ executor still walks it. This must be corrected before adding another index.
    deliberately unchanged. Study Notes preview/region p90 must remain within
    10 percent of 0107. Retained RenderProgram bytes are unchanged; AGG scratch
    is bounded by the most complex operation seen in one active render.
+
+5. **r25-3-0109: ordered candidate command backend.** The 0108 device result
+   showed that removing packet scratch construction did not move Q16 enough.
+   Sparse tiles with very few spatial candidates still accumulated hundreds of
+   thousands of `replayWorkUnits`. The cause was structural: replay searched
+   each alternating native line/fill run and advanced three sequential payload
+   counters even when almost every command was outside the tile.
+
+   0109 makes source ordinals directly executable. Every homogeneous native
+   run stores the first payload index for its opcode. An 8-byte lookup record
+   per 256 source commands bounds the search to native runs intersecting that
+   source block, so jumping to a sparse candidate never crosses intervening
+   run boundaries. Consecutive same/next-run commands keep the existing O(1)
+   cursor, so dense replay does not pay a block lookup per command. At seal
+   time, the program also derives compact mandatory
+   ranges containing exactly the commands that a line/fill spatial query may
+   not omit: canonical gaps plus owned stroke and Darken commands. Sparse
+   replay performs an allocation-free ordered merge of the existing candidate
+   bitmap and those mandatory ranges. A selected source ordinal resolves its
+   native payload with:
+
+   ```text
+   run.first_payload + (source_ordinal - run.first_command)
+   ```
+
+   This is one ordered program, not a page classifier or an alternate page
+   renderer. Candidate selection may omit only exact native line/fill commands
+   whose conservative holder-space bounds do not intersect the tile.
+   Canonical objects and non-indexed native commands remain ordered barriers.
+   Unknown bounds are already fail-open candidates. Full replay retains the
+   existing sequential execution, pixels, clips, state changes, cancellation,
+   and canonical fallback behavior.
+
+   Lookup blocks and mandatory ranges share the spatial index lifetime and its
+   96 MiB program budget. If the spatial index is unavailable or rejected by
+   the budget, both are discarded and full replay is used; canonical-only
+   holders still retain no sidecar. The cursor allocates nothing per query and
+   scans at most one 64-bit word per 64 source commands.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0109 event=compile
+   mode=ordinal_addressable_render_program
+   nativeRuns=... runLookupBlocks=... mandatoryRuns=... mandatoryCommands=...
+
+   revision=r25-3-0109 event=replay
+   mode=ordered_candidate_command_backend
+   spatialCandidates=... mandatoryCommands=... cursorWords=...
+   replayWorkUnits=... replayUs=...
+   ```
+
+   On a sparse Q16 tile, `replayWorkUnits` must approach
+   `spatialCandidates + mandatoryCommands`; it must no longer track the number
+   of alternating native runs. `cursorWords` is bounded by
+   `ceil(command_count / 64)`. Dense/full tiles still pay their real
+   rasterization cost, so 0109 does not claim to solve dense Q16 or full-page
+   preview throughput. `11.pdf` Darken execution and ordinary full replay are
+   intentionally unchanged.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill

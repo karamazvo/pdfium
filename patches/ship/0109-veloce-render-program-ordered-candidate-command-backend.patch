@@ -1,0 +1,1091 @@
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 1a6fe3b37..f0243dbfb 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -499,6 +499,229 @@ size_t VeloceSpatialOrdinalIndex::EstimatedBytes() const {
+          always_candidate_ordinals_.capacity() * sizeof(uint32_t);
+ }
+ 
++VeloceOrderedCommandCursor::VeloceOrderedCommandCursor(
++    uint32_t command_count,
++    pdfium::span<const uint64_t> candidate_words,
++    pdfium::span<const VeloceMandatoryCommandRange> mandatory_ranges)
++    : command_count_(command_count),
++      candidate_words_(candidate_words),
++      mandatory_ranges_(mandatory_ranges) {
++  AdvanceCandidate();
++  AdvanceMandatory();
++}
++
++std::optional<uint32_t> VeloceOrderedCommandCursor::Next() {
++  if (!next_candidate_ && !next_mandatory_) {
++    return std::nullopt;
++  }
++  const uint32_t result =
++      !next_mandatory_ ||
++              (next_candidate_ && *next_candidate_ < *next_mandatory_)
++          ? *next_candidate_
++          : *next_mandatory_;
++  if (next_candidate_ && *next_candidate_ == result) {
++    AdvanceCandidate();
++  }
++  if (next_mandatory_ && *next_mandatory_ == result) {
++    AdvanceMandatory();
++  }
++  return result;
++}
++
++void VeloceOrderedCommandCursor::AdvanceCandidate() {
++  next_candidate_.reset();
++  while (true) {
++    if (candidate_word_ != 0u) {
++      const uint32_t ordinal =
++          candidate_word_base_ + std::countr_zero(candidate_word_);
++      candidate_word_ &= candidate_word_ - 1u;
++      if (ordinal < command_count_) {
++        next_candidate_ = ordinal;
++        return;
++      }
++      continue;
++    }
++    if (word_index_ >= candidate_words_.size()) {
++      return;
++    }
++    candidate_word_base_ = static_cast<uint32_t>(word_index_ * 64u);
++    candidate_word_ = candidate_words_[word_index_++];
++    ++words_scanned_;
++  }
++}
++
++void VeloceOrderedCommandCursor::AdvanceMandatory() {
++  next_mandatory_.reset();
++  while (mandatory_range_index_ < mandatory_ranges_.size()) {
++    const VeloceMandatoryCommandRange& range =
++        mandatory_ranges_[mandatory_range_index_];
++    if (mandatory_offset_ < range.command_count) {
++      next_mandatory_ = range.first_command + mandatory_offset_++;
++      return;
++    }
++    ++mandatory_range_index_;
++    mandatory_offset_ = 0u;
++  }
++}
++
++namespace {
++
++bool IsSpatiallyIndexedOpcode(VeloceRenderOpcode opcode) {
++  return opcode == VeloceRenderOpcode::kNativeOpaqueLine ||
++         opcode == VeloceRenderOpcode::kNativeOpaqueFillPath;
++}
++
++std::vector<VeloceNativeRunLookupBlock> BuildNativeRunLookupBlocks(
++    uint32_t command_count,
++    pdfium::span<const VeloceNativeRun> native_runs) {
++  std::vector<VeloceNativeRunLookupBlock> blocks;
++  blocks.reserve(
++      (command_count + kVeloceNativeRunLookupBlockSize - 1u) /
++      kVeloceNativeRunLookupBlockSize);
++  size_t first_run = 0u;
++  for (uint32_t block_start = 0u; block_start < command_count;
++       block_start += kVeloceNativeRunLookupBlockSize) {
++    const uint32_t block_limit =
++        std::min(command_count,
++                 block_start + kVeloceNativeRunLookupBlockSize);
++    while (first_run < native_runs.size() &&
++           native_runs[first_run].first_command +
++                   native_runs[first_run].command_count <=
++               block_start) {
++      ++first_run;
++    }
++    size_t run_limit = first_run;
++    while (run_limit < native_runs.size() &&
++           native_runs[run_limit].first_command < block_limit) {
++      ++run_limit;
++    }
++    blocks.push_back(
++        {static_cast<uint32_t>(first_run),
++         static_cast<uint32_t>(run_limit - first_run)});
++  }
++  return blocks;
++}
++
++bool NativeRunLookupBlocksMatch(
++    uint32_t command_count,
++    pdfium::span<const VeloceNativeRun> native_runs,
++    pdfium::span<const VeloceNativeRunLookupBlock> blocks) {
++  if (blocks.size() !=
++      (command_count + kVeloceNativeRunLookupBlockSize - 1u) /
++          kVeloceNativeRunLookupBlockSize) {
++    return false;
++  }
++  size_t first_run = 0u;
++  size_t block_index = 0u;
++  for (uint32_t block_start = 0u; block_start < command_count;
++       block_start += kVeloceNativeRunLookupBlockSize, ++block_index) {
++    const uint32_t block_limit =
++        std::min(command_count,
++                 block_start + kVeloceNativeRunLookupBlockSize);
++    while (first_run < native_runs.size() &&
++           native_runs[first_run].first_command +
++                   native_runs[first_run].command_count <=
++               block_start) {
++      ++first_run;
++    }
++    size_t run_limit = first_run;
++    while (run_limit < native_runs.size() &&
++           native_runs[run_limit].first_command < block_limit) {
++      ++run_limit;
++    }
++    if (blocks[block_index].first_run != first_run ||
++        blocks[block_index].run_count != run_limit - first_run) {
++      return false;
++    }
++  }
++  return true;
++}
++
++std::vector<VeloceMandatoryCommandRange> BuildMandatoryCommandRanges(
++    uint32_t command_count,
++    pdfium::span<const VeloceNativeRun> native_runs) {
++  std::vector<VeloceMandatoryCommandRange> ranges;
++  const auto append_range = [&ranges](uint32_t first, uint32_t count) {
++    if (count == 0u) {
++      return;
++    }
++    if (!ranges.empty() &&
++        ranges.back().first_command + ranges.back().command_count == first) {
++      ranges.back().command_count += count;
++      return;
++    }
++    ranges.push_back({first, count});
++  };
++
++  uint32_t command = 0u;
++  for (const VeloceNativeRun& run : native_runs) {
++    if (command < run.first_command) {
++      append_range(command, run.first_command - command);
++    }
++    if (!IsSpatiallyIndexedOpcode(run.opcode)) {
++      append_range(run.first_command, run.command_count);
++    }
++    command = run.first_command + run.command_count;
++  }
++  if (command < command_count) {
++    append_range(command, command_count - command);
++  }
++  return ranges;
++}
++
++bool MandatoryCommandRangesMatch(
++    uint32_t command_count,
++    pdfium::span<const VeloceNativeRun> native_runs,
++    pdfium::span<const VeloceMandatoryCommandRange> ranges) {
++  size_t range_index = 0u;
++  std::optional<VeloceMandatoryCommandRange> pending;
++  const auto flush_pending = [&]() {
++    if (!pending) {
++      return true;
++    }
++    if (range_index >= ranges.size() ||
++        ranges[range_index].first_command != pending->first_command ||
++        ranges[range_index].command_count != pending->command_count) {
++      return false;
++    }
++    ++range_index;
++    pending.reset();
++    return true;
++  };
++  const auto append_expected = [&](uint32_t first, uint32_t count) {
++    if (count == 0u) {
++      return true;
++    }
++    if (pending &&
++        pending->first_command + pending->command_count == first) {
++      pending->command_count += count;
++      return true;
++    }
++    if (!flush_pending()) {
++      return false;
++    }
++    pending = VeloceMandatoryCommandRange{first, count};
++    return true;
++  };
++
++  uint32_t command = 0u;
++  for (const VeloceNativeRun& run : native_runs) {
++    if (command < run.first_command &&
++        !append_expected(command, run.first_command - command)) {
++      return false;
++    }
++    if (!IsSpatiallyIndexedOpcode(run.opcode) &&
++        !append_expected(run.first_command, run.command_count)) {
++      return false;
++    }
++    command = run.first_command + run.command_count;
++  }
++  return append_expected(command, command_count - command) &&
++         flush_pending() && range_index == ranges.size();
++}
++
++}  // namespace
++
+ VeloceNativeLineStorage::VeloceNativeLineStorage() = default;
+ VeloceNativeLineStorage::VeloceNativeLineStorage(
+     VeloceNativeLineStorage&& other) noexcept = default;
+@@ -533,6 +756,8 @@ size_t VeloceNativeLineStorage::EstimatedBytes() const {
+ VeloceRenderProgram::VeloceRenderProgram(
+     uint32_t command_count,
+     std::vector<VeloceNativeRun> native_runs,
++    std::vector<VeloceNativeRunLookupBlock> native_run_lookup_blocks,
++    std::vector<VeloceMandatoryCommandRange> mandatory_ranges,
+     std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts,
+     VeloceNativeLineStorage native_lines,
+     std::vector<VeloceNativeLineRun> native_line_runs,
+@@ -558,6 +783,8 @@ VeloceRenderProgram::VeloceRenderProgram(
+                                     native_stroke_paths.size() +
+                                     native_fill_paths.size())},
+       native_runs_(std::move(native_runs)),
++      native_run_lookup_blocks_(std::move(native_run_lookup_blocks)),
++      mandatory_ranges_(std::move(mandatory_ranges)),
+       opcode_counts_(opcode_counts),
+       native_lines_(std::move(native_lines)),
+       native_line_runs_(std::move(native_line_runs)),
+@@ -597,10 +824,19 @@ bool VeloceRenderProgram::Validate() const {
+     }
+     previous_run_limit = run.first_command + run.command_count;
+     if (run.opcode == VeloceRenderOpcode::kNativeOpaqueLine) {
++      if (run.first_payload != expected_lines) {
++        return false;
++      }
+       expected_lines += run.command_count;
+     } else if (run.opcode == VeloceRenderOpcode::kNativeOpaqueFillPath) {
++      if (run.first_payload != expected_fills) {
++        return false;
++      }
+       expected_fills += run.command_count;
+     } else {
++      if (run.first_payload != expected_paths) {
++        return false;
++      }
+       expected_paths += run.command_count;
+     }
+   }
+@@ -609,6 +845,17 @@ bool VeloceRenderProgram::Validate() const {
+       expected_fills != native_fill_path_count()) {
+     return false;
+   }
++  if (spatial_index_) {
++    if (!NativeRunLookupBlocksMatch(header_.command_count, native_runs_,
++                                    native_run_lookup_blocks_) ||
++        !MandatoryCommandRangesMatch(header_.command_count, native_runs_,
++                                     mandatory_ranges_)) {
++      return false;
++    }
++  } else if (!native_run_lookup_blocks_.empty() ||
++             !mandatory_ranges_.empty()) {
++    return false;
++  }
+   uint32_t expected_line = 0u;
+   for (const VeloceNativeLineRun& run : native_line_runs_) {
+     if (run.first_line != expected_line || run.line_count == 0u ||
+@@ -697,6 +944,10 @@ size_t VeloceRenderProgram::EstimatedBytes() const {
+   }
+   return sizeof(*this) +
+          native_runs_.capacity() * sizeof(VeloceNativeRun) +
++         native_run_lookup_blocks_.capacity() *
++             sizeof(VeloceNativeRunLookupBlock) +
++         mandatory_ranges_.capacity() *
++             sizeof(VeloceMandatoryCommandRange) +
+          native_lines_.EstimatedBytes() +
+          native_line_runs_.capacity() * sizeof(VeloceNativeLineRun) +
+          native_path_bytes +
+@@ -711,6 +962,32 @@ size_t VeloceRenderProgram::EstimatedBytes() const {
+          SpatialIndexBytes();
+ }
+ 
++uint32_t VeloceRenderProgram::FindNativeRunCursorForSpatialReplay(
++    uint32_t command_index) const {
++  if (command_index >= header_.command_count ||
++      native_run_lookup_blocks_.empty()) {
++    return static_cast<uint32_t>(native_runs_.size());
++  }
++  const VeloceNativeRunLookupBlock& block =
++      native_run_lookup_blocks_[command_index /
++                                kVeloceNativeRunLookupBlockSize];
++  const auto first = native_runs_.begin() + block.first_run;
++  const auto limit = first + block.run_count;
++  auto found = std::upper_bound(
++      first, limit, command_index,
++      [](uint32_t command, const VeloceNativeRun& run) {
++        return command < run.first_command;
++      });
++  if (found != first) {
++    const auto previous = found - 1;
++    if (command_index <
++        previous->first_command + previous->command_count) {
++      return static_cast<uint32_t>(previous - native_runs_.begin());
++    }
++  }
++  return static_cast<uint32_t>(found - native_runs_.begin());
++}
++
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder(
+     uint32_t initial_command_count,
+     const CFX_FloatRect& holder_bounds)
+@@ -803,16 +1080,18 @@ void VeloceRenderProgramBuilder::AppendSpatialOrdinal(
+ 
+ void VeloceRenderProgramBuilder::AppendNativeRun(
+     uint32_t command_index,
++    uint32_t payload_index,
+     VeloceRenderOpcode opcode) {
+   if (!native_runs_.empty()) {
+     VeloceNativeRun& previous = native_runs_.back();
+     if (previous.opcode == opcode &&
+-        previous.first_command + previous.command_count == command_index) {
++        previous.first_command + previous.command_count == command_index &&
++        previous.first_payload + previous.command_count == payload_index) {
+       ++previous.command_count;
+       return;
+     }
+   }
+-  native_runs_.push_back({command_index, 1u, opcode});
++  native_runs_.push_back({command_index, 1u, payload_index, opcode});
+ }
+ 
+ void VeloceRenderProgramBuilder::AppendCommandBlock(
+@@ -1436,7 +1715,13 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+           : (native_lines_.size() != previous_line_count
+                  ? VeloceRenderOpcode::kNativeOpaqueLine
+                  : VeloceRenderOpcode::kNativeOpaqueStrokePath);
+-  AppendNativeRun(command_index, opcode);
++  const uint32_t payload_index =
++      opcode == VeloceRenderOpcode::kNativeOpaqueLine
++          ? static_cast<uint32_t>(native_lines_.size() - 1u)
++          : opcode == VeloceRenderOpcode::kNativeOpaqueFillPath
++          ? static_cast<uint32_t>(native_fill_paths_.size() - 1u)
++          : static_cast<uint32_t>(native_stroke_paths_.size() - 1u);
++  AppendNativeRun(command_index, payload_index, opcode);
+   if (opcode != VeloceRenderOpcode::kNativeOpaqueLine &&
+       opcode != VeloceRenderOpcode::kNativeOpaqueFillPath) {
+     AppendCommandBlock(command_index, opcode, bounds, bounds_known);
+@@ -1454,21 +1739,45 @@ VeloceRenderProgramBuilder::Finish() {
+   if (exceeded_budget_) {
+     return nullptr;
+   }
++  std::vector<VeloceMandatoryCommandRange> mandatory_ranges;
++  std::vector<VeloceNativeRunLookupBlock> native_run_lookup_blocks;
+   std::unique_ptr<const VeloceSpatialOrdinalIndex> spatial_index;
+   if (spatial_index_builder_) {
+     spatial_index = spatial_index_builder_->Finish(object_count_);
+-    if (EstimatedRetainedBytesWithoutSpatialIndex() +
+-            spatial_index->EstimatedBytes() >
+-        kMaxRetainedProgramBytes) {
++    const size_t base_and_spatial_bytes =
++        EstimatedRetainedBytesWithoutSpatialIndex() +
++        spatial_index->EstimatedBytes();
++    if (base_and_spatial_bytes <= kMaxRetainedProgramBytes) {
++      mandatory_ranges =
++          BuildMandatoryCommandRanges(object_count_, native_runs_);
++      native_run_lookup_blocks =
++          BuildNativeRunLookupBlocks(object_count_, native_runs_);
++    }
++    if (base_and_spatial_bytes > kMaxRetainedProgramBytes ||
++        base_and_spatial_bytes +
++                native_run_lookup_blocks.capacity() *
++                    sizeof(VeloceNativeRunLookupBlock) +
++                mandatory_ranges.capacity() *
++                    sizeof(VeloceMandatoryCommandRange) >
++            kMaxRetainedProgramBytes) {
+       spatial_index.reset();
++      std::vector<VeloceNativeRunLookupBlock>().swap(
++          native_run_lookup_blocks);
++      std::vector<VeloceMandatoryCommandRange>().swap(mandatory_ranges);
+     }
+   }
++  size_t mandatory_command_count = 0u;
++  for (const VeloceMandatoryCommandRange& range : mandatory_ranges) {
++    mandatory_command_count += range.command_count;
++  }
+   const uint64_t build_millis = build_start_millis_ == 0u
+                                     ? 0u
+                                     : NowMillis() - build_start_millis_;
+   auto program = std::unique_ptr<const VeloceRenderProgram>(
+       new VeloceRenderProgram(
+-          object_count_, std::move(native_runs_), opcode_counts_,
++          object_count_, std::move(native_runs_),
++          std::move(native_run_lookup_blocks), std::move(mandatory_ranges),
++          opcode_counts_,
+           std::move(native_lines_), std::move(native_line_runs_),
+           std::move(native_stroke_paths_),
+           std::move(native_fill_paths_),
+@@ -1484,7 +1793,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0108 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0109 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1494,15 +1803,17 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0108 event=compile "
+-        "mode=compact_spatial_ordinal_program "
++        "revision=r25-3-0109 event=compile "
++        "mode=ordinal_addressable_render_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu fillGeometries=%zu fillGeometryPoints=%zu "
+         "canonicalPaths=%zu "
+         "states=%zu matrices=%zu dashValues=%zu visibilityRuns=%zu "
+         "clipRuns=%zu ownedPathPoints=%zu visibilityScopedLines=%u "
+-        "inlineTranslationLines=%u commandBlocks=%zu lineRuns=%zu "
++        "inlineTranslationLines=%u nativeRuns=%zu runLookupBlocks=%zu "
++        "mandatoryRuns=%zu "
++        "mandatoryCommands=%zu commandBlocks=%zu lineRuns=%zu "
+         "spatialCells=%zu spatialPostings=%zu spatialAlways=%zu "
+         "spatialIndexBytes=%zu bytes=%zu nativeBudgetFallbacks=%u "
+         "rejectNotPath=%u rejectPaint=%u rejectClip=%u rejectGeometry=%u "
+@@ -1522,6 +1833,9 @@ VeloceRenderProgramBuilder::Finish() {
+         program->clip_runs().size(), native_stroke_path_point_count_,
+         program->visibility_scoped_line_count(),
+         program->inline_translation_line_count(),
++        program->native_runs().size(),
++        program->native_run_lookup_blocks_.size(),
++        program->mandatory_ranges().size(), mandatory_command_count,
+         program->command_blocks().size(),
+         program->native_line_runs().size(),
+         program->spatial_index() ? program->spatial_index()->cell_count() : 0u,
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index dafa60783..7c99ff02e 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -24,7 +24,7 @@ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 11u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 12u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -67,10 +67,22 @@ static_assert(sizeof(VeloceRenderProgramHeader) == 16u);
+ struct VeloceNativeRun {
+   uint32_t first_command = 0;
+   uint32_t command_count = 0;
++  uint32_t first_payload = 0;
+   VeloceRenderOpcode opcode = VeloceRenderOpcode::kCanonicalUnsupported;
+   uint8_t reserved[3] = {};
+ };
+-static_assert(sizeof(VeloceNativeRun) == 12u);
++static_assert(sizeof(VeloceNativeRun) == 16u);
++
++inline constexpr uint32_t kVeloceNativeRunLookupBlockSize = 256u;
++
++// Bounds an ordinal-to-native-run search to the runs intersecting one fixed
++// source-order block. This avoids both a per-command map and a whole-program
++// run walk when sparse replay jumps across many alternating native runs.
++struct VeloceNativeRunLookupBlock {
++  uint32_t first_run = 0;
++  uint32_t run_count = 0;
++};
++static_assert(sizeof(VeloceNativeRunLookupBlock) == 8u);
+ 
+ enum class VeloceOpaquePathStateFlag : uint8_t {
+   kStrokeAdjust = 1u << 0,
+@@ -198,6 +210,44 @@ struct VeloceSpatialQueryResult {
+   uint32_t candidate_commands = 0;
+ };
+ 
++// Consecutive source ordinals that cannot be omitted by a line/fill spatial
++// query. Canonical commands and owned native stroke paths share this compact
++// representation and remain in exact painter order.
++struct VeloceMandatoryCommandRange {
++  uint32_t first_command = 0;
++  uint32_t command_count = 0;
++};
++static_assert(sizeof(VeloceMandatoryCommandRange) == 8u);
++
++// Allocation-free merge of spatial candidate bits and mandatory source
++// ranges. The cursor only moves forward and emits each selected ordinal once.
++class VeloceOrderedCommandCursor final {
++ public:
++  VeloceOrderedCommandCursor(
++      uint32_t command_count,
++      pdfium::span<const uint64_t> candidate_words,
++      pdfium::span<const VeloceMandatoryCommandRange> mandatory_ranges);
++
++  std::optional<uint32_t> Next();
++  size_t words_scanned() const { return words_scanned_; }
++
++ private:
++  void AdvanceCandidate();
++  void AdvanceMandatory();
++
++  const uint32_t command_count_;
++  const pdfium::span<const uint64_t> candidate_words_;
++  const pdfium::span<const VeloceMandatoryCommandRange> mandatory_ranges_;
++  size_t word_index_ = 0u;
++  size_t words_scanned_ = 0u;
++  uint64_t candidate_word_ = 0u;
++  uint32_t candidate_word_base_ = 0u;
++  std::optional<uint32_t> next_candidate_;
++  size_t mandatory_range_index_ = 0u;
++  uint32_t mandatory_offset_ = 0u;
++  std::optional<uint32_t> next_mandatory_;
++};
++
+ // Immutable holder-space lookup for exact native lines and fills. Bin streams
+ // contain source ordinals; query marks a caller-owned bitmap and replay reads
+ // those bits in painter order. Unknown and broad bounds are always candidates.
+@@ -300,6 +350,11 @@ class VeloceRenderProgram final {
+   pdfium::span<const VeloceNativeRun> native_runs() const {
+     return native_runs_;
+   }
++  pdfium::span<const VeloceMandatoryCommandRange> mandatory_ranges() const {
++    return mandatory_ranges_;
++  }
++  uint32_t FindNativeRunCursorForSpatialReplay(
++      uint32_t command_index) const;
+   size_t command_count() const { return header_.command_count; }
+   size_t opcode_count(VeloceRenderOpcode opcode) const {
+     return opcode_counts_[static_cast<size_t>(opcode)];
+@@ -367,6 +422,8 @@ class VeloceRenderProgram final {
+   VeloceRenderProgram(
+       uint32_t command_count,
+       std::vector<VeloceNativeRun> native_runs,
++      std::vector<VeloceNativeRunLookupBlock> native_run_lookup_blocks,
++      std::vector<VeloceMandatoryCommandRange> mandatory_ranges,
+       std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts,
+       VeloceNativeLineStorage native_lines,
+       std::vector<VeloceNativeLineRun> native_line_runs,
+@@ -390,6 +447,8 @@ class VeloceRenderProgram final {
+ 
+   const VeloceRenderProgramHeader header_;
+   const std::vector<VeloceNativeRun> native_runs_;
++  const std::vector<VeloceNativeRunLookupBlock> native_run_lookup_blocks_;
++  const std::vector<VeloceMandatoryCommandRange> mandatory_ranges_;
+   const std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts_;
+   const VeloceNativeLineStorage native_lines_;
+   const std::vector<VeloceNativeLineRun> native_line_runs_;
+@@ -464,7 +523,9 @@ class VeloceRenderProgramBuilder final {
+   void AppendSpatialOrdinal(uint32_t command_index,
+                             const CFX_FloatRect& bounds,
+                             bool bounds_known);
+-  void AppendNativeRun(uint32_t command_index, VeloceRenderOpcode opcode);
++  void AppendNativeRun(uint32_t command_index,
++                       uint32_t payload_index,
++                       VeloceRenderOpcode opcode);
+   void AppendCommandBlock(uint32_t command_index,
+                           VeloceRenderOpcode opcode,
+                           const CFX_FloatRect& bounds,
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 6b98e16e9..c4cb347ce 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -3,6 +3,7 @@
+ 
+ #include "core/fpdfapi/page/veloce_render_program.h"
+ 
++#include <array>
+ #include <memory>
+ #include <utility>
+ 
+@@ -99,8 +100,10 @@ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+   ASSERT_EQ(1u, program->native_runs().size());
+   EXPECT_EQ(0u, program->native_runs()[0].first_command);
+   EXPECT_EQ(2u, program->native_runs()[0].command_count);
++  EXPECT_EQ(0u, program->native_runs()[0].first_payload);
+   EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLine,
+             program->native_runs()[0].opcode);
++  EXPECT_TRUE(program->mandatory_ranges().empty());
+ }
+ 
+ TEST(VeloceRenderProgramTest, RejectsProgramWhenObjectsChangeDuringCompile) {
+@@ -444,12 +447,20 @@ TEST(VeloceRenderProgramTest, PreservesNativeOrdinalsAcrossCanonicalBarrier) {
+   ASSERT_EQ(2u, program->native_runs().size());
+   EXPECT_EQ(0u, program->native_runs()[0].first_command);
+   EXPECT_EQ(1u, program->native_runs()[0].command_count);
++  EXPECT_EQ(0u, program->native_runs()[0].first_payload);
+   EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLine,
+             program->native_runs()[0].opcode);
+   EXPECT_EQ(2u, program->native_runs()[1].first_command);
+   EXPECT_EQ(1u, program->native_runs()[1].command_count);
++  EXPECT_EQ(1u, program->native_runs()[1].first_payload);
+   EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLine,
+             program->native_runs()[1].opcode);
++  ASSERT_EQ(1u, program->mandatory_ranges().size());
++  EXPECT_EQ(1u, program->mandatory_ranges()[0].first_command);
++  EXPECT_EQ(1u, program->mandatory_ranges()[0].command_count);
++  EXPECT_EQ(0u, program->FindNativeRunCursorForSpatialReplay(0u));
++  EXPECT_EQ(1u, program->FindNativeRunCursorForSpatialReplay(1u));
++  EXPECT_EQ(1u, program->FindNativeRunCursorForSpatialReplay(2u));
+   ASSERT_EQ(1u, program->native_line_runs().size());
+   EXPECT_EQ(2u, program->native_line_runs()[0].line_count);
+   ASSERT_TRUE(program->spatial_index());
+@@ -463,6 +474,26 @@ TEST(VeloceRenderProgramTest, PreservesNativeOrdinalsAcrossCanonicalBarrier) {
+   EXPECT_FALSE(IsCandidate(candidates, 2u));
+ }
+ 
++TEST(VeloceRenderProgramTest, NativeRunLookupCrossesSourceBlockBoundary) {
++  VeloceRenderProgramBuilder builder(
++      255u, CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++  auto first_line = MakeOpaqueLine(1.0f, 2.0f);
++  auto canonical_barrier = MakeOpaqueLine(3.0f, 4.0f);
++  canonical_barrier->set_winding_filltype();
++  auto second_line = MakeOpaqueLine(5.0f, 6.0f);
++  builder.AppendPageObject(*first_line);
++  builder.AppendPageObject(*canonical_barrier);
++  builder.AppendPageObject(*second_line);
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  ASSERT_EQ(2u, program->native_runs().size());
++  EXPECT_EQ(0u, program->FindNativeRunCursorForSpatialReplay(255u));
++  EXPECT_EQ(1u, program->FindNativeRunCursorForSpatialReplay(256u));
++  EXPECT_EQ(1u, program->FindNativeRunCursorForSpatialReplay(257u));
++}
++
+ TEST(VeloceRenderProgramTest, KeepsCompactLineStateAcrossCanonicalBarriers) {
+   VeloceRenderProgramBuilder builder(
+       0u, CFX_FloatRect(0.0f, 0.0f, 1200.0f, 20.0f));
+@@ -483,7 +514,34 @@ TEST(VeloceRenderProgramTest, KeepsCompactLineStateAcrossCanonicalBarriers) {
+   ASSERT_EQ(130u, program->native_runs().size());
+   ASSERT_EQ(1u, program->native_line_runs().size());
+   EXPECT_EQ(130u, program->native_line_runs()[0].line_count);
++  ASSERT_EQ(129u, program->mandatory_ranges().size());
++  for (size_t i = 0u; i < program->mandatory_ranges().size(); ++i) {
++    EXPECT_EQ(static_cast<uint32_t>(i * 2u + 1u),
++              program->mandatory_ranges()[i].first_command);
++    EXPECT_EQ(1u, program->mandatory_ranges()[i].command_count);
++  }
+   ASSERT_TRUE(program->spatial_index());
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     OrderedCommandCursorMergesCandidatesAndMandatoryRanges) {
++  std::array<uint64_t, 1u> candidate_words = {
++      (uint64_t{1} << 1u) | (uint64_t{1} << 4u) |
++      (uint64_t{1} << 10u)};
++  std::array<VeloceMandatoryCommandRange, 3u> mandatory_ranges = {
++      VeloceMandatoryCommandRange{0u, 1u},
++      VeloceMandatoryCommandRange{3u, 2u},
++      VeloceMandatoryCommandRange{8u, 2u}};
++  VeloceOrderedCommandCursor cursor(11u, candidate_words, mandatory_ranges);
++
++  std::array<uint32_t, 7u> expected = {0u, 1u, 3u, 4u, 8u, 9u, 10u};
++  for (uint32_t ordinal : expected) {
++    const std::optional<uint32_t> actual = cursor.Next();
++    ASSERT_TRUE(actual.has_value());
++    EXPECT_EQ(ordinal, *actual);
++  }
++  EXPECT_FALSE(cursor.Next().has_value());
++  EXPECT_EQ(1u, cursor.words_scanned());
++}
++
+ }  // namespace
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 4147f906e..b00ac5ad3 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -8,7 +8,6 @@
+ 
+ #include <atomic>
+ #include <array>
+-#include <bit>
+ #include <chrono>
+ #include <cmath>
+ #include <stdint.h>
+@@ -229,30 +228,6 @@ bool IsFiniteVeloceRect(const CFX_FloatRect& rect) {
+          std::isfinite(rect.right) && std::isfinite(rect.top);
+ }
+ 
+-size_t FindNextVeloceCandidate(pdfium::span<const uint64_t> words,
+-                               size_t first,
+-                               size_t limit) {
+-  if (first >= limit) {
+-    return limit;
+-  }
+-  size_t word_index = first / 64u;
+-  uint64_t word =
+-      words[word_index] & (~uint64_t{0} << (first % 64u));
+-  while (true) {
+-    if (word != 0u) {
+-      const size_t candidate =
+-          word_index * 64u + std::countr_zero(word);
+-      return std::min(candidate, limit);
+-    }
+-    ++word_index;
+-    first = word_index * 64u;
+-    if (first >= limit || word_index >= words.size()) {
+-      return limit;
+-    }
+-    word = words[word_index];
+-  }
+-}
+-
+ CFX_GraphStateData BuildVeloceGraphState(
+     const VeloceOpaquePathState& source,
+     pdfium::span<const float> dash_values) {
+@@ -351,6 +326,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       program->native_runs();
+   const pdfium::span<const VeloceNativeLineRun> native_line_runs =
+       program->native_line_runs();
++  const pdfium::span<const VeloceMandatoryCommandRange> mandatory_ranges =
++      program->mandatory_ranges();
+   const pdfium::span<const VeloceClipRun> clip_runs = program->clip_runs();
+   const pdfium::span<const VeloceVisibilityRun> visibility_runs =
+       program->visibility_runs();
+@@ -372,6 +349,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   }
+   const bool spatial_full_replay =
+       spatial_query.mode == VeloceSpatialQueryMode::kFullReplay;
++  size_t mandatory_command_count = 0u;
++  for (const VeloceMandatoryCommandRange& range : mandatory_ranges) {
++    mandatory_command_count += range.command_count;
++  }
+ 
+   const auto replay_start = std::chrono::steady_clock::now();
+   size_t command_count = 0;
+@@ -394,9 +375,6 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t max_line_batch = 0;
+   size_t native_fill_draws = 0;
+   size_t replay_work_units = 0;
+-  uint32_t native_line_index = 0;
+-  uint32_t native_path_index = 0;
+-  uint32_t native_fill_index = 0;
+   size_t native_line_run_index = 0;
+   size_t block_index = 0;
+   size_t native_run_index = 0;
+@@ -419,6 +397,22 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
+       ordered_path_context;
+   bool ordered_path_context_attempted = false;
++  std::optional<VeloceOrderedCommandCursor> ordered_command_cursor;
++  if (!spatial_full_replay) {
++    ordered_command_cursor.emplace(
++        static_cast<uint32_t>(program->command_count()),
++        veloce_candidate_words_, mandatory_ranges);
++    const size_t spatially_indexed_commands =
++        program->native_line_count() + program->native_fill_path_count();
++    CHECK_GE(spatially_indexed_commands, spatial_query.candidate_commands);
++    spatial_commands_culled =
++        spatially_indexed_commands - spatial_query.candidate_commands;
++    CHECK_GE(program->command_count(),
++             mandatory_command_count + spatial_query.candidate_commands);
++    commands_skipped =
++        program->command_count() -
++        (mandatory_command_count + spatial_query.candidate_commands);
++  }
+   bool direct_darken_context = !in_group_ && !transparency_.IsGroup();
+   if (!direct_darken_context && !in_group_ && transparency_.IsGroup() &&
+       !transparency_.IsIsolated() &&
+@@ -479,8 +473,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0108 event=replay "
+-        "mode=persistent_agg_ordered_executor "
++        "revision=r25-3-0109 event=replay "
++        "mode=ordered_candidate_command_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+@@ -493,6 +487,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "pathBoundsCulled=%zu "
+         "nativeObjectLookups=%zu visibilityRunChecks=%zu "
+         "orderedPathContext=%d darkenContextDirect=%d "
++        "mandatoryRuns=%zu mandatoryCommands=%zu cursorWords=%zu "
+         "replayWorkUnits=%zu cancelChecks=%zu "
+         "replayUs=%llu",
+         result, command_count, commands_skipped, program->native_line_count(),
+@@ -509,6 +504,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         native_path_bounds_culled,
+         native_object_lookups, visibility_run_checks,
+         ordered_path_context ? 1 : 0, can_direct_darken ? 1 : 0,
++        mandatory_ranges.size(), mandatory_command_count,
++        ordered_command_cursor ? ordered_command_cursor->words_scanned() : 0u,
+         replay_work_units, cancellation_checks,
+         static_cast<unsigned long long>(replay_micros));
+ #else
+@@ -536,17 +533,40 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(line_batch_fallbacks);
+     static_cast<void>(max_line_batch);
+     static_cast<void>(native_fill_draws);
++    static_cast<void>(mandatory_command_count);
++    static_cast<void>(ordered_command_cursor);
+     static_cast<void>(replay_work_units);
+ #endif
+   };
+ 
+-  size_t command_index = 0u;
++  uint32_t command_index = 0u;
++  const auto advance_command = [&]() {
++    if (spatial_full_replay) {
++      ++command_index;
++      return;
++    }
++    const std::optional<uint32_t> next = ordered_command_cursor->Next();
++    command_index =
++        next.value_or(static_cast<uint32_t>(program->command_count()));
++  };
++  if (!spatial_full_replay) {
++    command_index =
++        static_cast<uint32_t>(program->command_count());
++    advance_command();
++  }
++  const auto run_contains = [](const VeloceNativeRun& run,
++                               uint32_t command) {
++    return command >= run.first_command &&
++           command < run.first_command + run.command_count;
++  };
+   while (command_index < program->command_count()) {
+-    while (native_run_index < native_runs.size() &&
+-           command_index >=
+-               native_runs[native_run_index].first_command +
+-                   native_runs[native_run_index].command_count) {
+-      ++native_run_index;
++    if (spatial_full_replay) {
++      while (native_run_index < native_runs.size() &&
++             command_index >=
++                 native_runs[native_run_index].first_command +
++                     native_runs[native_run_index].command_count) {
++        ++native_run_index;
++      }
+     }
+ 
+     while (block_index < command_blocks.size() &&
+@@ -563,14 +583,12 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         return true;
+       }
+     }
+-    if (block_index < command_blocks.size() &&
++    if (spatial_full_replay && block_index < command_blocks.size() &&
+         command_blocks[block_index].first_command == command_index) {
+       const VeloceCommandBlock& block = command_blocks[block_index++];
+       ++blocks_tested;
+       if ((block.flags & kVeloceCommandBlockUnbounded) == 0u &&
+           !VeloceRectsIntersect(block.bounds, holder_clip)) {
+-        native_line_index += block.native_line_count;
+-        native_path_index += block.native_path_count;
+         commands_skipped += block.command_count;
+         command_index += block.command_count;
+         ++blocks_skipped;
+@@ -579,12 +597,39 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       }
+     }
+ 
+-    const bool has_native_command =
+-        native_run_index < native_runs.size() &&
+-        command_index >= native_runs[native_run_index].first_command;
++    const VeloceNativeRun* active_native_run = nullptr;
++    if (native_run_index < native_runs.size() &&
++        run_contains(native_runs[native_run_index], command_index)) {
++      active_native_run = &native_runs[native_run_index];
++    } else if (!spatial_full_replay &&
++               native_run_index >= native_runs.size()) {
++      // There are no native runs after this trailing canonical gap.
++    } else if (!spatial_full_replay &&
++               native_run_index < native_runs.size() &&
++               command_index < native_runs[native_run_index].first_command) {
++      // The cached cursor already identifies the first run after this
++      // canonical gap.
++    } else if (!spatial_full_replay &&
++               native_run_index + 1u < native_runs.size() &&
++               run_contains(native_runs[native_run_index + 1u],
++                            command_index)) {
++      active_native_run = &native_runs[++native_run_index];
++    } else if (!spatial_full_replay &&
++               native_run_index + 1u < native_runs.size() &&
++               command_index <
++                   native_runs[native_run_index + 1u].first_command) {
++      // The next run begins after this canonical gap.
++    } else if (!spatial_full_replay) {
++      native_run_index =
++          program->FindNativeRunCursorForSpatialReplay(command_index);
++      if (native_run_index < native_runs.size() &&
++          run_contains(native_runs[native_run_index], command_index)) {
++        active_native_run = &native_runs[native_run_index];
++      }
++    }
+     const VeloceRenderOpcode opcode =
+-        has_native_command
+-            ? native_runs[native_run_index].opcode
++        active_native_run
++            ? active_native_run->opcode
+             : VeloceRenderOpcode::kCanonicalUnsupported;
+     const bool is_native_line =
+         opcode == VeloceRenderOpcode::kNativeOpaqueLine;
+@@ -594,30 +639,6 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         opcode == VeloceRenderOpcode::kNativeDarkenStrokePath;
+     const bool is_native_fill =
+         opcode == VeloceRenderOpcode::kNativeOpaqueFillPath;
+-    if (!spatial_full_replay && (is_native_line || is_native_fill)) {
+-      const size_t run_limit =
+-          native_runs[native_run_index].first_command +
+-          native_runs[native_run_index].command_count;
+-      const size_t next_candidate =
+-          spatial_query.mode == VeloceSpatialQueryMode::kNoCandidates
+-              ? run_limit
+-              : FindNextVeloceCandidate(veloce_candidate_words_,
+-                                        command_index, run_limit);
+-      const uint32_t skip_count =
+-          static_cast<uint32_t>(next_candidate - command_index);
+-      if (skip_count != 0u) {
+-        if (is_native_line) {
+-          native_line_index += skip_count;
+-        } else {
+-          native_fill_index += skip_count;
+-        }
+-        spatial_commands_culled += skip_count;
+-        commands_skipped += skip_count;
+-        command_index = next_candidate;
+-        continue;
+-      }
+-    }
+-
+     ++command_count;
+ 
+     if (!is_native_line && !is_native_path && !is_native_darken &&
+@@ -631,7 +652,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       CHECK(object);
+       if (!object->IsActive() ||
+           !VeloceRectsIntersect(object->GetRect(), holder_clip)) {
+-        ++command_index;
++        advance_command();
+         continue;
+       }
+       RenderSingleObject(object, holder_to_device);
+@@ -640,10 +661,14 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         log_result("cancelled");
+         return true;
+       }
+-      ++command_index;
++      advance_command();
+       continue;
+     }
+ 
++    CHECK(active_native_run);
++    const uint32_t payload_index =
++        active_native_run->first_payload +
++        (command_index - active_native_run->first_command);
+     while (next_clip_run_index < clip_runs.size() &&
+            clip_runs[next_clip_run_index].first_command <= command_index) {
+       active_clip_run_index = next_clip_run_index++;
+@@ -655,30 +680,30 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const VeloceNativeStrokePath* native_path = nullptr;
+     const VeloceNativeFillPath* native_fill = nullptr;
+     if (is_native_line) {
+-      CHECK_LT(native_line_index, program->native_line_count());
++      CHECK_LT(payload_index, program->native_line_count());
+       while (native_line_run_index < native_line_runs.size() &&
+-             native_line_index >=
++             payload_index >=
+                  native_line_runs[native_line_run_index].first_line +
+                      native_line_runs[native_line_run_index].line_count) {
+         ++native_line_run_index;
+       }
+       CHECK_LT(native_line_run_index, native_line_runs.size());
+       line_run = &native_line_runs[native_line_run_index];
+-      CHECK_GE(native_line_index, line_run->first_line);
+-      CHECK_LT(native_line_index,
++      CHECK_GE(payload_index, line_run->first_line);
++      CHECK_LT(payload_index,
+                line_run->first_line + line_run->line_count);
+-      line = &program->native_line(native_line_index++);
++      line = &program->native_line(payload_index);
+     } else if (is_native_fill) {
+-      CHECK_LT(native_fill_index, program->native_fill_path_count());
+-      native_fill = &program->native_fill_path(native_fill_index++);
++      CHECK_LT(payload_index, program->native_fill_path_count());
++      native_fill = &program->native_fill_path(payload_index);
+     } else {
+-      CHECK_LT(native_path_index, program->native_stroke_path_count());
+-      native_path = &program->native_stroke_path(native_path_index++);
++      CHECK_LT(payload_index, program->native_stroke_path_count());
++      native_path = &program->native_stroke_path(payload_index);
+     }
+     if ((is_native_path || is_native_darken) && native_path->bounds_known &&
+         !VeloceRectsIntersect(native_path->bounds, holder_clip)) {
+       ++native_path_bounds_culled;
+-      ++command_index;
++      advance_command();
+       continue;
+     }
+ 
+@@ -700,7 +725,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       ++visibility_run_checks;
+     }
+     if (!active_visibility_run_visible) {
+-      ++command_index;
++      advance_command();
+       continue;
+     }
+     if (!native_clip_ready ||
+@@ -785,7 +810,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         log_result("cancelled");
+         return true;
+       }
+-      ++command_index;
++      advance_command();
+       continue;
+     }
+ 
+@@ -801,7 +826,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       if (IsFiniteVeloceRect(fill_bounds) && !fill_bounds.IsEmpty() &&
+           !VeloceRectsIntersect(fill_bounds, holder_clip)) {
+         ++native_path_bounds_culled;
+-        ++command_index;
++        advance_command();
+         continue;
+       }
+       const CPDF_RenderOptions::Options& render_options =
+@@ -823,7 +848,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+           log_result("cancelled");
+           return true;
+         }
+-        ++command_index;
++        advance_command();
+         continue;
+       }
+ 
+@@ -843,7 +868,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+           static_cast<uint32_t>(command_index);
+       ++line_batch_count;
+       ++native_fill_draws;
+-      ++command_index;
++      advance_command();
+       if (line_batch_count == line_batch.size() && !flush_line_batch()) {
+         log_result("cancelled");
+         return true;
+@@ -879,7 +904,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+           return true;
+         }
+       }
+-      ++command_index;
++      advance_command();
+       continue;
+     }
+     line_batch[line_batch_count] = CFX_OrderedPathDraw{
+@@ -893,7 +918,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     if (!is_native_line) {
+       ++native_path_draws;
+     }
+-    ++command_index;
++    advance_command();
+     if (line_batch_count == line_batch.size() && !flush_line_batch()) {
+       log_result("cancelled");
+       return true;
+@@ -905,9 +930,6 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     log_result("cancelled");
+     return true;
+   }
+-  CHECK_EQ(native_line_index, program->native_line_count());
+-  CHECK_EQ(native_path_index, program->native_stroke_path_count());
+-  CHECK_EQ(native_fill_index, program->native_fill_path_count());
+   CHECK_EQ(command_count + commands_skipped, program->command_count());
+   CHECK_GE(commands_skipped, spatial_commands_culled);
+   if (ShouldCancelRender()) {
