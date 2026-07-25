@@ -1,0 +1,301 @@
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index dea95d405..8a68ae405 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1786,7 +1786,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0111 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0112 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1796,8 +1796,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0111 event=compile "
+-        "mode=exact_noop_invariant_transform_program "
++        "revision=r25-3-0112 event=compile "
++        "mode=direct_ordered_opaque_line_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index c2b083289..46b2d5090 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -24,7 +24,7 @@ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 14u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 15u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 90f350cf8..4b590e9ae 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -406,6 +406,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t dense_raster_passes = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
++  size_t direct_butt_line_draws = 0;
++  size_t generic_stroke_draws = 0;
+   size_t exact_noop_lines_skipped = 0;
+   static constexpr size_t kMaxLineBatch = 256u;
+   std::array<CFX_OrderedPathDraw, kMaxLineBatch> line_batch;
+@@ -460,11 +462,16 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       CHECK_LE(batch_stats.stroke_transform_builds +
+                    batch_stats.stroke_transform_hits,
+                batch_stats.source_draws);
++      CHECK_LE(batch_stats.direct_butt_line_draws +
++                   batch_stats.generic_stroke_draws,
++               batch_stats.source_draws);
+       native_draws += flushed_count;
+       line_batch_commands += flushed_count;
+       dense_raster_passes += batch_stats.raster_passes;
+       stroke_transform_builds += batch_stats.stroke_transform_builds;
+       stroke_transform_hits += batch_stats.stroke_transform_hits;
++      direct_butt_line_draws += batch_stats.direct_butt_line_draws;
++      generic_stroke_draws += batch_stats.generic_stroke_draws;
+       ++line_batch_dispatches;
+       max_line_batch = std::max(max_line_batch, flushed_count);
+       line_batch_count = 0u;
+@@ -499,8 +506,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0111 event=replay "
+-        "mode=exact_noop_invariant_transform_backend "
++        "revision=r25-3-0112 event=replay "
++        "mode=direct_ordered_opaque_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+@@ -510,6 +517,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
+         "lineRasterPasses=%zu exactNoOpLinesSkipped=%zu "
+         "strokeTransformBuilds=%zu strokeTransformHits=%zu "
++        "directButtLineDraws=%zu genericStrokeDraws=%zu "
+         "spatialMode=%u spatialBinsTested=%u spatialBinsSelected=%u "
+         "spatialPostings=%u spatialCandidates=%u spatialCulled=%zu "
+         "pathBoundsCulled=%zu "
+@@ -527,7 +535,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+         max_line_batch, native_fill_draws, dense_raster_passes,
+         exact_noop_lines_skipped, stroke_transform_builds,
+-        stroke_transform_hits,
++        stroke_transform_hits, direct_butt_line_draws,
++        generic_stroke_draws,
+         static_cast<unsigned>(spatial_query.mode), spatial_query.bins_tested,
+         spatial_query.bins_selected, spatial_query.postings_marked,
+         spatial_query.candidate_commands, spatial_commands_culled,
+@@ -566,6 +575,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(dense_raster_passes);
+     static_cast<void>(stroke_transform_builds);
+     static_cast<void>(stroke_transform_hits);
++    static_cast<void>(direct_butt_line_draws);
++    static_cast<void>(generic_stroke_draws);
+     static_cast<void>(exact_noop_lines_skipped);
+     static_cast<void>(mandatory_command_count);
+     static_cast<void>(ordered_command_cursor);
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 5f88f1a28..ddd5a4389 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -18,6 +18,7 @@
+ #include "core/fxcrt/check_op.h"
+ #include "core/fxcrt/compiler_specific.h"
+ #include "core/fxcrt/fx_safe_types.h"
++#include "core/fxcrt/fx_system.h"
+ #include "core/fxcrt/notreached.h"
+ #include "core/fxcrt/span.h"
+ #include "core/fxcrt/unowned_ptr_exclusion.h"
+@@ -1067,6 +1068,54 @@ void BuildAggStrokeLine(const CFX_StrokeLine& line,
+   path->line_to(end.x, end.y);
+ }
+ 
++bool RasterizeDirectButtStrokeLine(
++    agg::rasterizer_scanline_aa* rasterizer,
++    agg::path_storage* path,
++    const CFX_StrokeLine& line,
++    const CFX_Matrix& object_to_stroke,
++    const CFX_Matrix& stroke_to_device,
++    const CFX_GraphStateData& graph_state,
++    float stroke_scale) {
++  if (graph_state.line_cap() != CFX_GraphStateData::LineCap::kButt ||
++      !graph_state.dash_array().empty() || line.start == line.end) {
++    return false;
++  }
++
++  const CFX_PointF start =
++      HardClip(object_to_stroke.Transform(line.start));
++  const CFX_PointF end = HardClip(object_to_stroke.Transform(line.end));
++  const float segment_x = end.x - start.x;
++  const float segment_y = end.y - start.y;
++  const float segment_length = FXSYS_sqrt2(segment_x, segment_y);
++  if (!std::isfinite(segment_length) || segment_length <= 1.0e-14f) {
++    return false;
++  }
++
++  const float device_unit =
++      1.0f /
++      ((stroke_to_device.GetXUnit() + stroke_to_device.GetYUnit()) / 2.0f);
++  const float stroke_width =
++      std::max(graph_state.line_width() * stroke_scale, device_unit);
++  if (!std::isfinite(stroke_width) || stroke_width <= 0.0f) {
++    return false;
++  }
++
++  // This is the exact four-vertex polygon emitted by AGG's conv_stroke for
++  // one non-degenerate butt-cap segment. Keep the arithmetic and vertex order
++  // aligned with stroke_calc_cap(), then apply the same normalized transform.
++  const float half_width = stroke_width / 2.0f;
++  const float normal_x = segment_y * half_width / segment_length;
++  const float normal_y = segment_x * half_width / segment_length;
++  path->remove_all();
++  path->move_to(start.x - normal_x, start.y + normal_y);
++  path->line_to(start.x + normal_x, start.y - normal_y);
++  path->line_to(end.x + normal_x, end.y - normal_y);
++  path->line_to(end.x - normal_x, end.y + normal_y);
++  path->end_poly();
++  rasterizer->add_path_transformed(*path, &stroke_to_device);
++  return true;
++}
++
+ }  // namespace
+ 
+ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
+@@ -1497,6 +1546,7 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+       RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
+                       nullptr, stroke_state, 1,
+                       draw.fill_options.stroke_text_mode);
++      ++packet_stats.generic_stroke_draws;
+       return;
+     }
+ 
+@@ -1531,12 +1581,20 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+     } else {
+       const CFX_StrokeLine line{draw.line_start, draw.line_end,
+                                 draw.object_to_device};
++      if (RasterizeDirectButtStrokeLine(
++              &agg_context->rasterizer, &agg_context->path_data, line,
++              matrix1, agg_context->stroke_normalized, *stroke_state,
++              matrix1.a)) {
++        ++packet_stats.direct_butt_line_draws;
++        return;
++      }
+       BuildAggStrokeLine(line, &matrix1, &agg_context->path_data);
+     }
+     RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
+                     &agg_context->stroke_normalized, stroke_state,
+                     matrix1.a,
+                     draw.fill_options.stroke_text_mode);
++    ++packet_stats.generic_stroke_draws;
+   };
+   const auto render_independent_stroke = [&](const CFX_OrderedPathDraw& draw) {
+     reset_stroke_rasterizer();
+@@ -1575,6 +1633,8 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+     stats->raster_passes += packet_stats.raster_passes;
+     stats->stroke_transform_builds += packet_stats.stroke_transform_builds;
+     stats->stroke_transform_hits += packet_stats.stroke_transform_hits;
++    stats->direct_butt_line_draws += packet_stats.direct_butt_line_draws;
++    stats->generic_stroke_draws += packet_stats.generic_stroke_draws;
+   }
+   return true;
+ }
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index f0a9451ef..56a9e770e 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -210,18 +210,19 @@ TEST(CFXDefaultRenderDeviceTest,
+   stroke_options.stroke = true;
+   const std::array<CFX_OrderedPathDraw, 4> draws = {
+       CFX_OrderedPathDraw{nullptr, {5.0f, 5.0f}, {10.0f, 5.0f},
+-                          CFX_Matrix(), 0, stroke_options},
++                          CFX_Matrix(1.25f, 0.0f, 0.0f, 1.25f, 0.0f, 0.0f),
++                          0, stroke_options},
+       CFX_OrderedPathDraw{
+           nullptr, {5.0f, 5.0f}, {10.0f, 5.0f},
+-          CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 40.0f, 0.0f), 0,
++          CFX_Matrix(1.25f, 0.0f, 0.0f, 1.25f, 40.0f, 0.0f), 0,
+           stroke_options},
+       CFX_OrderedPathDraw{
+           nullptr, {5.0f, 5.0f}, {10.0f, 5.0f},
+-          CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 40.0f), 0,
++          CFX_Matrix(1.25f, 0.0f, 0.0f, 1.25f, 0.0f, 40.0f), 0,
+           stroke_options},
+       CFX_OrderedPathDraw{
+           nullptr, {5.0f, 5.0f}, {10.0f, 5.0f},
+-          CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 40.0f, 40.0f), 0,
++          CFX_Matrix(1.25f, 0.0f, 0.0f, 1.25f, 40.0f, 40.0f), 0,
+           stroke_options},
+   };
+ 
+@@ -243,6 +244,49 @@ TEST(CFXDefaultRenderDeviceTest,
+   EXPECT_EQ(draws.size(), stats.raster_passes);
+   EXPECT_EQ(1u, stats.stroke_transform_builds);
+   EXPECT_EQ(draws.size() - 1u, stats.stroke_transform_hits);
++  EXPECT_EQ(draws.size(), stats.direct_butt_line_draws);
++  EXPECT_EQ(0u, stats.generic_stroke_draws);
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
++
++TEST(CFXDefaultRenderDeviceTest,
++     OrderedRoundLinesFailClosedToGenericStroke) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  batched.GetBitmap()->Clear(0xffffffff);
++
++  CFX_GraphStateData graph_state;
++  graph_state.set_line_width(3.0f);
++  graph_state.SetLineCap(CFX_GraphStateData::LineCap::kRound);
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  constexpr FX_ARGB kStrokeColor = 0xff204080;
++  const CFX_OrderedPathDraw draw{
++      nullptr, {4.0f, 7.0f}, {49.0f, 43.0f},
++      CFX_Matrix(1.25f, 0.0f, 0.0f, 1.25f, 1.0f, 2.0f), 0,
++      stroke_options};
++
++  CFX_Path source_path;
++  source_path.AppendLine(draw.line_start, draw.line_end);
++  ASSERT_TRUE(baseline.DrawPath(
++      source_path, &draw.object_to_device, &graph_state, /*fill_color=*/0,
++      kStrokeColor, stroke_options));
++
++  std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext> context =
++      batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), pdfium::span_from_ref(draw), &graph_state, kStrokeColor,
++      stroke_options, &stats));
++  EXPECT_EQ(0u, stats.direct_butt_line_draws);
++  EXPECT_EQ(1u, stats.generic_stroke_draws);
+   EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 40e5f74e2..6ecd71525 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -57,6 +57,8 @@ struct CFX_OrderedPathBatchStats {
+   size_t raster_passes = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
++  size_t direct_butt_line_draws = 0;
++  size_t generic_stroke_draws = 0;
+ };
+ 
+ enum class DeviceType : bool {

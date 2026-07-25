@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0111 on 2026-07-25 (Asia/Taipei)
+**Updated through:** r25-3-0112 on 2026-07-25 (Asia/Taipei)
 
 ## Decision
 
@@ -499,6 +499,49 @@ executor still walks it. This must be corrected before adding another index.
    spatial index, so its runtime skip count can be lower. Acceptance requires
    lower full-preview and dense-tile `replayUs` than 0110, exact unit-pixel
    equivalence, and no measurable regression for 11.pdf or Study Notes.
+
+   Device results confirmed the semantic skip but not an end-to-end Q16 win.
+   It skipped 574,229 exact no-op lines and reduced full replay from 4.64
+   seconds in 0110 to 3.14 seconds. Compilation nevertheless measured 13.74
+   seconds and first visible measured 18.63 seconds. Dense tiles still issued
+   2.15 to 2.42 million independent line raster passes and took 3.30 to 4.15
+   seconds. Sparse culling was already effective; the remaining dense work
+   genuinely intersected those tiles.
+
+8. **r25-3-0112: direct ordered opaque-line raster kernel.** The measured
+   invariant is that dispatch batching is no longer the limiting operation:
+   `lineRasterPasses` still equals the number of surviving source operations.
+   For an exact non-degenerate, solid, butt-cap line, AGG's generic
+   `conv_stroke` emits exactly four polygon vertices. 0112 computes those same
+   vertices directly using the same normalized transform, minimum device
+   width, hard clipping, half-width, and source order. It then sends the
+   polygon to the existing AGG antialias rasterizer and PDFium compositor.
+
+   This is not cross-object batching. Every line retains its own raster and
+   source-over composite, so overlapping antialias coverage remains unchanged.
+   The mechanism removes only repeated two-point path and generic stroker
+   construction. Round and square caps, dashes, zero-area mode, transformed
+   degeneracy, complex paths, fills, and invalid state use the existing
+   generic or canonical path. No page classification, threshold, persistent
+   bitmap, global cache, lock, or UI-thread work is introduced.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0112 event=compile
+   mode=direct_ordered_opaque_line_program
+
+   revision=r25-3-0112 event=replay
+   mode=direct_ordered_opaque_line_backend
+   directButtLineDraws=... genericStrokeDraws=...
+   lineRasterPasses=... replayUs=...
+   ```
+
+   Q16 should show `directButtLineDraws` close to its surviving opaque-line
+   count and materially lower dense-tile `replayUs`. `lineRasterPasses` remains
+   equal to source operations by design. Acceptance requires exact unit-pixel
+   equivalence, no fallback increase, and no measurable regression for
+   11.pdf or Study Notes.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
