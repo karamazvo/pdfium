@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0112 on 2026-07-25 (Asia/Taipei)
+**Updated through:** r25-3-0113 on 2026-07-25 (Asia/Taipei)
 
 ## Decision
 
@@ -542,6 +542,14 @@ executor still walks it. This must be corrected before adding another index.
    equal to source operations by design. Acceptance requires exact unit-pixel
    equivalence, no fallback increase, and no measurable regression for
    11.pdf or Study Notes.
+
+9. **r25-3-0113: build correction.** The 0112 Android library compiled, but
+   `pdfium_unittests` did not because its new fallback test called the
+   `CFX_GraphState` wrapper method `SetLineCap()` on a
+   `CFX_GraphStateData` value. 0113 uses the data object's
+   `set_line_cap()` method and advances Android revision markers. It changes
+   no runtime geometry, eligibility, rasterization, ordering, allocation, or
+   pixel behavior.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill

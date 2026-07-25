@@ -141,6 +141,7 @@ these patches:
 | r25-3-0110 | `0110-veloce-render-program-single-pass-dense-executor.patch` | Removes the builder's per-object full retained-capacity recomputation and reserves exact logical bytes as the parser appends each lowered object; sealing still validates actual retained capacities against the 96 MiB ceiling. Dense AGG packets coalesce consecutive same-state simple lines into one raster pass only when conservatively expanded device-pixel bounds occupy disjoint cells. Any overlap, uncertain bound, fill, path, state, clip, visibility, canonical ordinal, or packet boundary flushes to the existing independent ordered path. A fixed 32x32 stack grid adds no page-sized allocation, and inline translations use an equivalent direct matrix composition. |
 | r25-3-0111 | `0111-veloce-render-program-exact-noop-invariant-stroke.patch` | Supersedes 0110's negative-value device-pixel occupancy grid after device telemetry showed only 2,929 raster passes removed from 3.16 million commands. Exact two-point butt-cap strokes whose endpoints are identical receive no spatial posting and are skipped before visibility, clip, transform, packet, and AGG work; round and square caps remain rendered. Every remaining operation keeps an independent source-order raster/composite pass. A render-local AGG context reuses only the normalized affine transform and inverse while the exact linear matrix is unchanged, removing repeated inversions without retained page memory or shared state. |
 | r25-3-0112 | `0112-veloce-render-program-direct-ordered-opaque-line.patch` | Replaces AGG's generic path-storage and `conv_stroke` construction for one exact non-degenerate, solid, butt-cap opaque line with the identical four-vertex polygon produced by AGG's `stroke_calc_cap()`. Each source object still receives an independent raster/composite pass at its original ordinal; the optimization only removes redundant geometry machinery inside that pass. Round/square caps, dashed strokes, zero-area mode, degenerate device geometry, fills, complex paths, invalid matrices, and unsupported drivers stay on the existing generic or canonical path. Scratch remains render-local and bounded. |
+| r25-3-0113 | `0113-veloce-render-program-direct-line-build-correction.patch` | Build correction after 0112 reached Android unit-test compilation and used the `CFX_GraphState` wrapper setter on a `CFX_GraphStateData` test value. Uses `set_line_cap()` and advances Android revision markers to 0113. Runtime geometry, ordering, eligibility, memory, and pixel behavior are unchanged. |
 
 ## Why this directory exists
 
@@ -153,8 +154,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0112`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0112:
+blind numeric globbing. For `r25-3-0113`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0113:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -183,10 +184,11 @@ git apply patches/ship/0109-veloce-render-program-ordered-candidate-command-back
 git apply patches/ship/0110-veloce-render-program-single-pass-dense-executor.patch
 git apply patches/ship/0111-veloce-render-program-exact-noop-invariant-stroke.patch
 git apply patches/ship/0112-veloce-render-program-direct-ordered-opaque-line.patch
+git apply patches/ship/0113-veloce-render-program-direct-line-build-correction.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0112` build. The machine-checked list lives in the 0112 workflow.
+`r25-3-0113` build. The machine-checked list lives in the 0113 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

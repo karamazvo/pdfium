@@ -1,0 +1,48 @@
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 8a68ae405..a6c3b582e 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1786,7 +1786,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0112 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0113 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1796,7 +1796,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0112 event=compile "
++        "revision=r25-3-0113 event=compile "
+         "mode=direct_ordered_opaque_line_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 4b590e9ae..ae9f13451 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -506,7 +506,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0112 event=replay "
++        "revision=r25-3-0113 event=replay "
+         "mode=direct_ordered_opaque_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index 56a9e770e..ab0a38d82 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -263,7 +263,7 @@ TEST(CFXDefaultRenderDeviceTest,
+ 
+   CFX_GraphStateData graph_state;
+   graph_state.set_line_width(3.0f);
+-  graph_state.SetLineCap(CFX_GraphStateData::LineCap::kRound);
++  graph_state.set_line_cap(CFX_GraphStateData::LineCap::kRound);
+   CFX_FillRenderOptions stroke_options;
+   stroke_options.stroke = true;
+   constexpr FX_ARGB kStrokeColor = 0xff204080;
