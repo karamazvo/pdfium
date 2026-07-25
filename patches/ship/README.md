@@ -139,6 +139,7 @@ these patches:
 | r25-3-0108 | `0108-veloce-render-program-persistent-agg-ordered-context.patch` | Replaces per-packet AGG scratch construction with one explicitly owned render-local ordered-path context. The existing fixed 256-entry packets, source order, independent per-operation raster/composite behavior, clip/state boundaries, and cancellation cadence are unchanged. AGG reuses only logical scratch capacity across packets; unsupported, null, or foreign contexts return before packet pixels so canonical fallback remains valid. |
 | r25-3-0109 | `0109-veloce-render-program-ordered-candidate-command-backend.patch` | Adds a payload base to every native run and builds compact mandatory command ranges as the exact complement of spatially indexed lines/fills. Sparse replay merges candidate bits with mandatory ranges in source order. Consecutive commands use an O(1) run cursor; a true jump uses an 8-byte lookup record per 256 source commands to find the intersecting/next native run without crossing skipped boundaries. Full replay and pixel execution are unchanged. Lookup/mandatory metadata exists only while the bounded spatial index exists; unknown bounds still fail open as candidates. |
 | r25-3-0110 | `0110-veloce-render-program-single-pass-dense-executor.patch` | Removes the builder's per-object full retained-capacity recomputation and reserves exact logical bytes as the parser appends each lowered object; sealing still validates actual retained capacities against the 96 MiB ceiling. Dense AGG packets coalesce consecutive same-state simple lines into one raster pass only when conservatively expanded device-pixel bounds occupy disjoint cells. Any overlap, uncertain bound, fill, path, state, clip, visibility, canonical ordinal, or packet boundary flushes to the existing independent ordered path. A fixed 32x32 stack grid adds no page-sized allocation, and inline translations use an equivalent direct matrix composition. |
+| r25-3-0111 | `0111-veloce-render-program-exact-noop-invariant-stroke.patch` | Supersedes 0110's negative-value device-pixel occupancy grid after device telemetry showed only 2,929 raster passes removed from 3.16 million commands. Exact two-point butt-cap strokes whose endpoints are identical receive no spatial posting and are skipped before visibility, clip, transform, packet, and AGG work; round and square caps remain rendered. Every remaining operation keeps an independent source-order raster/composite pass. A render-local AGG context reuses only the normalized affine transform and inverse while the exact linear matrix is unchanged, removing repeated inversions without retained page memory or shared state. |
 
 ## Why this directory exists
 
@@ -151,8 +152,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0110`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0110:
+blind numeric globbing. For `r25-3-0111`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0111:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -179,10 +180,11 @@ git apply patches/ship/0107-veloce-render-program-compact-spatial-ordinal-progra
 git apply patches/ship/0108-veloce-render-program-persistent-agg-ordered-context.patch
 git apply patches/ship/0109-veloce-render-program-ordered-candidate-command-backend.patch
 git apply patches/ship/0110-veloce-render-program-single-pass-dense-executor.patch
+git apply patches/ship/0111-veloce-render-program-exact-noop-invariant-stroke.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0110` build. The machine-checked list lives in the 0110 workflow.
+`r25-3-0111` build. The machine-checked list lives in the 0111 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

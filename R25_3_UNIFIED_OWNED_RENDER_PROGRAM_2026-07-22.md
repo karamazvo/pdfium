@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0110 on 2026-07-24 (Asia/Taipei)
+**Updated through:** r25-3-0111 on 2026-07-25 (Asia/Taipei)
 
 ## Decision
 
@@ -443,6 +443,62 @@ executor still walks it. This must be corrected before adding another index.
    requires a material reduction in Q16 parse/lowering or dense replay time,
    exact canonical-vs-batched pixel tests, and no regression for 11.pdf or
    canonical Study Notes pages.
+
+7. **r25-3-0111: exact no-op and invariant stroke executor.** Device results
+   rejected 0110's dense raster-coalescing premise. Q16 lowered 3,164,996
+   line/fill commands, but the 32x32 occupancy grid removed only 2,929 raster
+   passes (0.09 percent). Full-preview replay increased from 3,203,543
+   microseconds in 0109 to 4,643,138 microseconds in 0110. Inspecting bounds
+   and grid cells for every line was therefore more expensive than the tiny
+   amount of AGG work it avoided.
+
+   0111 deletes that grid rather than compensating for it. Every command with
+   non-empty coverage again receives one independent raster/composite pass in
+   exact source order. The retained improvement is based on PDF stroke
+   semantics instead of geometric proximity: a two-point open stroke with
+   identical endpoints and a butt cap covers no pixels. The builder keeps the
+   owned line ordinal but emits no holder-space spatial posting. Full replay
+   recognizes the same exact predicate from owned geometry and immutable
+   state, then advances before optional-content lookup, clip installation,
+   matrix composition, packet construction, or AGG. Round and square caps are
+   deliberately not elided. There is no filename, command-count threshold,
+   tolerance, overlap estimate, or device-space occupancy policy.
+
+   The remaining independent strokes frequently share an identical affine
+   linear part while only translation changes. The existing render-local AGG
+   context now caches the normalized transform and its inverse until any of
+   `a`, `b`, `c`, or `d` changes. Per-command translation and matrix
+   multiplication remain in the original operation order, and rasterization
+   still receives the per-command derived scale. This removes repeated matrix
+   inversion without retained page memory, a global cache, a lock, or
+   cross-thread state.
+
+   Static analysis of Q16's decompressed content found 574,229 exact
+   identical-endpoint strokes among roughly 2.94 million two-point strokes.
+   This predicts removal of about 18 percent of total Q16 replay commands from
+   the raster hot path. It is a corpus estimate, not an eligibility rule.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0111 event=compile
+   mode=exact_noop_invariant_transform_program
+   exactNoOpLines=... spatialPostings=... compileWindowMs=...
+
+   revision=r25-3-0111 event=replay
+   mode=exact_noop_invariant_transform_backend
+   lineBatchCommands=... lineRasterPasses=...
+   exactNoOpLinesSkipped=... strokeTransformBuilds=...
+   strokeTransformHits=... replayUs=...
+   ```
+
+   For a full Q16 replay, `exactNoOpLinesSkipped` should be close to the
+   compile-time `exactNoOpLines`, `lineRasterPasses` must equal
+   `lineBatchCommands`, and `strokeTransformHits` should dominate
+   `strokeTransformBuilds`. Sparse replay may omit no-op ordinals through the
+   spatial index, so its runtime skip count can be lower. Acceptance requires
+   lower full-preview and dense-tile `replayUs` than 0110, exact unit-pixel
+   equivalence, and no measurable regression for 11.pdf or Study Notes.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
