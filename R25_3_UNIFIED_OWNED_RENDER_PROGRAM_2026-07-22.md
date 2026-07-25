@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0113 on 2026-07-25 (Asia/Taipei)
+**Updated through:** r25-3-0114 on 2026-07-25 (Asia/Taipei)
 
 ## Decision
 
@@ -550,6 +550,29 @@ executor still walks it. This must be corrected before adding another index.
    `set_line_cap()` method and advances Android revision markers. It changes
    no runtime geometry, eligibility, rasterization, ordering, allocation, or
    pixel behavior.
+
+10. **r25-3-0114: shared exact Form programs.** Fully native Forms that
+    perform no resource lookup publish their immutable RenderProgram to a
+    document-owned cache. A later Form invocation may reuse it only when the
+    stream generation, Form matrix and BBox, transparency semantics, parent
+    matrix, and every inherited path-state value consumed by exact lowering
+    match bit-for-bit. Inherited clips, partial native coverage, resource
+    dependence, stream mutation, global page-object mutation, and live
+    command-count drift all reject reuse.
+
+    The live `CPDF_Form` still parses and owns canonical page objects, so
+    editing, visibility, unsupported rendering, and fallback retain PDFium's
+    normal source of truth. A cache hit removes only duplicate native geometry
+    copies, state/geometry interning, hashing, spatial-index construction, and
+    sidecar allocation. Cache-owned retention is bounded to 16 entries and
+    96 MiB per document, with no cross-document state or new lock.
+
+    Error.pdf pages 2 and 3 reference the same large vector Form. Expected
+    device proof is one `event=form_cache result=store` followed by
+    `event=form_cache result=hit` for the same `streamObj`, while canonical
+    pixel comparisons remain unchanged. The first occurrence still pays one
+    parse/lowering pass; eliminating that cold parse belongs to the later
+    parser-owned compact-tape phase.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill

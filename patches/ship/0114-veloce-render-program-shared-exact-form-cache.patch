@@ -1,0 +1,712 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sat, 25 Jul 2026 22:30:00 +0800
+Subject: [PATCH] Veloce r25-3-0114: share exact immutable Form programs
+
+Promote fully native, resource-independent Form RenderPrograms from holder-
+local ownership to a bounded document cache. Repeated equivalent Form
+invocations keep their canonical PDFium object holders but skip duplicate
+native geometry copying, state interning, hashing, spatial-index construction,
+and retained allocation.
+
+Cache identity covers the source stream generation, Form matrix and bounding
+box, transparency semantics, parent matrix, and every inherited path state
+consumed by exact lowering. Resource lookups, inherited clips, partial native
+coverage, stream mutation, command-count changes, and global object mutation
+all fail closed to normal holder construction and canonical rendering.
+
+Keep at most 16 entries and 96 MiB of cache-owned programs per document.
+Programs contain no page-object pointers; live holders remain authoritative for
+visibility, editing, canonical fallback, and source ordering. Add tests for
+exact reuse and stream-mutation invalidation.
+---
+diff --git a/core/fpdfapi/page/BUILD.gn b/core/fpdfapi/page/BUILD.gn
+index 6e763027d..6f6ae5ddc 100644
+--- a/core/fpdfapi/page/BUILD.gn
++++ b/core/fpdfapi/page/BUILD.gn
+@@ -147,6 +147,7 @@ pdfium_unittest_source_set("unittests") {
+     "cpdf_colorspace_unittest.cpp",
+     "cpdf_devicecs_unittest.cpp",
+     "cpdf_function_unittest.cpp",
++    "cpdf_form_unittest.cpp",
+     "cpdf_page_unittest.cpp",
+     "cpdf_pageimagecache_unittest.cpp",
+     "cpdf_pageobjectholder_unittest.cpp",
+diff --git a/core/fpdfapi/page/cpdf_docpagedata.cpp b/core/fpdfapi/page/cpdf_docpagedata.cpp
+index a5d08141a..bbe44a374 100644
+--- a/core/fpdfapi/page/cpdf_docpagedata.cpp
++++ b/core/fpdfapi/page/cpdf_docpagedata.cpp
+@@ -8,7 +8,9 @@
+ 
+ #include <algorithm>
+ #include <array>
++#include <bit>
+ #include <memory>
++#include <optional>
+ #include <set>
+ #include <utility>
+ #include <vector>
+@@ -17,12 +19,15 @@
+ #include "constants/font_encodings.h"
+ #include "core/fpdfapi/font/cpdf_fontglobals.h"
+ #include "core/fpdfapi/font/cpdf_type1font.h"
++#include "core/fpdfapi/page/cpdf_allstates.h"
+ #include "core/fpdfapi/page/cpdf_form.h"
+ #include "core/fpdfapi/page/cpdf_iccprofile.h"
+ #include "core/fpdfapi/page/cpdf_image.h"
++#include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pattern.h"
+ #include "core/fpdfapi/page/cpdf_shadingpattern.h"
+ #include "core/fpdfapi/page/cpdf_tilingpattern.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_array.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_name.h"
+@@ -169,14 +174,217 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* doc,
+   return font_desc;
+ }
+ 
++uint32_t VeloceFloatBits(float value) {
++  return std::bit_cast<uint32_t>(value);
++}
++
++std::array<uint32_t, 6> VeloceMatrixBits(const CFX_Matrix& matrix) {
++  return {VeloceFloatBits(matrix.a), VeloceFloatBits(matrix.b),
++          VeloceFloatBits(matrix.c), VeloceFloatBits(matrix.d),
++          VeloceFloatBits(matrix.e), VeloceFloatBits(matrix.f)};
++}
++
++enum class VeloceColorKind : uint8_t {
++  kAbsent,
++  kNull,
++  kPattern,
++  kSolid,
++};
++
++VeloceColorKind GetVeloceColorKind(const CPDF_Color* color) {
++  if (!color) {
++    return VeloceColorKind::kAbsent;
++  }
++  if (color->IsNull()) {
++    return VeloceColorKind::kNull;
++  }
++  return color->IsPattern() ? VeloceColorKind::kPattern
++                            : VeloceColorKind::kSolid;
++}
++
++struct VeloceFormInvocationKey {
++  RetainPtr<const CPDF_Stream> stream;
++  uint64_t stream_generation = 0u;
++  std::array<uint32_t, 6> form_matrix = {};
++  std::array<uint32_t, 4> form_bbox = {};
++  std::array<uint32_t, 6> initial_ctm = {};
++  std::array<uint32_t, 6> parent_matrix = {};
++  std::vector<uint32_t> dash_values;
++  RetainPtr<const CPDF_Dictionary> soft_mask;
++  RetainPtr<const CPDF_Object> transfer;
++  uint32_t fill_alpha = 0u;
++  uint32_t stroke_alpha = 0u;
++  uint32_t line_width = 0u;
++  uint32_t miter_limit = 0u;
++  uint32_t dash_phase = 0u;
++  uint32_t fill_color_ref = 0u;
++  uint32_t stroke_color_ref = 0u;
++  int op_mode = 0;
++  BlendMode blend_mode = BlendMode::kNormal;
++  CFX_GraphStateData::LineCap line_cap =
++      CFX_GraphStateData::LineCap::kButt;
++  CFX_GraphStateData::LineJoin line_join =
++      CFX_GraphStateData::LineJoin::kMiter;
++  VeloceColorKind fill_color_kind = VeloceColorKind::kAbsent;
++  VeloceColorKind stroke_color_kind = VeloceColorKind::kAbsent;
++  bool has_initial_states = false;
++  bool has_parent_matrix = false;
++  bool has_general_state = false;
++  bool has_color_state = false;
++  bool transparency_group = false;
++  bool isolated_group = false;
++  bool fill_overprint = false;
++  bool stroke_overprint = false;
++  bool stroke_adjust = false;
++
++  bool operator==(const VeloceFormInvocationKey&) const = default;
++};
++
++std::optional<VeloceFormInvocationKey> MakeVeloceFormInvocationKey(
++    RetainPtr<const CPDF_Stream> stream,
++    const CPDF_AllStates* initial_states,
++    const CFX_Matrix* parent_matrix,
++    bool transparency_group,
++    bool isolated_group) {
++  // Form invocations created by the page parser do not inherit a clip. Other
++  // callers can; structural clip equality is deliberately not approximated.
++  if (!stream || (initial_states && initial_states->clip_path().HasRef())) {
++    return std::nullopt;
++  }
++
++  VeloceFormInvocationKey key;
++  key.stream = std::move(stream);
++  key.stream_generation = key.stream->GetVeloceDataGeneration();
++  key.form_matrix =
++      VeloceMatrixBits(key.stream->GetDict()->GetMatrixFor("Matrix"));
++  if (RetainPtr<const CPDF_Array> bbox =
++          key.stream->GetDict()->GetArrayFor("BBox")) {
++    const CFX_FloatRect rect = bbox->GetRect();
++    key.form_bbox = {VeloceFloatBits(rect.left),
++                     VeloceFloatBits(rect.bottom),
++                     VeloceFloatBits(rect.right),
++                     VeloceFloatBits(rect.top)};
++  }
++  key.transparency_group = transparency_group;
++  key.isolated_group = isolated_group;
++  if (parent_matrix) {
++    key.has_parent_matrix = true;
++    key.parent_matrix = VeloceMatrixBits(*parent_matrix);
++  }
++  if (!initial_states) {
++    return key;
++  }
++
++  key.has_initial_states = true;
++  key.initial_ctm =
++      VeloceMatrixBits(initial_states->current_transformation_matrix());
++
++  const CPDF_GeneralState& general = initial_states->general_state();
++  key.has_general_state = general.HasRef();
++  if (key.has_general_state) {
++    key.blend_mode = general.GetBlendType();
++    key.fill_alpha = VeloceFloatBits(general.GetFillAlpha());
++    key.stroke_alpha = VeloceFloatBits(general.GetStrokeAlpha());
++    key.soft_mask = general.GetSoftMask();
++    key.transfer = general.GetTR();
++    key.fill_overprint = general.GetFillOP();
++    key.stroke_overprint = general.GetStrokeOP();
++    key.op_mode = general.GetOPMode();
++    key.stroke_adjust = general.GetStrokeAdjust();
++  }
++
++  const CFX_GraphState& graph = initial_states->graph_state();
++  key.line_width = VeloceFloatBits(graph.GetLineWidth());
++  key.miter_limit = VeloceFloatBits(graph.GetMiterLimit());
++  key.dash_phase = VeloceFloatBits(graph.GetLineDashPhase());
++  key.line_cap = graph.GetLineCap();
++  key.line_join = graph.GetLineJoin();
++  const std::vector<float> dashes = graph.GetLineDashArray();
++  key.dash_values.reserve(dashes.size());
++  for (float dash : dashes) {
++    key.dash_values.push_back(VeloceFloatBits(dash));
++  }
++
++  const CPDF_ColorState& color = initial_states->color_state();
++  key.has_color_state = color.HasRef();
++  if (key.has_color_state) {
++    key.fill_color_kind = GetVeloceColorKind(color.GetFillColor());
++    key.stroke_color_kind = GetVeloceColorKind(color.GetStrokeColor());
++    key.fill_color_ref = color.GetFillColorRef();
++    key.stroke_color_ref = color.GetStrokeColorRef();
++  }
++  return key;
++}
++
+ }  // namespace
+ 
++class VeloceFormProgramCache final {
++ public:
++  static constexpr size_t kMaxBytes = 96u * 1024u * 1024u;
++  static constexpr size_t kMaxEntries = 16u;
++
++  std::shared_ptr<const VeloceRenderProgram> Find(
++      const VeloceFormInvocationKey& key) {
++    auto it = std::ranges::find(entries_, key, &Entry::key);
++    if (it == entries_.end()) {
++      return nullptr;
++    }
++    if (it->program->mutation_epoch() !=
++        GetVelocePageObjectMutationEpoch()) {
++      retained_bytes_ -= it->bytes;
++      entries_.erase(it);
++      return nullptr;
++    }
++    it->last_use = ++use_clock_;
++    return it->program;
++  }
++
++  void Store(VeloceFormInvocationKey key,
++             std::shared_ptr<const VeloceRenderProgram> program) {
++    CHECK(program);
++    const size_t bytes = program->EstimatedBytes();
++    if (bytes > kMaxBytes) {
++      return;
++    }
++
++    auto same = std::ranges::find(entries_, key, &Entry::key);
++    if (same != entries_.end()) {
++      retained_bytes_ -= same->bytes;
++      entries_.erase(same);
++    }
++    while (!entries_.empty() &&
++           (entries_.size() >= kMaxEntries ||
++            retained_bytes_ > kMaxBytes - bytes)) {
++      auto oldest = std::ranges::min_element(entries_, {}, &Entry::last_use);
++      retained_bytes_ -= oldest->bytes;
++      entries_.erase(oldest);
++    }
++    retained_bytes_ += bytes;
++    entries_.push_back(
++        {std::move(key), std::move(program), bytes, ++use_clock_});
++  }
++
++ private:
++  struct Entry {
++    VeloceFormInvocationKey key;
++    std::shared_ptr<const VeloceRenderProgram> program;
++    size_t bytes = 0u;
++    uint64_t last_use = 0u;
++  };
++
++  std::vector<Entry> entries_;
++  size_t retained_bytes_ = 0u;
++  uint64_t use_clock_ = 0u;
++};
++
+ // static
+ CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* doc) {
+   return static_cast<CPDF_DocPageData*>(doc->GetPageData());
+ }
+ 
+-CPDF_DocPageData::CPDF_DocPageData() = default;
++CPDF_DocPageData::CPDF_DocPageData()
++    : veloce_form_program_cache_(
++          std::make_unique<VeloceFormProgramCache>()) {}
+ 
+ CPDF_DocPageData::~CPDF_DocPageData() {
+   for (auto& it : image_map_) {
+@@ -435,6 +643,36 @@ RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
+   return pImage;
+ }
+ 
++std::shared_ptr<const VeloceRenderProgram>
++CPDF_DocPageData::FindVeloceFormRenderProgram(
++    RetainPtr<const CPDF_Stream> stream,
++    const CPDF_AllStates* initial_states,
++    const CFX_Matrix* parent_matrix,
++    bool transparency_group,
++    bool isolated_group) {
++  std::optional<VeloceFormInvocationKey> key =
++      MakeVeloceFormInvocationKey(std::move(stream), initial_states,
++                                  parent_matrix, transparency_group,
++                                  isolated_group);
++  return key ? veloce_form_program_cache_->Find(*key) : nullptr;
++}
++
++void CPDF_DocPageData::CacheVeloceFormRenderProgram(
++    RetainPtr<const CPDF_Stream> stream,
++    const CPDF_AllStates* initial_states,
++    const CFX_Matrix* parent_matrix,
++    bool transparency_group,
++    bool isolated_group,
++    std::shared_ptr<const VeloceRenderProgram> program) {
++  std::optional<VeloceFormInvocationKey> key =
++      MakeVeloceFormInvocationKey(std::move(stream), initial_states,
++                                  parent_matrix, transparency_group,
++                                  isolated_group);
++  if (key) {
++    veloce_form_program_cache_->Store(std::move(*key), std::move(program));
++  }
++}
++
+ void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
+   DCHECK(dwStreamObjNum);
+   auto it = image_map_.find(dwStreamObjNum);
+diff --git a/core/fpdfapi/page/cpdf_docpagedata.h b/core/fpdfapi/page/cpdf_docpagedata.h
+index a46ff6ecc..efd7eb66e 100644
+--- a/core/fpdfapi/page/cpdf_docpagedata.h
++++ b/core/fpdfapi/page/cpdf_docpagedata.h
+@@ -22,6 +22,7 @@
+ 
+ class CFX_Font;
+ class CPDF_Dictionary;
++class CPDF_AllStates;
+ class CPDF_FontEncoding;
+ class CPDF_IccProfile;
+ class CPDF_Image;
+@@ -29,6 +30,8 @@ class CPDF_Object;
+ class CPDF_Pattern;
+ class CPDF_Stream;
+ class CPDF_StreamAcc;
++class VeloceFormProgramCache;
++class VeloceRenderProgram;
+ 
+ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
+                                public CPDF_Font::FormFactoryIface {
+@@ -84,6 +87,20 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
+ 
+   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
+ 
++  std::shared_ptr<const VeloceRenderProgram> FindVeloceFormRenderProgram(
++      RetainPtr<const CPDF_Stream> stream,
++      const CPDF_AllStates* initial_states,
++      const CFX_Matrix* parent_matrix,
++      bool transparency_group,
++      bool isolated_group);
++  void CacheVeloceFormRenderProgram(
++      RetainPtr<const CPDF_Stream> stream,
++      const CPDF_AllStates* initial_states,
++      const CFX_Matrix* parent_matrix,
++      bool transparency_group,
++      bool isolated_group,
++      std::shared_ptr<const VeloceRenderProgram> program);
++
+   RetainPtr<CPDF_IccProfile> GetIccProfile(
+       RetainPtr<const CPDF_Stream> pProfileStream);
+ 
+@@ -131,6 +148,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
+   std::map<RetainPtr<const CPDF_Object>, RetainPtr<CPDF_Pattern>> pattern_map_;
+   std::map<uint32_t, RetainPtr<CPDF_Image>> image_map_;
+   std::map<RetainPtr<const CPDF_Dictionary>, RetainPtr<CPDF_Font>> font_map_;
++  std::unique_ptr<VeloceFormProgramCache> veloce_form_program_cache_;
+ };
+ 
+ #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index a363f9d25..f649647a3 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -9,15 +9,22 @@
+ #include <algorithm>
+ #include <memory>
+ 
++#include "build/build_config.h"
+ #include "core/fpdfapi/page/cpdf_contentparser.h"
++#include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_imageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_stream.h"
+ #include "core/fxcrt/check_op.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ 
++#if BUILDFLAG(IS_ANDROID)
++#include <android/log.h>
++#endif
++
+ CPDF_Form::RecursionState::RecursionState() = default;
+ 
+ CPDF_Form::RecursionState::~RecursionState() = default;
+@@ -83,9 +90,59 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+   }
+ 
+   if (GetParseState() == ParseState::kNotParsed) {
++    std::shared_ptr<const VeloceRenderProgram> cached_program;
++    CPDF_DocPageData* page_data = nullptr;
++    if (!pType3Char) {
++      page_data = CPDF_DocPageData::FromDocument(GetDocument());
++      cached_program = page_data->FindVeloceFormRenderProgram(
++          GetStream(), pGraphicStates, pParentMatrix,
++          GetTransparency().IsGroup(), GetTransparency().IsIsolated());
++    }
+     StartParse(std::make_unique<CPDF_ContentParser>(
+         GetStream(), this, pGraphicStates, pParentMatrix, pType3Char,
+         recursion_state ? recursion_state : &recursion_state_));
++    if (cached_program) {
++      DisableVeloceRenderProgramRecordingForCurrentParse();
++    }
++    DCHECK_EQ(GetParseState(), ParseState::kParsing);
++    ContinueParse(nullptr);
++
++    if (cached_program) {
++      if (!VeloceParseUsedResources() &&
++          cached_program->command_count() == GetPageObjectCount()) {
++        SetVeloceRenderProgram(std::move(cached_program));
++#if BUILDFLAG(IS_ANDROID)
++        __android_log_print(
++            ANDROID_LOG_INFO, "VeloceRenderProgram2",
++            "revision=r25-3-0114 event=form_cache result=hit "
++            "streamObj=%u commands=%zu bytes=%zu",
++            GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
++            GetVeloceRenderProgram()->EstimatedBytes());
++#endif
++      }
++      return;
++    }
++
++    std::shared_ptr<const VeloceRenderProgram> built_program =
++        GetVeloceRenderProgramShared();
++    if (page_data && built_program &&
++        built_program->header().native_command_count ==
++            built_program->command_count() &&
++        !VeloceParseUsedResources()) {
++      page_data->CacheVeloceFormRenderProgram(
++          GetStream(), pGraphicStates, pParentMatrix,
++          GetTransparency().IsGroup(), GetTransparency().IsIsolated(),
++          built_program);
++#if BUILDFLAG(IS_ANDROID)
++      __android_log_print(
++          ANDROID_LOG_INFO, "VeloceRenderProgram2",
++          "revision=r25-3-0114 event=form_cache result=store "
++          "streamObj=%u commands=%zu bytes=%zu",
++          GetStream()->GetObjNum(), built_program->command_count(),
++          built_program->EstimatedBytes());
++#endif
++    }
++    return;
+   }
+   DCHECK_EQ(GetParseState(), ParseState::kParsing);
+   ContinueParse(nullptr);
+diff --git a/core/fpdfapi/page/cpdf_form_unittest.cpp b/core/fpdfapi/page/cpdf_form_unittest.cpp
+new file mode 100644
+index 000000000..903e04db5
+--- /dev/null
++++ b/core/fpdfapi/page/cpdf_form_unittest.cpp
+@@ -0,0 +1,65 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/page/cpdf_form.h"
++
++#include <iterator>
++#include <memory>
++
++#include "core/fpdfapi/page/veloce_render_program.h"
++#include "core/fpdfapi/parser/cpdf_dictionary.h"
++#include "core/fpdfapi/parser/cpdf_stream.h"
++#include "core/fpdfapi/parser/cpdf_test_document.h"
++#include "core/fxcrt/data_vector.h"
++#include "core/fxcrt/retain_ptr.h"
++#include "testing/gtest/include/gtest/gtest.h"
++
++namespace {
++
++RetainPtr<CPDF_Stream> MakeOpaqueFillFormStream() {
++  static constexpr uint8_t kContents[] = "0 0 10 10 re f\n";
++  return pdfium::MakeRetain<CPDF_Stream>(
++      DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
++      pdfium::MakeRetain<CPDF_Dictionary>());
++}
++
++}  // namespace
++
++TEST(CPDFFormTest, ReusesExactResourceIndependentRenderProgram) {
++  auto document = std::make_unique<CPDF_TestDocument>();
++  document->CreateNewDoc();
++  RetainPtr<CPDF_Stream> stream = MakeOpaqueFillFormStream();
++
++  CPDF_Form first(document.get(), nullptr, stream);
++  first.ParseContent();
++  const VeloceRenderProgram* first_program = first.GetVeloceRenderProgram();
++  ASSERT_TRUE(first_program);
++  ASSERT_EQ(first_program->header().native_command_count,
++            first_program->command_count());
++
++  CPDF_Form second(document.get(), nullptr, stream);
++  second.ParseContent();
++
++  EXPECT_EQ(first_program, second.GetVeloceRenderProgram());
++  EXPECT_EQ(first.GetPageObjectCount(), second.GetPageObjectCount());
++}
++
++TEST(CPDFFormTest, StreamMutationInvalidatesCachedRenderProgram) {
++  auto document = std::make_unique<CPDF_TestDocument>();
++  document->CreateNewDoc();
++  RetainPtr<CPDF_Stream> stream = MakeOpaqueFillFormStream();
++
++  CPDF_Form first(document.get(), nullptr, stream);
++  first.ParseContent();
++  const VeloceRenderProgram* first_program = first.GetVeloceRenderProgram();
++  ASSERT_TRUE(first_program);
++
++  static constexpr uint8_t kReplacement[] = "0 0 20 20 re f\n";
++  stream->SetData(kReplacement);
++
++  CPDF_Form second(document.get(), nullptr, stream);
++  second.ParseContent();
++
++  ASSERT_TRUE(second.GetVeloceRenderProgram());
++  EXPECT_NE(first_program, second.GetVeloceRenderProgram());
++}
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 6225b1b85..de8d65e7e 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -56,6 +56,13 @@ CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
+ void CPDF_PageObjectHolder::SetVeloceRenderProgram(
+     std::unique_ptr<const VeloceRenderProgram> program) {
+   CHECK(program);
++  SetVeloceRenderProgram(
++      std::shared_ptr<const VeloceRenderProgram>(std::move(program)));
++}
++
++void CPDF_PageObjectHolder::SetVeloceRenderProgram(
++    std::shared_ptr<const VeloceRenderProgram> program) {
++  CHECK(program);
+   veloce_render_program_ = std::move(program);
+ }
+ 
+@@ -65,6 +72,12 @@ void CPDF_PageObjectHolder::ResetVeloceRenderProgram() {
+   record_veloce_render_program_ = false;
+ }
+ 
++void CPDF_PageObjectHolder::
++    DisableVeloceRenderProgramRecordingForCurrentParse() {
++  veloce_render_program_builder_.reset();
++  record_veloce_render_program_ = false;
++}
++
+ bool CPDF_PageObjectHolder::IsPage() const {
+   return false;
+ }
+@@ -74,6 +87,7 @@ void CPDF_PageObjectHolder::StartParse(
+   DCHECK_EQ(parse_state_, ParseState::kNotParsed);
+   ResetVeloceRenderProgram();
+   record_veloce_render_program_ = page_object_list_.empty();
++  veloce_parse_used_resources_ = false;
+   parser_ = std::move(pParser);
+   parse_state_ = ParseState::kParsing;
+ }
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 7f8a9aa03..6a85209e4 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -106,9 +106,22 @@ class CPDF_PageObjectHolder {
+   const VeloceRenderProgram* GetVeloceRenderProgram() const {
+     return veloce_render_program_.get();
+   }
++  std::shared_ptr<const VeloceRenderProgram> GetVeloceRenderProgramShared()
++      const {
++    return veloce_render_program_;
++  }
+   void SetVeloceRenderProgram(
+       std::unique_ptr<const VeloceRenderProgram> program);
++  void SetVeloceRenderProgram(
++      std::shared_ptr<const VeloceRenderProgram> program);
+   void ResetVeloceRenderProgram();
++  void DisableVeloceRenderProgramRecordingForCurrentParse();
++  void NoteVeloceResourceLookup() {
++    veloce_parse_used_resources_ = true;
++  }
++  bool VeloceParseUsedResources() const {
++    return veloce_parse_used_resources_;
++  }
+ 
+   bool InsertPageObjectAtIndex(size_t index,
+                                std::unique_ptr<CPDF_PageObject> page_obj);
+@@ -174,8 +187,9 @@ class CPDF_PageObjectHolder {
+   std::unique_ptr<CPDF_ContentParser> parser_;
+   std::deque<std::unique_ptr<CPDF_PageObject>> page_object_list_;
+   std::unique_ptr<VeloceRenderProgramBuilder> veloce_render_program_builder_;
+-  std::unique_ptr<const VeloceRenderProgram> veloce_render_program_;
++  std::shared_ptr<const VeloceRenderProgram> veloce_render_program_;
+   bool record_veloce_render_program_ = false;
++  bool veloce_parse_used_resources_ = false;
+ 
+   CTMMap all_ctms_;
+ 
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index 14c5b0ef9..752222ff1 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1207,6 +1207,7 @@ void CPDF_StreamContentParser::Handle_SetFont() {
+ 
+ RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
+     ByteStringView type) {
++  object_holder_->NoteVeloceResourceLookup();
+   if (!resources_) {
+     return nullptr;
+   }
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index a6c3b582e..ccdc4a847 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1786,7 +1786,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0113 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0114 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1796,7 +1796,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0113 event=compile "
++        "revision=r25-3-0114 event=compile "
+         "mode=direct_ordered_opaque_line_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 46b2d5090..884768c86 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -335,10 +335,11 @@ class VeloceNativeLineStorage final {
+   size_t size_ = 0;
+ };
+ 
+-// Immutable native rendering representation owned by one live page-object
+-// holder. PDFium page objects remain authoritative for fidelity and editing.
+-// The sidecar contains no page-object pointers. Only exact native runs are
+-// retained; gaps between runs are implicit canonical spans.
++// Immutable native rendering representation owned by a live page-object
++// holder or shared by exact equivalent Form holders. PDFium page objects
++// remain authoritative for fidelity and editing. The sidecar contains no
++// page-object pointers. Only exact native runs are retained; gaps between runs
++// are implicit canonical spans.
+ class VeloceRenderProgram final {
+  public:
+   ~VeloceRenderProgram() = default;
+diff --git a/core/fpdfapi/parser/cpdf_stream.cpp b/core/fpdfapi/parser/cpdf_stream.cpp
+index d6700e8b3..0be016a49 100644
+--- a/core/fpdfapi/parser/cpdf_stream.cpp
++++ b/core/fpdfapi/parser/cpdf_stream.cpp
+@@ -91,6 +91,7 @@ void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> file) {
+   data_ = std::move(file);
+   dict_ = pdfium::MakeRetain<CPDF_Dictionary>();
+   SetLengthInDict(size);
++  ++veloce_data_generation_;
+ }
+ 
+ RetainPtr<CPDF_Object> CPDF_Stream::Clone() const {
+@@ -139,6 +140,7 @@ void CPDF_Stream::TakeData(DataVector<uint8_t> data) {
+   const int size = pdfium::checked_cast<int>(data.size());
+   data_ = std::move(data);
+   SetLengthInDict(size);
++  ++veloce_data_generation_;
+ }
+ 
+ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
+diff --git a/core/fpdfapi/parser/cpdf_stream.h b/core/fpdfapi/parser/cpdf_stream.h
+index ffeea79ca..24afff497 100644
+--- a/core/fpdfapi/parser/cpdf_stream.h
++++ b/core/fpdfapi/parser/cpdf_stream.h
+@@ -35,6 +35,7 @@ class CPDF_Stream final : public CPDF_Object {
+                const CPDF_Encryptor* encryptor) const override;
+ 
+   size_t GetRawSize() const;
++  uint64_t GetVeloceDataGeneration() const { return veloce_data_generation_; }
+   // Can only be called when stream is memory-based.
+   // This is meant to be used by CPDF_StreamAcc only.
+   // Other callers should use CPDF_StreamAcc to access data in all cases.
+@@ -95,6 +96,7 @@ class CPDF_Stream final : public CPDF_Object {
+ 
+   std::variant<RetainPtr<IFX_SeekableReadStream>, DataVector<uint8_t>> data_;
+   RetainPtr<CPDF_Dictionary> dict_;
++  uint64_t veloce_data_generation_ = 1u;
+ };
+ 
+ inline CPDF_Stream* ToStream(CPDF_Object* obj) {
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index ae9f13451..c22c22520 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -506,7 +506,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0113 event=replay "
++        "revision=r25-3-0114 event=replay "
+         "mode=direct_ordered_opaque_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "

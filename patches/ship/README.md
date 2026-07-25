@@ -142,6 +142,7 @@ these patches:
 | r25-3-0111 | `0111-veloce-render-program-exact-noop-invariant-stroke.patch` | Supersedes 0110's negative-value device-pixel occupancy grid after device telemetry showed only 2,929 raster passes removed from 3.16 million commands. Exact two-point butt-cap strokes whose endpoints are identical receive no spatial posting and are skipped before visibility, clip, transform, packet, and AGG work; round and square caps remain rendered. Every remaining operation keeps an independent source-order raster/composite pass. A render-local AGG context reuses only the normalized affine transform and inverse while the exact linear matrix is unchanged, removing repeated inversions without retained page memory or shared state. |
 | r25-3-0112 | `0112-veloce-render-program-direct-ordered-opaque-line.patch` | Replaces AGG's generic path-storage and `conv_stroke` construction for one exact non-degenerate, solid, butt-cap opaque line with the identical four-vertex polygon produced by AGG's `stroke_calc_cap()`. Each source object still receives an independent raster/composite pass at its original ordinal; the optimization only removes redundant geometry machinery inside that pass. Round/square caps, dashed strokes, zero-area mode, degenerate device geometry, fills, complex paths, invalid matrices, and unsupported drivers stay on the existing generic or canonical path. Scratch remains render-local and bounded. |
 | r25-3-0113 | `0113-veloce-render-program-direct-line-build-correction.patch` | Build correction after 0112 reached Android unit-test compilation and used the `CFX_GraphState` wrapper setter on a `CFX_GraphStateData` test value. Uses `set_line_cap()` and advances Android revision markers to 0113. Runtime geometry, ordering, eligibility, memory, and pixel behavior are unchanged. |
+| r25-3-0114 | `0114-veloce-render-program-shared-exact-form-cache.patch` | Shares fully native, resource-independent Form RenderPrograms across exact equivalent invocations in one document. Identity includes stream generation, Form matrix/BBox, transparency, parent matrix, and every inherited path state consumed by lowering. Resource lookup, inherited clip, partial native coverage, mutation, or command-count drift fails closed. The cache owns at most 16 programs and 96 MiB; canonical Form holders remain the editing/fallback source of truth. |
 
 ## Why this directory exists
 
@@ -154,8 +155,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0113`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0113:
+blind numeric globbing. For `r25-3-0114`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0114:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -185,10 +186,11 @@ git apply patches/ship/0110-veloce-render-program-single-pass-dense-executor.pat
 git apply patches/ship/0111-veloce-render-program-exact-noop-invariant-stroke.patch
 git apply patches/ship/0112-veloce-render-program-direct-ordered-opaque-line.patch
 git apply patches/ship/0113-veloce-render-program-direct-line-build-correction.patch
+git apply patches/ship/0114-veloce-render-program-shared-exact-form-cache.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0113` build. The machine-checked list lives in the 0113 workflow.
+`r25-3-0114` build. The machine-checked list lives in the 0114 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
