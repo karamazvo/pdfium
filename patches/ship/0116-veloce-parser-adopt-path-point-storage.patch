@@ -1,0 +1,178 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sun, 26 Jul 2026 13:10:00 +0800
+Subject: [PATCH] Veloce r25-3-0116: adopt parsed path point storage
+
+Transfer the parser's completed point vector directly into the canonical
+CPDF_Path instead of reconstructing the same path one point at a time. The
+existing loop creates a temporary CFX_Path and grows destination storage for
+every point after the parser has already allocated and populated an exact
+vector. Dense line drawings therefore pay millions of redundant allocations
+and copies before RenderProgram execution begins.
+
+The adopted vector remains owned by the normal copy-on-write CPDF_Path. Point
+coordinates, types, close flags, object boundaries, graphics state, source
+ordinals, clipping, editing behavior, and canonical fallback are unchanged.
+Clip-and-paint operators continue to share the CPDF_Path and clone on the
+existing transform boundary.
+
+This is a universal parser storage correction: it adds no page classifier,
+threshold, retained cache, synchronization, UI-thread work, or alternate
+object model. Add exact metadata coverage and revision proof. Q16 should keep
+the same 3,165,420 commands and replay counters while materially reducing
+compileWindowMs and first-preview acquire time.
+---
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index 317933b72..f3388c0ac 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0115 event=form_cache result=hit "
++            "revision=r25-3-0116 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0115 event=form_cache result=store "
++          "revision=r25-3-0116 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_path.cpp b/core/fpdfapi/page/cpdf_path.cpp
+index c30035949..8b6cf3bf3 100644
+--- a/core/fpdfapi/page/cpdf_path.cpp
++++ b/core/fpdfapi/page/cpdf_path.cpp
+@@ -6,6 +6,8 @@
+ 
+ #include "core/fpdfapi/page/cpdf_path.h"
+ 
++#include <utility>
++
+ CPDF_Path::CPDF_Path() = default;
+ 
+ CPDF_Path::CPDF_Path(const CPDF_Path& that) = default;
+@@ -16,6 +18,10 @@ const std::vector<CFX_Path::Point>& CPDF_Path::GetPoints() const {
+   return ref_.GetObject()->GetPoints();
+ }
+ 
++void CPDF_Path::SetPoints(std::vector<CFX_Path::Point> points) {
++  ref_.Emplace()->GetPoints() = std::move(points);
++}
++
+ void CPDF_Path::ClosePath() {
+   ref_.GetPrivateCopy()->ClosePath();
+ }
+diff --git a/core/fpdfapi/page/cpdf_path.h b/core/fpdfapi/page/cpdf_path.h
+index 0745cc959..815510984 100644
+--- a/core/fpdfapi/page/cpdf_path.h
++++ b/core/fpdfapi/page/cpdf_path.h
+@@ -22,6 +22,7 @@ class CPDF_Path {
+   bool HasRef() const { return !!ref_; }
+ 
+   const std::vector<CFX_Path::Point>& GetPoints() const;
++  void SetPoints(std::vector<CFX_Path::Point> points);
+   void ClosePath();
+ 
+   CFX_PointF GetPoint(int index) const;
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index 752222ff1..277f636fe 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1610,13 +1610,7 @@ void CPDF_StreamContentParser::AddPathObject(
+   }
+ 
+   CPDF_Path path;
+-  for (const auto& point : path_points) {
+-    if (point.close_figure_) {
+-      path.AppendPointAndClose(point.point_, point.type_);
+-    } else {
+-      path.AppendPoint(point.point_, point.type_);
+-    }
+-  }
++  path.SetPoints(std::move(path_points));
+ 
+   CFX_Matrix matrix =
+       cur_states_->current_transformation_matrix() * mt_content_to_user_;
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index b324eb819..ab9fe5306 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1820,7 +1820,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0115 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0116 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1830,8 +1830,9 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0115 event=compile "
++        "revision=r25-3-0116 event=compile "
+         "mode=exact_clip_interned_program "
++        "pathStorage=adopted "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index d6f7e1a36..5a158b329 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -109,6 +109,35 @@ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+   EXPECT_TRUE(program->mandatory_ranges().empty());
+ }
+ 
++TEST(VeloceRenderProgramTest, AdoptedPathPointsPreserveExactPointMetadata) {
++  std::vector<CFX_Path::Point> points;
++  points.emplace_back(CFX_PointF(1.25f, -2.5f),
++                      CFX_Path::Point::Type::kMove, /*close=*/false);
++  points.emplace_back(CFX_PointF(3.75f, 4.5f),
++                      CFX_Path::Point::Type::kBezier, /*close=*/false);
++  points.emplace_back(CFX_PointF(-5.25f, 6.5f),
++                      CFX_Path::Point::Type::kLine, /*close=*/true);
++
++  CPDF_Path path;
++  path.SetPoints(std::move(points));
++
++  ASSERT_EQ(3u, path.GetPoints().size());
++  EXPECT_EQ(CFX_PointF(1.25f, -2.5f), path.GetPoints()[0].point_);
++  EXPECT_EQ(CFX_Path::Point::Type::kMove, path.GetPoints()[0].type_);
++  EXPECT_FALSE(path.GetPoints()[0].close_figure_);
++  EXPECT_EQ(CFX_PointF(3.75f, 4.5f), path.GetPoints()[1].point_);
++  EXPECT_EQ(CFX_Path::Point::Type::kBezier, path.GetPoints()[1].type_);
++  EXPECT_FALSE(path.GetPoints()[1].close_figure_);
++  EXPECT_EQ(CFX_PointF(-5.25f, 6.5f), path.GetPoints()[2].point_);
++  EXPECT_EQ(CFX_Path::Point::Type::kLine, path.GetPoints()[2].type_);
++  EXPECT_TRUE(path.GetPoints()[2].close_figure_);
++
++  CPDF_Path shared_path = path;
++  path.Transform(CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 10.0f, 20.0f));
++  EXPECT_EQ(CFX_PointF(1.25f, -2.5f), shared_path.GetPoints()[0].point_);
++  EXPECT_EQ(CFX_PointF(11.25f, 17.5f), path.GetPoints()[0].point_);
++}
++
+ TEST(VeloceRenderProgramTest,
+      DegenerateButtCapLineNeedsNoSpatialCandidate) {
+   auto no_op = MakeOpaqueLine(1.0f, 1.0f);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 0009047ad..633cdb00f 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -506,7 +506,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0115 event=replay "
++        "revision=r25-3-0116 event=replay "
+         "mode=exact_clip_interned_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "

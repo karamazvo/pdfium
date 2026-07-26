@@ -144,6 +144,7 @@ these patches:
 | r25-3-0113 | `0113-veloce-render-program-direct-line-build-correction.patch` | Build correction after 0112 reached Android unit-test compilation and used the `CFX_GraphState` wrapper setter on a `CFX_GraphStateData` test value. Uses `set_line_cap()` and advances Android revision markers to 0113. Runtime geometry, ordering, eligibility, memory, and pixel behavior are unchanged. |
 | r25-3-0114 | `0114-veloce-render-program-shared-exact-form-cache.patch` | Shares fully native, resource-independent Form RenderPrograms across exact equivalent invocations in one document. Identity includes stream generation, Form matrix/BBox, transparency, parent matrix, and every inherited path state consumed by lowering. Resource lookup, inherited clip, partial native coverage, mutation, or command-count drift fails closed. The cache owns at most 16 programs and 96 MiB; canonical Form holders remain the editing/fallback source of truth. |
 | r25-3-0115 | `0115-veloce-render-program-exact-clip-interning.patch` | Interns consecutive pointer-distinct path-only clip scopes only after exact structural comparison of fill rule, point type, close flag, and float bits. The first immutable clip snapshot remains the run representative. Text clips, malformed paths, and every structural difference stay distinct. This preserves painter order and canonical fallback while avoiding redundant clip installation and allowing the existing fixed 256-command ordered packet to span equivalent clips. No page classifier, tolerance, extra retained table, lock, or UI-thread work is added. |
+| r25-3-0116 | `0116-veloce-parser-adopt-path-point-storage.patch` | Moves the parser's completed exact point vector into canonical `CPDF_Path` storage instead of rebuilding it through one temporary path and destination growth operation per point. Coordinates, point types, close flags, object boundaries, copy-on-write behavior, painter order, editing, and canonical fallback remain unchanged. The correction applies to every parsed path without a classifier, threshold, cache, retained sidecar bytes, lock, or UI-thread work. Q16 acceptance is materially lower `compileWindowMs` and preview `acquireMs` with unchanged command, opcode, spatial, replay, and pixel counters. |
 
 ## Why this directory exists
 
@@ -156,8 +157,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0115`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0115:
+blind numeric globbing. For `r25-3-0116`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0116:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -189,10 +190,11 @@ git apply patches/ship/0112-veloce-render-program-direct-ordered-opaque-line.pat
 git apply patches/ship/0113-veloce-render-program-direct-line-build-correction.patch
 git apply patches/ship/0114-veloce-render-program-shared-exact-form-cache.patch
 git apply patches/ship/0115-veloce-render-program-exact-clip-interning.patch
+git apply patches/ship/0116-veloce-parser-adopt-path-point-storage.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0115` build. The machine-checked list lives in the 0115 workflow.
+`r25-3-0116` build. The machine-checked list lives in the 0116 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

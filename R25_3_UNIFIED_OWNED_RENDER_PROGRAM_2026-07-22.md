@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0115 on 2026-07-26 (Asia/Taipei)
+**Updated through:** r25-3-0116 on 2026-07-26 (Asia/Taipei)
 
 ## Decision
 
@@ -612,6 +612,44 @@ executor still walks it. This must be corrected before adding another index.
     region `replayUs`, no new canonical fallbacks, and no measurable Q16,
     11.pdf, or Study Notes regression. This revision does not claim to solve
     Q16's surviving dense stroke raster cost.
+
+12. **r25-3-0116: adopt parsed path point storage.** The Q16 `compileWindowMs`
+    measurement includes PDFium's canonical content parsing and page-object
+    construction; it is not a second RenderProgram traversal. Inspection of
+    that single pass found a general duplicate operation: the content parser
+    already owns the final `std::vector<CFX_Path::Point>`, but
+    `AddPathObject()` reconstructs a new `CPDF_Path` one point at a time.
+    Each append creates temporary path storage and grows/copies destination
+    storage after the exact vector has already been allocated and populated.
+    Q16 repeats that work for roughly three million two-point paths.
+
+    `CPDF_Path::SetPoints()` now moves the completed vector into the normal
+    copy-on-write path object. It does not merge objects, defer objects, or
+    create a second geometry model. Coordinates, point types, close flags,
+    object boundaries, graphics state, source ordinals, clip behavior,
+    mutation, editing, and canonical fallback remain unchanged. A path used
+    for both painting and clipping still follows the existing copy-on-write
+    transform boundary.
+
+    The mechanism applies to every parsed path and adds no classifier,
+    threshold, cache, retained page memory, synchronization, or UI-thread
+    work. The existing RenderProgram format remains version 16 because its
+    immutable representation is unchanged.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0116 event=compile
+    mode=exact_clip_interned_program pathStorage=adopted
+    ```
+
+    Q16 acceptance requires the same `commands=3165420`, native opcode
+    counts, exact-no-op count, spatial postings, replay draw counts, and
+    pixels as 0115, with materially lower `compileWindowMs`, preview
+    `acquireMs`, and launch-to-first-tile time. The 0115 baseline is
+    `compileWindowMs=11818`, `acquireMs=12891`, and first tile at 15258 ms.
+    Replay is intentionally unchanged; its 2.07-second full-preview cost is
+    the lower bound after parser construction is removed.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
