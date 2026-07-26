@@ -448,7 +448,7 @@ jobs:
           grep -q 'NonOpaqueFillFailsClosed' core/fpdfapi/page/veloce_render_program_unittest.cpp
           grep -q 'veloce_render_program_builder_->AppendPageObject' core/fpdfapi/page/cpdf_pageobjectholder.cpp
           grep -q 'veloce_render_program_builder_->Finish()' core/fpdfapi/page/cpdf_pageobjectholder.cpp
-          grep -q 'RecordVeloceParsedPath' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'RecordVeloceParsedLine' core/fpdfapi/page/cpdf_pageobjectholder.cpp
           grep -q 'CanRecordVeloceParsedPath' core/fpdfapi/page/cpdf_streamcontentparser.cpp
           grep -q 'may_be_compact_line' core/fpdfapi/page/cpdf_streamcontentparser.cpp
           grep -q 'OmitLastPageObject' core/fpdfapi/page/veloce_render_program.cpp
