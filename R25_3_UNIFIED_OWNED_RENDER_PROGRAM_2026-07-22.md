@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0114 on 2026-07-25 (Asia/Taipei)
+**Updated through:** r25-3-0115 on 2026-07-26 (Asia/Taipei)
 
 ## Decision
 
@@ -573,6 +573,45 @@ executor still walks it. This must be corrected before adding another index.
     pixel comparisons remain unchanged. The first occurrence still pays one
     parse/lowering pass; eliminating that cold parse belongs to the later
     parser-owned compact-tape phase.
+
+11. **r25-3-0115: exact path-only clip interning.** EP23's shared Form
+    contains 28,071 native fills and emits the same rectangular `W* n` clip
+    before every fill. PDFium's `CPDF_ClipPath::operator==` compares
+    copy-on-write storage identity, so pointer-distinct but semantically
+    identical clips previously created 28,071 clip runs. Replay consequently
+    reinstalled and rasterized the same clip 28,071 times and flushed the
+    fixed ordered packet after every fill.
+
+    The builder now keeps pointer identity as its O(1) fast path and otherwise
+    compares path-only clip state exactly: path count, fill rule, point type,
+    close flag, and every coordinate float bit. A match reuses the current
+    retained run representative. No clip geometry is normalized, rounded, or
+    reduced to a rectangle. Text-containing clips, malformed path references,
+    and any exact structural difference remain separate, preserving PDFium's
+    existing clip transitions and fail-closed behavior.
+
+    The comparison allocates no memory and adds no global table, page
+    classifier, lock, or UI-thread work. It reduces retained clip snapshots
+    and lets the existing bounded 256-command executor packet span equivalent
+    clips while each fill still rasterizes and composites independently at its
+    original source ordinal.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0115 event=compile mode=exact_clip_interned_program
+    nativeOpaqueFills=28071 clipRuns=1
+    exactClipChecks=28070 exactClipMatches=28070
+
+    revision=r25-3-0115 event=replay mode=exact_clip_interned_backend
+    nativeFills=28071 clipRuns=1
+    lineBatchCommands=28071 lineBatchDispatches=~110 maxLineBatch=256
+    ```
+
+    Acceptance requires unchanged EP23 pixels, materially lower preview and
+    region `replayUs`, no new canonical fallbacks, and no measurable Q16,
+    11.pdf, or Study Notes regression. This revision does not claim to solve
+    Q16's surviving dense stroke raster cost.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill

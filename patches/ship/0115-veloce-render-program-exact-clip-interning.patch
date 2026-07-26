@@ -1,0 +1,273 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sun, 26 Jul 2026 13:05:00 +0800
+Subject: [PATCH] Veloce r25-3-0115: intern exact path-only clip runs
+
+Treat pointer identity as the fast path for retained clips, then compare
+pointer-distinct path-only clips by exact fill rule, point type, close flag,
+and floating-point bits. Consecutive equivalent scopes retain one immutable
+representative without changing source order or the canonical PDFium object
+model.
+
+This removes redundant clip installation and its forced draw-batch flush for
+producers that emit the same clip before every path. Text clips and every
+structurally different or malformed clip remain distinct and therefore keep
+the existing fail-closed replay behavior. The comparison allocates no memory,
+uses no tolerance or page classifier, and the retained-program budget remains
+unchanged.
+
+Add unit coverage for pointer-distinct equivalent clips and for A/B/A clip
+transitions, bump the immutable program format, and expose exact comparison
+counters. On Error.pdf pages 2/3, the expected proof is 28,071 native fills
+with `clipRuns=1`, about 110 bounded dispatches instead of 28,071, and
+unchanged pixels.
+---
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index f649647a3..317933b72 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0114 event=form_cache result=hit "
++            "revision=r25-3-0115 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0114 event=form_cache result=store "
++          "revision=r25-3-0115 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index ccdc4a847..b324eb819 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -191,6 +191,29 @@ bool SamePath(const CFX_Path& lhs, const CFX_Path& rhs) {
+   return true;
+ }
+
++bool SamePathOnlyClip(const CPDF_ClipPath& lhs,
++                      const CPDF_ClipPath& rhs) {
++  if (!lhs.HasRef() || !rhs.HasRef() || lhs.GetTextCount() != 0u ||
++      rhs.GetTextCount() != 0u ||
++      lhs.GetPathCount() != rhs.GetPathCount()) {
++    return false;
++  }
++  for (size_t i = 0; i < lhs.GetPathCount(); ++i) {
++    if (lhs.GetClipType(i) != rhs.GetClipType(i)) {
++      return false;
++    }
++    const CPDF_Path lhs_path = lhs.GetPath(i);
++    const CPDF_Path rhs_path = rhs.GetPath(i);
++    if (!lhs_path.HasRef() || !rhs_path.HasRef() ||
++        !IsFinitePath(*lhs_path.GetObject()) ||
++        !IsFinitePath(*rhs_path.GetObject()) ||
++        !SamePath(*lhs_path.GetObject(), *rhs_path.GetObject())) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ uint64_t HashOpaquePathState(const VeloceOpaquePathState& state,
+                              pdfium::span<const float> dashes) {
+   uint64_t hash = kFnvOffsetBasis;
+@@ -1033,8 +1056,19 @@ void VeloceRenderProgramBuilder::RememberVisibilityScope(
+ }
+
+ bool VeloceRenderProgramBuilder::HasSameClipScope(
+-    const CPDF_ClipPath& clip_path) const {
+-  return has_previous_clip_scope_ && previous_clip_path_ == clip_path;
++    const CPDF_ClipPath& clip_path) {
++  if (!has_previous_clip_scope_) {
++    return false;
++  }
++  if (previous_clip_path_ == clip_path) {
++    return true;
++  }
++  ++exact_clip_equivalence_checks_;
++  if (!SamePathOnlyClip(previous_clip_path_, clip_path)) {
++    return false;
++  }
++  ++exact_clip_equivalence_matches_;
++  return true;
+ }
+
+ void VeloceRenderProgramBuilder::RememberClipScope(
+@@ -1786,7 +1820,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0114 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0115 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1796,15 +1830,16 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0114 event=compile "
+-        "mode=direct_ordered_opaque_line_program "
++        "revision=r25-3-0115 event=compile "
++        "mode=exact_clip_interned_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u "
+         "fillGeometries=%zu fillGeometryPoints=%zu "
+         "canonicalPaths=%zu "
+         "states=%zu matrices=%zu dashValues=%zu visibilityRuns=%zu "
+-        "clipRuns=%zu ownedPathPoints=%zu visibilityScopedLines=%u "
++        "clipRuns=%zu exactClipChecks=%u exactClipMatches=%u "
++        "ownedPathPoints=%zu visibilityScopedLines=%u "
+         "inlineTranslationLines=%u nativeRuns=%zu runLookupBlocks=%zu "
+         "mandatoryRuns=%zu "
+         "mandatoryCommands=%zu commandBlocks=%zu lineRuns=%zu "
+@@ -1825,7 +1860,8 @@ VeloceRenderProgramBuilder::Finish() {
+             program->header().native_command_count,
+         program->opaque_path_states().size(), program->path_matrices().size(),
+         program->dash_values().size(), program->visibility_runs().size(),
+-        program->clip_runs().size(), native_stroke_path_point_count_,
++        program->clip_runs().size(), exact_clip_equivalence_checks_,
++        exact_clip_equivalence_matches_, native_stroke_path_point_count_,
+         program->visibility_scoped_line_count(),
+         program->inline_translation_line_count(),
+         program->native_runs().size(),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 884768c86..7e04eedea 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -24,7 +24,7 @@ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 15u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 16u;
+
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -155,9 +155,9 @@ struct VeloceNativeFillGeometry {
+   CFX_FloatRect bounds;
+ };
+
+-// A retained CPDF_ClipPath is an immutable copy-on-write snapshot. Runs avoid
+-// adding a clip index to every native line while preserving exact clip changes
+-// in command order.
++// A retained CPDF_ClipPath is an immutable copy-on-write snapshot. Consecutive
++// path-only clips with exact structural equality share one retained run;
++// text-containing and structurally different clips remain distinct.
+ struct VeloceClipRun {
+   uint32_t first_command = 0;
+   CPDF_ClipPath clip_path;
+@@ -518,7 +518,7 @@ class VeloceRenderProgramBuilder final {
+   bool Reject(VeloceNativeLineRejectReason reason);
+   bool HasSameVisibilityScope(const CPDF_ContentMarks& marks) const;
+   void RememberVisibilityScope(const CPDF_ContentMarks& marks);
+-  bool HasSameClipScope(const CPDF_ClipPath& clip_path) const;
++  bool HasSameClipScope(const CPDF_ClipPath& clip_path);
+   void RememberClipScope(const CPDF_ClipPath& clip_path);
+   void AppendNativeLineRun(uint16_t state_index, uint16_t matrix_index);
+   void AppendSpatialOrdinal(uint32_t command_index,
+@@ -582,6 +582,8 @@ class VeloceRenderProgramBuilder final {
+   uint32_t incremental_budget_checks_ = 0;
+   uint32_t native_budget_fallbacks_ = 0;
+   uint32_t exact_noop_line_count_ = 0;
++  uint32_t exact_clip_equivalence_checks_ = 0;
++  uint32_t exact_clip_equivalence_matches_ = 0;
+   uint32_t object_count_ = 0;
+   uint32_t path_object_count_ = 0;
+   uint64_t build_start_millis_ = 0;
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index d61934d94..d6f7e1a36 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -55,13 +55,16 @@ std::unique_ptr<CPDF_PathObject> MakeOpaqueFill(float translation_x = 0.0f) {
+   return path;
+ }
+
+-void SetRectClip(CPDF_PathObject* object, const CFX_FloatRect& rect) {
++void SetRectClip(
++    CPDF_PathObject* object,
++    const CFX_FloatRect& rect,
++    CFX_FillRenderOptions::FillType fill_type =
++        CFX_FillRenderOptions::FillType::kWinding) {
+   CPDF_Path clip_path;
+   clip_path.Emplace();
+   clip_path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);
+   object->mutable_clip_path().Emplace();
+-  object->mutable_clip_path().AppendPath(
+-      std::move(clip_path), CFX_FillRenderOptions::FillType::kWinding);
++  object->mutable_clip_path().AppendPath(std::move(clip_path), fill_type);
+ }
+
+ bool IsCandidate(pdfium::span<const uint64_t> words, uint32_t ordinal) {
+@@ -196,6 +199,48 @@ TEST(VeloceRenderProgramTest, OwnsMultiSegmentStrokeAndExactClipRun) {
+             program->clip_runs()[0].clip_path.GetClipBox());
+ }
+
++TEST(VeloceRenderProgramTest,
++     InternsPointerDistinctExactPathOnlyClipRuns) {
++  auto first = MakeOpaqueFill(10.0f);
++  auto second = MakeOpaqueFill(20.0f);
++  SetRectClip(first.get(), CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++  SetRectClip(second.get(), CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++  ASSERT_FALSE(first->clip_path() == second->clip_path());
++
++  VeloceRenderProgramBuilder builder;
++  builder.AppendPageObject(*first);
++  builder.AppendPageObject(*second);
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  EXPECT_EQ(2u, program->native_fill_path_count());
++  ASSERT_EQ(1u, program->clip_runs().size());
++  EXPECT_EQ(0u, program->clip_runs()[0].first_command);
++}
++
++TEST(VeloceRenderProgramTest,
++     PreservesDifferentFillRuleClipRuns) {
++  auto first = MakeOpaqueFill(10.0f);
++  auto second = MakeOpaqueFill(20.0f);
++  auto third = MakeOpaqueFill(30.0f);
++  SetRectClip(first.get(), CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++  SetRectClip(second.get(), CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f),
++              CFX_FillRenderOptions::FillType::kEvenOdd);
++  SetRectClip(third.get(), CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++
++  VeloceRenderProgramBuilder builder;
++  builder.AppendPageObject(*first);
++  builder.AppendPageObject(*second);
++  builder.AppendPageObject(*third);
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  ASSERT_EQ(3u, program->clip_runs().size());
++  EXPECT_EQ(0u, program->clip_runs()[0].first_command);
++  EXPECT_EQ(1u, program->clip_runs()[1].first_command);
++  EXPECT_EQ(2u, program->clip_runs()[2].first_command);
++}
++
+ TEST(VeloceRenderProgramTest, OwnsDarkenStrokeAsOrderedNativePath) {
+   auto path = MakeOpaqueLine(1.0f, 3.0f);
+   path->SetRect(CFX_FloatRect(1.0f, 2.0f, 3.0f, 4.0f));
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index c22c22520..0009047ad 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -506,8 +506,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0114 event=replay "
+-        "mode=direct_ordered_opaque_line_backend "
++        "revision=r25-3-0115 event=replay "
++        "mode=exact_clip_interned_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
