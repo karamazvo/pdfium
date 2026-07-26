@@ -1,14 +1,16 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0116 on 2026-07-26 (Asia/Taipei)
+**Updated through:** r25-3-0117 on 2026-07-26 (Asia/Taipei)
 
 ## Decision
 
-Canonical PDFium page objects remain the only source of truth. Generation 3
-adds one optional, immutable native sidecar to a holder; it does not create a
-second page model or select a renderer by page type. Filename, page size,
-object count, path count, and Kotlin classification never choose the path.
+The PDF content stream remains the authoritative source. Canonical PDFium page
+objects are the complete editing/fallback representation and are always
+available through exact one-time materialization. Generation 3 adds one
+optional, immutable native sidecar to a holder; it does not select a renderer
+by page type. Filename, page size, object count, path count, and Kotlin
+classification never choose the path.
 
 During normal parser construction, each path object is offered to an exact
 lowerer in source painter order:
@@ -651,6 +653,72 @@ executor still walks it. This must be corrected before adding another index.
     Replay is intentionally unchanged; its 2.07-second full-preview cost is
     the lower bound after parser construction is removed.
 
+    Device results confirmed that the mechanism is valuable where path
+    geometry is nontrivial: 11.pdf compile fell from 277 ms to 162 ms and
+    preview render from 487 ms to 352 ms. EP23's shared Form compile fell from
+    1159 ms to 291 ms, page-2 acquire from 1286 ms to 443 ms, and page-2 total
+    from 1499 ms to 580 ms. Q16 stayed near 12.2 seconds because its dominant
+    cost is creating and retaining roughly 2.94 million canonical
+    `CPDF_PathObject` instances, not copying their two points.
+
+13. **r25-3-0117: parser-owned compact ordered line tape.** Exact lowering,
+    not a page classifier, now decides whether a root-page opaque two-point
+    line needs a retained canonical object. The parser builds the same exact
+    native command first. Only after that succeeds with finite known bounds
+    may the holder omit the canonical line object. Rejected paths, complex
+    strokes, fills, Darken, text, images, Forms, shadings, and unsupported
+    state remain ordinary PDFium objects.
+
+    Source order remains the single command order. Before the first omission,
+    retained object indexes are identical to source ordinals and no map is
+    allocated. At the first omission, the builder creates one sorted
+    source-ordinal list for retained canonical barriers; replay resolves only
+    those barriers through binary search. The map and all native data share
+    the existing 96 MiB program budget.
+
+    Optional-content visibility no longer needs a live page-object
+    representative. Each visibility run owns an immutable copy-on-write
+    `CPDF_ContentMarks` scope and calls PDFium's existing `CPDF_OCContext`
+    logic directly. Conservative scope, mark, and string storage estimates
+    are charged to the same 96 MiB program budget as geometry and ordinal
+    tables. Clip runs, graphics state, colors, geometry, source ordinals, and
+    painter order remain exact.
+
+    Compact replay performs all context checks before its first pixel: the
+    holder mutation epoch, AGG ordered-path capability, render mode, device
+    transform, aggregate line bounds, path matrices, and translated stroke
+    alpha. The legacy path display list rejects compact holders before
+    iteration. If construction exceeds budget, validation fails, a render
+    context is unsupported, or an API requests page objects for editing or
+    enumeration, the page reparses its original content once with compact
+    recording disabled and exposes the complete canonical holder.
+
+    This changes object ownership, not PDF semantics or scheduling. There is
+    no filename rule, object-count threshold, Kotlin classification, second
+    bitmap, global cache, lock, or UI-thread operation.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0117 event=compile
+    mode=parser_compact_ordered_program
+    omittedPageObjects=... retainedPageObjects=...
+
+    revision=r25-3-0117 event=replay
+    mode=parser_compact_ordered_backend
+    omittedPageObjects=... retainedPageObjects=...
+    ```
+
+    Q16 should retain the same `commands=3165420`, native opcode counts,
+    visibility-run count, spatial postings, exact-no-op count, replay draw
+    counts, and pixels while omitting most of its approximately 2.94 million
+    exact native lines. The retained count should be dominated by fills,
+    complex paths, text, and other canonical barriers. 11.pdf's Darken paths
+    and EP23's fills are intentionally retained, so their 0116 performance and
+    canonical ownership remain unchanged. Acceptance requires materially
+    lower Q16 `compileWindowMs`, `acquireMs`, launch-to-first-tile time, and
+    peak holder memory, plus exact normal-page, 11.pdf, Q16, and EP23 pixels.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former
@@ -682,7 +750,8 @@ renderer.
 
 ## Invariants
 
-- PDFium page objects are the single source of truth for fidelity and editing.
+- The original PDF content stream is authoritative; complete canonical PDFium
+  page objects materialize before editing, enumeration, or canonical fallback.
 - One source order, one destination bitmap, one pixel owner at each ordinal.
 - Native execution is allowed only when exact lowering succeeds.
 - Unknown or unsupported semantics remain canonical at the same ordinal.

@@ -1,0 +1,1249 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index f3388c0a..8362f27e 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0116 event=form_cache result=hit "
++            "revision=r25-3-0117 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0116 event=form_cache result=store "
++          "revision=r25-3-0117 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_occontext.cpp b/core/fpdfapi/page/cpdf_occontext.cpp
+index 9830c66a..8d0df354 100644
+--- a/core/fpdfapi/page/cpdf_occontext.cpp
++++ b/core/fpdfapi/page/cpdf_occontext.cpp
+@@ -187,9 +187,13 @@ bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {
+ }
+ 
+ bool CPDF_OCContext::CheckPageObjectVisible(const CPDF_PageObject* pObj) const {
+-  const CPDF_ContentMarks* pMarks = pObj->GetContentMarks();
+-  for (size_t i = 0; i < pMarks->CountItems(); ++i) {
+-    const CPDF_ContentMarkItem* item = pMarks->GetItem(i);
++  return CheckContentMarksVisible(*pObj->GetContentMarks());
++}
++
++bool CPDF_OCContext::CheckContentMarksVisible(
++    const CPDF_ContentMarks& marks) const {
++  for (size_t i = 0; i < marks.CountItems(); ++i) {
++    const CPDF_ContentMarkItem* item = marks.GetItem(i);
+     if (item->GetName() == "OC" &&
+         item->GetParamType() == CPDF_ContentMarkItem::kPropertiesDict &&
+         !CheckOCGDictVisible(item->GetParam().Get())) {
+diff --git a/core/fpdfapi/page/cpdf_occontext.h b/core/fpdfapi/page/cpdf_occontext.h
+index 61533e8c..c4defed9 100644
+--- a/core/fpdfapi/page/cpdf_occontext.h
++++ b/core/fpdfapi/page/cpdf_occontext.h
+@@ -17,6 +17,7 @@
+ class CPDF_Array;
+ class CPDF_Dictionary;
+ class CPDF_Document;
++class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ 
+ class CPDF_OCContext final : public Retainable {
+@@ -27,6 +28,7 @@ class CPDF_OCContext final : public Retainable {
+ 
+   bool CheckOCGDictVisible(const CPDF_Dictionary* pOCGDict) const;
+   bool CheckPageObjectVisible(const CPDF_PageObject* pObj) const;
++  bool CheckContentMarksVisible(const CPDF_ContentMarks& marks) const;
+ 
+  private:
+   CPDF_OCContext(CPDF_Document* doc, UsageType eUsageType);
+diff --git a/core/fpdfapi/page/cpdf_page.cpp b/core/fpdfapi/page/cpdf_page.cpp
+index 0e363731..13ba9c8b 100644
+--- a/core/fpdfapi/page/cpdf_page.cpp
++++ b/core/fpdfapi/page/cpdf_page.cpp
+@@ -94,6 +94,20 @@ bool CPDF_Page::IsPage() const {
+   return true;
+ }
+ 
++void CPDF_Page::EnsureCanonicalPageObjects() const {
++  if (GetParseState() != ParseState::kParsed ||
++      !HasVeloceOmittedPageObjects()) {
++    return;
++  }
++
++  CPDF_Page* page = const_cast<CPDF_Page*>(this);
++  page->BeginVeloceCanonicalReparse();
++  page->StartParse(std::make_unique<CPDF_ContentParser>(page));
++  page->DisableVeloceRenderProgramRecordingForCurrentParse();
++  page->ContinueParse(nullptr);
++  page->EndVeloceCanonicalReparse();
++}
++
+ void CPDF_Page::ParseContent() {
+   if (GetParseState() == ParseState::kParsed) {
+     return;
+@@ -105,6 +119,9 @@ void CPDF_Page::ParseContent() {
+ 
+   DCHECK_EQ(GetParseState(), ParseState::kParsing);
+   ContinueParse(nullptr);
++  if (HasVeloceOmittedPageObjects() && !GetVeloceRenderProgram()) {
++    EnsureCanonicalPageObjects();
++  }
+ }
+ 
+ RetainPtr<CPDF_Object> CPDF_Page::GetMutablePageAttr(ByteStringView name) {
+diff --git a/core/fpdfapi/page/cpdf_page.h b/core/fpdfapi/page/cpdf_page.h
+index 34db2635..5e3c1b69 100644
+--- a/core/fpdfapi/page/cpdf_page.h
++++ b/core/fpdfapi/page/cpdf_page.h
+@@ -75,6 +75,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
+ 
+   // CPDF_PageObjectHolder:
+   bool IsPage() const override;
++  void EnsureCanonicalPageObjects() const override;
+ 
+   void ParseContent();
+   const CFX_SizeF& GetPageSize() const { return page_size_; }
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index de8d65e7..ab8afd13 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -13,6 +13,7 @@
+ #include "core/fpdfapi/page/cpdf_allstates.h"
+ #include "core/fpdfapi/page/cpdf_contentparser.h"
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
+ #include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+@@ -87,6 +88,8 @@ void CPDF_PageObjectHolder::StartParse(
+   DCHECK_EQ(parse_state_, ParseState::kNotParsed);
+   ResetVeloceRenderProgram();
+   record_veloce_render_program_ = page_object_list_.empty();
++  veloce_source_object_count_ = page_object_list_.size();
++  veloce_omitted_page_object_count_ = 0u;
+   veloce_parse_used_resources_ = false;
+   parser_ = std::move(pParser);
+   parse_state_ = ParseState::kParsing;
+@@ -103,7 +106,9 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+   }
+ 
+   parse_state_ = ParseState::kParsed;
+-  document_->IncrementParsedPageCount();
++  if (!veloce_canonical_reparse_in_progress_) {
++    document_->IncrementParsedPageCount();
++  }
+   all_ctms_ = parser_->TakeAllCTMs();
+ 
+   if (record_veloce_render_program_ && veloce_render_program_builder_) {
+@@ -205,7 +210,17 @@ void CPDF_PageObjectHolder::LoadTransparencyInfo() {
+   }
+ }
+ 
++void CPDF_PageObjectHolder::EnsureCanonicalPageObjects() const {
++  CHECK(!HasVeloceOmittedPageObjects());
++}
++
++size_t CPDF_PageObjectHolder::GetPageObjectCount() const {
++  EnsureCanonicalPageObjects();
++  return page_object_list_.size();
++}
++
+ size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
++  EnsureCanonicalPageObjects();
+   size_t count = 0;
+   for (const auto& page_object : page_object_list_) {
+     if (page_object->IsActive()) {
+@@ -217,6 +232,12 @@ size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
+ 
+ CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
+     size_t index) const {
++  EnsureCanonicalPageObjects();
++  return GetVeloceRetainedPageObjectByIndex(index);
++}
++
++CPDF_PageObject*
++CPDF_PageObjectHolder::GetVeloceRetainedPageObjectByIndex(size_t index) const {
+   return fxcrt::IndexInBounds(page_object_list_, index)
+              ? page_object_list_[index].get()
+              : nullptr;
+@@ -224,8 +245,10 @@ CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
+ 
+ void CPDF_PageObjectHolder::AppendPageObject(
+     std::unique_ptr<CPDF_PageObject> pPageObj) {
++  EnsureCanonicalPageObjects();
+   CHECK(pPageObj);
+   page_object_list_.push_back(std::move(pPageObj));
++  ++veloce_source_object_count_;
+   if (record_veloce_render_program_) {
+     if (!veloce_render_program_builder_ && page_object_list_.back()->AsPath()) {
+       veloce_render_program_builder_ =
+@@ -235,6 +258,7 @@ void CPDF_PageObjectHolder::AppendPageObject(
+   }
+   if (veloce_render_program_builder_) {
+     veloce_render_program_builder_->AppendPageObject(*page_object_list_.back());
++    veloce_render_program_builder_->RetainLastPageObject();
+   } else {
+     if (!record_veloce_render_program_) {
+       ResetVeloceRenderProgram();
+@@ -243,9 +267,41 @@ void CPDF_PageObjectHolder::AppendPageObject(
+   page_object_list_.back()->SetVeloceAttachedToHolder(true);
+ }
+ 
++CPDF_PageObjectHolder::VeloceParsedPathDisposition
++CPDF_PageObjectHolder::RecordVeloceParsedPath(
++    const CPDF_PathObject& path) {
++  if (!record_veloce_render_program_ || !IsPage()) {
++    return VeloceParsedPathDisposition::kNotRecorded;
++  }
++  if (!veloce_render_program_builder_) {
++    veloce_render_program_builder_ =
++        std::make_unique<VeloceRenderProgramBuilder>(
++            static_cast<uint32_t>(veloce_source_object_count_), bbox_);
++  }
++  const bool exact_native_line =
++      veloce_render_program_builder_->AppendPageObject(path);
++  ++veloce_source_object_count_;
++  if (exact_native_line &&
++      veloce_render_program_builder_->OmitLastPageObject()) {
++    ++veloce_omitted_page_object_count_;
++    return VeloceParsedPathDisposition::kOmitRecorded;
++  }
++  veloce_render_program_builder_->RetainLastPageObject();
++  return VeloceParsedPathDisposition::kRetainRecorded;
++}
++
++void CPDF_PageObjectHolder::AppendRecordedPageObject(
++    std::unique_ptr<CPDF_PageObject> page_obj) {
++  CHECK_EQ(parse_state_, ParseState::kParsing);
++  CHECK(page_obj);
++  page_object_list_.push_back(std::move(page_obj));
++  page_object_list_.back()->SetVeloceAttachedToHolder(true);
++}
++
+ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+     size_t index,
+     std::unique_ptr<CPDF_PageObject> page_obj) {
++  EnsureCanonicalPageObjects();
+   CHECK(page_obj);
+   if (index > page_object_list_.size()) {
+     return false;
+@@ -269,11 +325,13 @@ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+                            std::move(page_obj));
+   page_object_list_[index]->SetVeloceAttachedToHolder(true);
+   ResetVeloceRenderProgram();
++  veloce_source_object_count_ = page_object_list_.size();
+   return true;
+ }
+ 
+ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+     CPDF_PageObject* pPageObj) {
++  EnsureCanonicalPageObjects();
+   auto it = std::ranges::find_if(page_object_list_,
+                                  pdfium::MatchesUniquePtr(pPageObj));
+   if (it == std::end(page_object_list_)) {
+@@ -284,6 +342,7 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+   result->SetVeloceAttachedToHolder(false);
+   page_object_list_.erase(it);
+   ResetVeloceRenderProgram();
++  veloce_source_object_count_ = page_object_list_.size();
+ 
+   int32_t content_stream = pPageObj->GetContentStream();
+   if (content_stream >= 0) {
+@@ -294,6 +353,7 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+ }
+ 
+ bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
++  EnsureCanonicalPageObjects();
+   if (index >= page_object_list_.size()) {
+     return false;
+   }
+@@ -302,5 +362,50 @@ bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
+   // std::deque::iterator::operator++() has not been marked as unsafe yet.
+   page_object_list_.erase(UNSAFE_TODO(page_object_list_.begin() + index));
+   ResetVeloceRenderProgram();
++  veloce_source_object_count_ = page_object_list_.size();
+   return true;
+ }
++
++CPDF_PageObjectHolder::iterator CPDF_PageObjectHolder::begin() {
++  EnsureCanonicalPageObjects();
++  return page_object_list_.begin();
++}
++
++CPDF_PageObjectHolder::const_iterator CPDF_PageObjectHolder::begin() const {
++  EnsureCanonicalPageObjects();
++  return page_object_list_.begin();
++}
++
++CPDF_PageObjectHolder::iterator CPDF_PageObjectHolder::end() {
++  EnsureCanonicalPageObjects();
++  return page_object_list_.end();
++}
++
++CPDF_PageObjectHolder::const_iterator CPDF_PageObjectHolder::end() const {
++  EnsureCanonicalPageObjects();
++  return page_object_list_.end();
++}
++
++void CPDF_PageObjectHolder::BeginVeloceCanonicalReparse() {
++  CHECK_EQ(parse_state_, ParseState::kParsed);
++  CHECK(HasVeloceOmittedPageObjects());
++  for (const auto& page_object : page_object_list_) {
++    page_object->SetVeloceAttachedToHolder(false);
++  }
++  page_object_list_.clear();
++  ResetVeloceRenderProgram();
++  mask_bounding_boxes_.clear();
++  all_ctms_.clear();
++  background_alpha_needed_ = false;
++  veloce_source_object_count_ = 0u;
++  veloce_omitted_page_object_count_ = 0u;
++  parse_state_ = ParseState::kNotParsed;
++  veloce_canonical_reparse_in_progress_ = true;
++}
++
++void CPDF_PageObjectHolder::EndVeloceCanonicalReparse() {
++  CHECK(veloce_canonical_reparse_in_progress_);
++  CHECK_EQ(parse_state_, ParseState::kParsed);
++  CHECK(!HasVeloceOmittedPageObjects());
++  veloce_canonical_reparse_in_progress_ = false;
++}
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 6a85209e..57c3c36c 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -30,6 +30,7 @@
+ class CPDF_ContentParser;
+ class CPDF_Document;
+ class CPDF_PageObject;
++class CPDF_PathObject;
+ class PauseIndicatorIface;
+ class VeloceRenderProgram;
+ class VeloceRenderProgramBuilder;
+@@ -54,6 +55,11 @@ struct FontData {
+ class CPDF_PageObjectHolder {
+  public:
+   enum class ParseState : uint8_t { kNotParsed, kParsing, kParsed };
++  enum class VeloceParsedPathDisposition : uint8_t {
++    kNotRecorded,
++    kRetainRecorded,
++    kOmitRecorded,
++  };
+ 
+   // Key: The stream index.
+   // Value: The current transformation matrix at the end of the stream.
+@@ -98,10 +104,28 @@ class CPDF_PageObjectHolder {
+   RetainPtr<CPDF_Dictionary> GetMutablePageResources() {
+     return page_resources_;
+   }
+-  size_t GetPageObjectCount() const { return page_object_list_.size(); }
++  size_t GetPageObjectCount() const;
+   size_t GetActivePageObjectCount() const;
+   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
+   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
++  VeloceParsedPathDisposition RecordVeloceParsedPath(
++      const CPDF_PathObject& path);
++  void AppendRecordedPageObject(std::unique_ptr<CPDF_PageObject> page_obj);
++  bool CanRecordVeloceParsedPath() const {
++    return record_veloce_render_program_ && IsPage();
++  }
++
++  size_t GetVeloceSourceObjectCount() const {
++    return veloce_source_object_count_;
++  }
++  size_t GetVeloceRetainedPageObjectCount() const {
++    return page_object_list_.size();
++  }
++  CPDF_PageObject* GetVeloceRetainedPageObjectByIndex(size_t index) const;
++  bool HasVeloceOmittedPageObjects() const {
++    return veloce_omitted_page_object_count_ != 0u;
++  }
++  virtual void EnsureCanonicalPageObjects() const;
+ 
+   const VeloceRenderProgram* GetVeloceRenderProgram() const {
+     return veloce_render_program_.get();
+@@ -130,11 +154,11 @@ class CPDF_PageObjectHolder {
+   std::unique_ptr<CPDF_PageObject> RemovePageObject(CPDF_PageObject* pPageObj);
+   bool ErasePageObjectAtIndex(size_t index);
+ 
+-  iterator begin() { return page_object_list_.begin(); }
+-  const_iterator begin() const { return page_object_list_.begin(); }
++  iterator begin();
++  const_iterator begin() const;
+ 
+-  iterator end() { return page_object_list_.end(); }
+-  const_iterator end() const { return page_object_list_.end(); }
++  iterator end();
++  const_iterator end() const;
+ 
+   const CFX_FloatRect& GetBBox() const { return bbox_; }
+ 
+@@ -170,6 +194,8 @@ class CPDF_PageObjectHolder {
+ 
+  protected:
+   void LoadTransparencyInfo();
++  void BeginVeloceCanonicalReparse();
++  void EndVeloceCanonicalReparse();
+ 
+   RetainPtr<CPDF_Dictionary> page_resources_;
+   RetainPtr<CPDF_Dictionary> resources_;
+@@ -190,6 +216,9 @@ class CPDF_PageObjectHolder {
+   std::shared_ptr<const VeloceRenderProgram> veloce_render_program_;
+   bool record_veloce_render_program_ = false;
+   bool veloce_parse_used_resources_ = false;
++  size_t veloce_source_object_count_ = 0u;
++  size_t veloce_omitted_page_object_count_ = 0u;
++  bool veloce_canonical_reparse_in_progress_ = false;
+ 
+   CTMMap all_ctms_;
+ 
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index 277f636f..e2b6f412 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1616,13 +1616,41 @@ void CPDF_StreamContentParser::AddPathObject(
+       cur_states_->current_transformation_matrix() * mt_content_to_user_;
+   bool bStroke = render_type == RenderType::kStroke;
+   if (bStroke || fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
+-    auto pPathObj = std::make_unique<CPDF_PathObject>(GetCurrentStreamIndex());
+-    pPathObj->set_stroke(bStroke);
+-    pPathObj->set_filltype(fill_type);
+-    pPathObj->path() = path;
+-    SetGraphicStates(pPathObj.get(), true, false, true);
+-    pPathObj->SetPathMatrix(matrix);
+-    object_holder_->AppendPageObject(std::move(pPathObj));
++    CPDF_PageObjectHolder::VeloceParsedPathDisposition disposition =
++        CPDF_PageObjectHolder::VeloceParsedPathDisposition::kNotRecorded;
++    const pdfium::span<const CFX_Path::Point> points = path.GetPoints();
++    const bool may_be_compact_line =
++        object_holder_->CanRecordVeloceParsedPath() && bStroke &&
++        fill_type == CFX_FillRenderOptions::FillType::kNoFill &&
++        points.size() == 2u &&
++        points[0].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
++        points[1].IsTypeAndOpen(CFX_Path::Point::Type::kLine);
++    if (may_be_compact_line) {
++      CPDF_PathObject candidate(GetCurrentStreamIndex());
++      candidate.set_stroke(true);
++      candidate.set_no_filltype();
++      candidate.path() = path;
++      SetGraphicStates(&candidate, true, false, true);
++      candidate.SetPathMatrix(matrix);
++      disposition = object_holder_->RecordVeloceParsedPath(candidate);
++    }
++    if (disposition !=
++        CPDF_PageObjectHolder::VeloceParsedPathDisposition::kOmitRecorded) {
++      auto path_object =
++          std::make_unique<CPDF_PathObject>(GetCurrentStreamIndex());
++      path_object->set_stroke(bStroke);
++      path_object->set_filltype(fill_type);
++      path_object->path() = path;
++      SetGraphicStates(path_object.get(), true, false, true);
++      path_object->SetPathMatrix(matrix);
++      if (disposition ==
++          CPDF_PageObjectHolder::VeloceParsedPathDisposition::
++              kRetainRecorded) {
++        object_holder_->AppendRecordedPageObject(std::move(path_object));
++      } else {
++        object_holder_->AppendPageObject(std::move(path_object));
++      }
++    }
+   }
+   if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
+     if (!matrix.IsIdentity()) {
+@@ -1653,13 +1681,15 @@ uint32_t CPDF_StreamContentParser::Parse(
+   ScopedSetInsertion scoped_insert(&recursion_state_->parsed_set,
+                                    pDataStart.data());
+ 
+-  uint32_t init_obj_count = object_holder_->GetPageObjectCount();
++  const size_t init_obj_count =
++      object_holder_->GetVeloceSourceObjectCount();
+   AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&syntax_);
+   syntax_ = std::make_unique<CPDF_StreamParser>(pDataStart,
+                                                 document_->GetByteStringPool());
+ 
+   while (true) {
+-    uint32_t cost = object_holder_->GetPageObjectCount() - init_obj_count;
++    const size_t cost =
++        object_holder_->GetVeloceSourceObjectCount() - init_obj_count;
+     if (max_cost && cost >= max_cost) {
+       break;
+     }
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index ab9fe530..c9872e34 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -8,6 +8,7 @@
+ #include <chrono>
+ #include <cmath>
+ #include <limits>
++#include <numeric>
+ #include <optional>
+ #include <utility>
+ 
+@@ -32,6 +33,38 @@ namespace {
+ 
+ constexpr uint64_t kFnvOffsetBasis = 1469598103934665603ull;
+ constexpr uint64_t kFnvPrime = 1099511628211ull;
++constexpr size_t kVisibilityScopeBaseBytes = 64u;
++constexpr size_t kVisibilityMarkBaseBytes = 128u;
++
++size_t EstimatedVisibilityScopeBytes(const CPDF_ContentMarks& marks) {
++  size_t bytes = kVisibilityScopeBaseBytes;
++  for (size_t i = 0; i < marks.CountItems(); ++i) {
++    const CPDF_ContentMarkItem* item = marks.GetItem(i);
++    const size_t string_bytes =
++        item->GetName().GetLength() + item->GetPropertyName().GetLength();
++    if (string_bytes >
++        std::numeric_limits<size_t>::max() - kVisibilityMarkBaseBytes -
++            bytes) {
++      return std::numeric_limits<size_t>::max();
++    }
++    bytes += kVisibilityMarkBaseBytes + string_bytes;
++  }
++  return bytes;
++}
++
++size_t EstimatedVisibilityScopesBytes(
++    pdfium::span<const VeloceVisibilityRun> runs) {
++  size_t bytes = 0u;
++  for (const VeloceVisibilityRun& run : runs) {
++    const size_t scope_bytes =
++        EstimatedVisibilityScopeBytes(run.content_marks);
++    if (scope_bytes > std::numeric_limits<size_t>::max() - bytes) {
++      return std::numeric_limits<size_t>::max();
++    }
++    bytes += scope_bytes;
++  }
++  return bytes;
++}
+ 
+ uint64_t NowMillis() {
+   return static_cast<uint64_t>(
+@@ -793,6 +826,9 @@ VeloceRenderProgram::VeloceRenderProgram(
+     std::vector<VeloceVisibilityRun> visibility_runs,
+     std::vector<VeloceClipRun> clip_runs,
+     std::vector<VeloceCommandBlock> command_blocks,
++    bool has_omitted_page_objects,
++    std::vector<uint32_t> retained_command_ordinals,
++    std::optional<CFX_FloatRect> native_line_bounds,
+     uint64_t mutation_epoch,
+     std::array<uint32_t, kVeloceNativeLineRejectReasonCount>
+         rejection_counts,
+@@ -820,6 +856,9 @@ VeloceRenderProgram::VeloceRenderProgram(
+       visibility_runs_(std::move(visibility_runs)),
+       clip_runs_(std::move(clip_runs)),
+       command_blocks_(std::move(command_blocks)),
++      has_omitted_page_objects_(has_omitted_page_objects),
++      retained_command_ordinals_(std::move(retained_command_ordinals)),
++      native_line_bounds_(native_line_bounds),
+       mutation_epoch_(mutation_epoch),
+       rejection_counts_(rejection_counts),
+       visibility_scoped_line_count_(visibility_scoped_line_count),
+@@ -833,6 +872,23 @@ bool VeloceRenderProgram::Validate() const {
+       visibility_runs_.empty()) {
+     return false;
+   }
++  if (has_omitted_page_objects_) {
++    if (retained_command_ordinals_.size() >= command_count() ||
++        !native_line_bounds_.has_value() ||
++        !IsFiniteRect(*native_line_bounds_) ||
++        native_line_bounds_->IsEmpty() ||
++        !std::is_sorted(retained_command_ordinals_.begin(),
++                        retained_command_ordinals_.end()) ||
++        std::adjacent_find(retained_command_ordinals_.begin(),
++                           retained_command_ordinals_.end()) !=
++            retained_command_ordinals_.end() ||
++        (!retained_command_ordinals_.empty() &&
++         retained_command_ordinals_.back() >= command_count())) {
++      return false;
++    }
++  } else if (!retained_command_ordinals_.empty()) {
++    return false;
++  }
+ 
+   uint32_t previous_run_limit = 0u;
+   uint64_t expected_lines = 0u;
+@@ -980,11 +1036,31 @@ size_t VeloceRenderProgram::EstimatedBytes() const {
+          path_matrices_.capacity() * sizeof(CFX_Matrix) +
+          dash_values_.capacity() * sizeof(float) +
+          visibility_runs_.capacity() * sizeof(VeloceVisibilityRun) +
++         EstimatedVisibilityScopesBytes(visibility_runs_) +
+          clip_runs_.capacity() * sizeof(VeloceClipRun) +
+          command_blocks_.capacity() * sizeof(VeloceCommandBlock) +
++         retained_command_ordinals_.capacity() * sizeof(uint32_t) +
+          SpatialIndexBytes();
+ }
+ 
++std::optional<size_t> VeloceRenderProgram::RetainedPageObjectIndex(
++    uint32_t command_index) const {
++  if (command_index >= command_count()) {
++    return std::nullopt;
++  }
++  if (!has_omitted_page_objects_) {
++    return command_index;
++  }
++  const auto found =
++      std::lower_bound(retained_command_ordinals_.begin(),
++                       retained_command_ordinals_.end(), command_index);
++  if (found == retained_command_ordinals_.end() ||
++      *found != command_index) {
++    return std::nullopt;
++  }
++  return static_cast<size_t>(found - retained_command_ordinals_.begin());
++}
++
+ uint32_t VeloceRenderProgram::FindNativeRunCursorForSpatialReplay(
+     uint32_t command_index) const {
+   if (command_index >= header_.command_count ||
+@@ -1024,6 +1100,38 @@ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder(
+ }
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+ 
++bool VeloceRenderProgramBuilder::OmitLastPageObject() {
++  CHECK_GT(object_count_, 0u);
++  if (!has_omitted_page_objects_) {
++    const size_t retained_count = static_cast<size_t>(object_count_ - 1u);
++    if (retained_count >
++            (kMaxRetainedProgramBytes - logical_retained_bytes_) /
++                sizeof(uint32_t)) {
++      return false;
++    }
++    retained_command_ordinals_.resize(retained_count);
++    std::iota(retained_command_ordinals_.begin(),
++              retained_command_ordinals_.end(), 0u);
++    logical_retained_bytes_ += retained_count * sizeof(uint32_t);
++    has_omitted_page_objects_ = true;
++  }
++  return true;
++}
++
++void VeloceRenderProgramBuilder::RetainLastPageObject() {
++  CHECK_GT(object_count_, 0u);
++  if (!has_omitted_page_objects_) {
++    return;
++  }
++  if (logical_retained_bytes_ >
++      kMaxRetainedProgramBytes - sizeof(uint32_t)) {
++    exceeded_budget_ = true;
++    return;
++  }
++  retained_command_ordinals_.push_back(object_count_ - 1u);
++  logical_retained_bytes_ += sizeof(uint32_t);
++}
++
+ bool VeloceRenderProgramBuilder::Reject(
+     VeloceNativeLineRejectReason reason) {
+   ++rejection_counts_[static_cast<size_t>(reason)];
+@@ -1194,11 +1302,17 @@ bool VeloceRenderProgramBuilder::TryReserveRetainedBudget(
+     bool needs_state,
+     bool needs_matrix,
+     size_t dash_count,
+-    bool needs_visibility_run,
++    const CPDF_ContentMarks* visibility_marks,
+     bool needs_clip_run,
+     bool needs_native_run,
+     bool needs_command_block) {
+   ++incremental_budget_checks_;
++  const size_t visibility_bytes =
++      visibility_marks ? EstimatedVisibilityScopeBytes(*visibility_marks) : 0u;
++  if (visibility_bytes >
++      kMaxRetainedProgramBytes - logical_retained_bytes_) {
++    return false;
++  }
+   const size_t additional_bytes =
+       (needs_native_run ? sizeof(VeloceNativeRun) : 0u) +
+       (append_line ? sizeof(VeloceNativeLine) : 0u) +
+@@ -1211,7 +1325,8 @@ bool VeloceRenderProgramBuilder::TryReserveRetainedBudget(
+       (needs_state ? sizeof(VeloceOpaquePathState) : 0u) +
+       (needs_matrix ? sizeof(CFX_Matrix) : 0u) +
+       (needs_state ? dash_count * sizeof(float) : 0u) +
+-      (needs_visibility_run ? sizeof(VeloceVisibilityRun) : 0u) +
++      (visibility_marks ? sizeof(VeloceVisibilityRun) + visibility_bytes
++                        : 0u) +
+       (needs_clip_run ? sizeof(VeloceClipRun) : 0u) +
+       (needs_command_block ? sizeof(VeloceCommandBlock) : 0u);
+   if (additional_bytes > kMaxRetainedProgramBytes - logical_retained_bytes_) {
+@@ -1246,8 +1361,10 @@ size_t VeloceRenderProgramBuilder::EstimatedRetainedBytesWithoutSpatialIndex()
+          path_matrices_.capacity() * sizeof(CFX_Matrix) +
+          dash_values_.capacity() * sizeof(float) +
+          visibility_runs_.capacity() * sizeof(VeloceVisibilityRun) +
++         EstimatedVisibilityScopesBytes(visibility_runs_) +
+          clip_runs_.capacity() * sizeof(VeloceClipRun) +
+-         command_blocks_.capacity() * sizeof(VeloceCommandBlock);
++         command_blocks_.capacity() * sizeof(VeloceCommandBlock) +
++         retained_command_ordinals_.capacity() * sizeof(uint32_t);
+ }
+ 
+ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+@@ -1454,7 +1571,8 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+                                 /*fill_geometry_point_count=*/0u,
+                                 /*needs_fill_geometry=*/false, needs_state,
+                                 needs_matrix, dashes.size(),
+-                                needs_visibility_run, needs_clip_run,
++                                needs_visibility_run ? &content_marks : nullptr,
++                                needs_clip_run,
+                                 needs_native_run, needs_command_block)) {
+     ++native_budget_fallbacks_;
+     return Reject(VeloceNativeLineRejectReason::kBudget);
+@@ -1474,7 +1592,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+   }
+   last_opaque_state_index_ = *state_index;
+   if (needs_visibility_run) {
+-    visibility_runs_.push_back({command_index});
++    visibility_runs_.push_back({command_index, content_marks});
+     RememberVisibilityScope(content_marks);
+   }
+   if (needs_clip_run) {
+@@ -1489,6 +1607,13 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+     line.translation_x = inline_translation_x;
+     line.translation_y = inline_translation_y;
+     CHECK(native_lines_.Append(line, kMaxNativeLines));
++    if (bounds_known) {
++      if (native_line_bounds_) {
++        native_line_bounds_->Union(*bounds);
++      } else {
++        native_line_bounds_ = *bounds;
++      }
++    }
+     AppendNativeLineRun(*state_index, *matrix_index);
+     if (exact_butt_cap_noop) {
+       ++exact_noop_line_count_;
+@@ -1636,7 +1761,8 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueFill(
+           /*needs_line_run=*/false,
+           /*path_point_count=*/0u, geometry_points, needs_geometry,
+           /*needs_state=*/false, needs_matrix, /*dash_count=*/0u,
+-          needs_visibility_run, needs_clip_run, needs_native_run,
++          needs_visibility_run ? &content_marks : nullptr, needs_clip_run,
++          needs_native_run,
+           /*needs_command_block=*/false)) {
+     ++native_budget_fallbacks_;
+     return Reject(VeloceNativeLineRejectReason::kBudget);
+@@ -1656,7 +1782,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueFill(
+   }
+   last_fill_geometry_index_ = *geometry_index;
+   if (needs_visibility_run) {
+-    visibility_runs_.push_back({command_index});
++    visibility_runs_.push_back({command_index, content_marks});
+     RememberVisibilityScope(content_marks);
+   }
+   if (needs_clip_run) {
+@@ -1676,10 +1802,10 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueFill(
+   return true;
+ }
+ 
+-void VeloceRenderProgramBuilder::AppendPageObject(
++bool VeloceRenderProgramBuilder::AppendPageObject(
+     const CPDF_PageObject& object) {
+   if (exceeded_budget_) {
+-    return;
++    return false;
+   }
+   if (object_count_ >= kMaxHolderCommands) {
+     std::vector<VeloceNativeRun>().swap(native_runs_);
+@@ -1708,11 +1834,11 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+     matrix_indices_.clear();
+     fill_geometry_indices_.clear();
+     exceeded_budget_ = true;
+-    return;
++    return false;
+   }
+   const uint32_t command_index = object_count_++;
+   if (!object.AsPath()) {
+-    return;
++    return false;
+   }
+   ++path_object_count_;
+   if (build_start_millis_ == 0u) {
+@@ -1732,7 +1858,7 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+                                            &bounds_known);
+   }
+   if (!appended) {
+-    return;
++    return false;
+   }
+   const VeloceRenderOpcode opcode =
+       last_native_was_fill_
+@@ -1754,6 +1880,7 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+     AppendCommandBlock(command_index, opcode, bounds, bounds_known);
+   }
+   ++opcode_counts_[static_cast<size_t>(opcode)];
++  return opcode == VeloceRenderOpcode::kNativeOpaqueLine && bounds_known;
+ }
+ 
+ std::unique_ptr<const VeloceRenderProgram>
+@@ -1812,6 +1939,9 @@ VeloceRenderProgramBuilder::Finish() {
+           std::move(opaque_path_states_), std::move(path_matrices_),
+           std::move(dash_values_), std::move(visibility_runs_),
+           std::move(clip_runs_), std::move(command_blocks_),
++          has_omitted_page_objects_,
++          std::move(retained_command_ordinals_),
++          native_line_bounds_,
+           mutation_epoch_,
+           rejection_counts_, visibility_scoped_line_count_,
+           inline_translation_line_count_, std::move(spatial_index)));
+@@ -1820,7 +1950,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0116 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0117 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1830,9 +1960,9 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0116 event=compile "
+-        "mode=exact_clip_interned_program "
+-        "pathStorage=adopted "
++        "revision=r25-3-0117 event=compile "
++        "mode=parser_compact_ordered_program "
++        "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u "
+@@ -1851,7 +1981,9 @@ VeloceRenderProgramBuilder::Finish() {
+         "rejectMatrix=%u rejectTransparency=%u rejectColor=%u "
+         "rejectGraph=%u rejectVisibility=%u rejectBudget=%u "
+         "compileWindowMs=%llu",
+-        program->command_count(), program->native_line_count(),
++        program->command_count() - program->retained_page_object_count(),
++        program->retained_page_object_count(), program->command_count(),
++        program->native_line_count(),
+         program->opcode_count(VeloceRenderOpcode::kNativeOpaqueStrokePath),
+         program->opcode_count(VeloceRenderOpcode::kNativeDarkenStrokePath),
+         program->native_fill_path_count(), exact_noop_line_count_,
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 7e04eede..2f6d5a80 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -14,6 +14,7 @@
+ #include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_clippath.h"
++#include "core/fpdfapi/page/cpdf_contentmarks.h"
+ #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/retain_ptr.h"
+@@ -24,7 +25,7 @@ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 16u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 17u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -163,13 +164,13 @@ struct VeloceClipRun {
+   CPDF_ClipPath clip_path;
+ };
+ 
+-// Marks the first native command whose optional-content state can be resolved
+-// from the live holder object at this ordinal. Consecutive native commands
+-// reuse the run until another exact content-mark identity is observed.
++// Marks the first native command with this immutable optional-content scope.
++// The retained copy-on-write marks let compact programs resolve visibility
++// without retaining a canonical page object solely as a visibility proxy.
+ struct VeloceVisibilityRun {
+   uint32_t first_command = 0;
++  CPDF_ContentMarks content_marks;
+ };
+-static_assert(sizeof(VeloceVisibilityRun) == 4u);
+ 
+ inline constexpr uint16_t kVeloceCommandBlockUnbounded = 1u << 0;
+ 
+@@ -363,6 +364,15 @@ class VeloceRenderProgram final {
+   bool has_native_commands() const {
+     return header_.native_command_count != 0u;
+   }
++  bool has_omitted_page_objects() const {
++    return has_omitted_page_objects_;
++  }
++  size_t retained_page_object_count() const {
++    return has_omitted_page_objects_ ? retained_command_ordinals_.size()
++                                     : command_count();
++  }
++  std::optional<size_t> RetainedPageObjectIndex(
++      uint32_t command_index) const;
+   bool is_valid() const { return valid_; }
+   size_t native_line_count() const { return native_lines_.size(); }
+   const VeloceNativeLine& native_line(size_t index) const {
+@@ -411,6 +421,9 @@ class VeloceRenderProgram final {
+   uint32_t inline_translation_line_count() const {
+     return inline_translation_line_count_;
+   }
++  const std::optional<CFX_FloatRect>& native_line_bounds() const {
++    return native_line_bounds_;
++  }
+   const VeloceSpatialOrdinalIndex* spatial_index() const {
+     return spatial_index_.get();
+   }
+@@ -437,6 +450,9 @@ class VeloceRenderProgram final {
+       std::vector<VeloceVisibilityRun> visibility_runs,
+       std::vector<VeloceClipRun> clip_runs,
+       std::vector<VeloceCommandBlock> command_blocks,
++      bool has_omitted_page_objects,
++      std::vector<uint32_t> retained_command_ordinals,
++      std::optional<CFX_FloatRect> native_line_bounds,
+       uint64_t mutation_epoch,
+       std::array<uint32_t, kVeloceNativeLineRejectReasonCount>
+           rejection_counts,
+@@ -462,6 +478,9 @@ class VeloceRenderProgram final {
+   const std::vector<VeloceVisibilityRun> visibility_runs_;
+   const std::vector<VeloceClipRun> clip_runs_;
+   const std::vector<VeloceCommandBlock> command_blocks_;
++  const bool has_omitted_page_objects_;
++  const std::vector<uint32_t> retained_command_ordinals_;
++  const std::optional<CFX_FloatRect> native_line_bounds_;
+   const uint64_t mutation_epoch_;
+   const std::array<uint32_t, kVeloceNativeLineRejectReasonCount>
+       rejection_counts_;
+@@ -485,7 +504,12 @@ class VeloceRenderProgramBuilder final {
+   VeloceRenderProgramBuilder& operator=(
+       const VeloceRenderProgramBuilder&) = delete;
+ 
+-  void AppendPageObject(const CPDF_PageObject& object);
++  // Returns true only when `object` was exactly lowered as a native opaque
++  // two-point line. The caller still decides whether the canonical object may
++  // be omitted from a render-only holder.
++  bool AppendPageObject(const CPDF_PageObject& object);
++  bool OmitLastPageObject();
++  void RetainLastPageObject();
+   std::unique_ptr<const VeloceRenderProgram> Finish();
+ 
+  private:
+@@ -542,7 +566,7 @@ class VeloceRenderProgramBuilder final {
+                                 bool needs_state,
+                                 bool needs_matrix,
+                                 size_t dash_count,
+-                                bool needs_visibility_run,
++                                const CPDF_ContentMarks* visibility_marks,
+                                 bool needs_clip_run,
+                                 bool needs_native_run,
+                                 bool needs_command_block);
+@@ -560,6 +584,8 @@ class VeloceRenderProgramBuilder final {
+   std::vector<VeloceVisibilityRun> visibility_runs_;
+   std::vector<VeloceClipRun> clip_runs_;
+   std::vector<VeloceCommandBlock> command_blocks_;
++  std::vector<uint32_t> retained_command_ordinals_;
++  std::optional<CFX_FloatRect> native_line_bounds_;
+   VeloceCommandBlock pending_command_block_;
+   std::optional<CFX_FloatRect> spatial_holder_bounds_;
+   std::unique_ptr<VeloceSpatialOrdinalIndexBuilder> spatial_index_builder_;
+@@ -586,6 +612,7 @@ class VeloceRenderProgramBuilder final {
+   uint32_t exact_clip_equivalence_matches_ = 0;
+   uint32_t object_count_ = 0;
+   uint32_t path_object_count_ = 0;
++  bool has_omitted_page_objects_ = false;
+   uint64_t build_start_millis_ = 0;
+   const uint64_t mutation_epoch_;
+   bool exceeded_budget_ = false;
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index c170e9bc..84b2c940 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -193,6 +193,38 @@ TEST(VeloceRenderProgramTest, PreservesImplicitCanonicalPrefixOrdinal) {
+   EXPECT_EQ(1u, program->native_runs()[0].command_count);
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     CompactOrdinalMapPreservesCanonicalBarriersAndSourceOrder) {
++  VeloceRenderProgramBuilder builder(
++      /*initial_command_count=*/2u,
++      CFX_FloatRect(0.0f, 0.0f, 100.0f, 100.0f));
++
++  auto first_line = MakeOpaqueLine(1.0f, 3.0f);
++  ASSERT_TRUE(builder.AppendPageObject(*first_line));
++  ASSERT_TRUE(builder.OmitLastPageObject());
++
++  auto canonical_barrier = MakeOpaqueLine(4.0f, 6.0f);
++  canonical_barrier->set_winding_filltype();
++  EXPECT_FALSE(builder.AppendPageObject(*canonical_barrier));
++  builder.RetainLastPageObject();
++
++  auto second_line = MakeOpaqueLine(7.0f, 9.0f);
++  ASSERT_TRUE(builder.AppendPageObject(*second_line));
++  ASSERT_TRUE(builder.OmitLastPageObject());
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  EXPECT_TRUE(program->has_omitted_page_objects());
++  EXPECT_EQ(5u, program->command_count());
++  EXPECT_EQ(3u, program->retained_page_object_count());
++  ASSERT_EQ(0u, program->RetainedPageObjectIndex(0u).value());
++  ASSERT_EQ(1u, program->RetainedPageObjectIndex(1u).value());
++  EXPECT_FALSE(program->RetainedPageObjectIndex(2u).has_value());
++  ASSERT_EQ(2u, program->RetainedPageObjectIndex(3u).value());
++  EXPECT_FALSE(program->RetainedPageObjectIndex(4u).has_value());
++}
++
+ TEST(VeloceRenderProgramTest, OwnsMultiSegmentStrokeAndExactClipRun) {
+   auto first = MakeOpaqueStrokePath();
+   auto second = MakeOpaqueStrokePath();
+@@ -443,6 +475,8 @@ TEST(VeloceRenderProgramTest, PreservesMarkedContentAsVisibilityRuns) {
+   ASSERT_EQ(2u, program->visibility_runs().size());
+   EXPECT_EQ(0u, program->visibility_runs()[0].first_command);
+   EXPECT_EQ(2u, program->visibility_runs()[1].first_command);
++  EXPECT_EQ(1u, program->visibility_runs()[0].content_marks.CountItems());
++  EXPECT_EQ(1u, program->visibility_runs()[1].content_marks.CountItems());
+   EXPECT_EQ(0u, program->rejection_count(
+                     VeloceNativeLineRejectReason::kVisibility));
+ }
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 1f50d418..ccb47af1 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -52,7 +52,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+         return;
+       }
+       current_layer_ = context_->GetLayer(layer_index_);
+-      last_object_rendered_ = current_layer_->GetObjectHolder()->end();
++      has_rendered_object_ = false;
+       render_status_ = std::make_unique<CPDF_RenderStatus>(context_, device_);
+       if (options_) {
+         render_status_->SetOptions(*options_);
+@@ -106,7 +106,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+     CPDF_PageObjectHolder::const_iterator iter;
+     CPDF_PageObjectHolder::const_iterator iterEnd =
+         current_layer_->GetObjectHolder()->end();
+-    if (last_object_rendered_ != iterEnd) {
++    if (has_rendered_object_) {
+       iter = last_object_rendered_;
+       ++iter;
+     } else {
+@@ -149,6 +149,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+         }
+       }
+       last_object_rendered_ = iter;
++      has_rendered_object_ = true;
+       if (nObjsToGo == 0) {
+         if (pPause && pPause->NeedToPauseNow()) {
+           return;
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.h b/core/fpdfapi/render/cpdf_progressiverenderer.h
+index c30dd2f5..227d0d4f 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.h
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.h
+@@ -55,6 +55,7 @@ class CPDF_ProgressiveRenderer {
+   uint32_t layer_index_ = 0;
+   UnownedPtr<CPDF_RenderContext::Layer> current_layer_;
+   CPDF_PageObjectHolder::const_iterator last_object_rendered_;
++  bool has_rendered_object_ = false;
+ };
+ 
+ #endif  // CORE_FPDFAPI_RENDER_CPDF_PROGRESSIVERENDERER_H_
+diff --git a/core/fpdfapi/render/cpdf_renderoptions.cpp b/core/fpdfapi/render/cpdf_renderoptions.cpp
+index 176b298e..93ffc219 100644
+--- a/core/fpdfapi/render/cpdf_renderoptions.cpp
++++ b/core/fpdfapi/render/cpdf_renderoptions.cpp
+@@ -87,3 +87,8 @@ bool CPDF_RenderOptions::CheckPageObjectVisible(
+     const CPDF_PageObject* pPageObj) const {
+   return !oc_context_ || oc_context_->CheckPageObjectVisible(pPageObj);
+ }
++
++bool CPDF_RenderOptions::CheckContentMarksVisible(
++    const CPDF_ContentMarks& marks) const {
++  return !oc_context_ || oc_context_->CheckContentMarksVisible(marks);
++}
+diff --git a/core/fpdfapi/render/cpdf_renderoptions.h b/core/fpdfapi/render/cpdf_renderoptions.h
+index 176ae4be..25cafedd 100644
+--- a/core/fpdfapi/render/cpdf_renderoptions.h
++++ b/core/fpdfapi/render/cpdf_renderoptions.h
+@@ -15,6 +15,7 @@
+ #include "core/fxge/dib/fx_dib.h"
+ 
+ class CPDF_Dictionary;
++class CPDF_ContentMarks;
+ 
+ class CPDF_RenderOptions {
+  public:
+@@ -67,6 +68,7 @@ class CPDF_RenderOptions {
+   uint32_t GetCacheSizeLimit() const;
+   bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
+   bool CheckPageObjectVisible(const CPDF_PageObject* pPageObj) const;
++  bool CheckContentMarksVisible(const CPDF_ContentMarks& marks) const;
+ 
+   void SetDrawAnnots(bool draw) { draw_annots_ = draw; }
+   bool GetDrawAnnots() const { return draw_annots_; }
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 633cdb00..073710dd 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -228,6 +228,12 @@ bool IsFiniteVeloceRect(const CFX_FloatRect& rect) {
+          std::isfinite(rect.right) && std::isfinite(rect.top);
+ }
+ 
++bool IsFiniteVeloceMatrix(const CFX_Matrix& matrix) {
++  return std::isfinite(matrix.a) && std::isfinite(matrix.b) &&
++         std::isfinite(matrix.c) && std::isfinite(matrix.d) &&
++         std::isfinite(matrix.e) && std::isfinite(matrix.f);
++}
++
+ CFX_Matrix ComposeVeloceInlineTranslation(
+     float translation_x,
+     float translation_y,
+@@ -323,7 +329,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   if (!holder || !program || !program->has_native_commands() ||
+       !program->is_valid() ||
+       program->header().format_version != kVeloceRenderProgramFormatVersion ||
+-      program->command_count() != holder->GetPageObjectCount() ||
++      program->command_count() != holder->GetVeloceSourceObjectCount() ||
++      program->retained_page_object_count() !=
++          holder->GetVeloceRetainedPageObjectCount() ||
+       !IsFiniteVeloceRect(holder_clip)) {
+     return false;
+   }
+@@ -416,6 +424,48 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
+       ordered_path_context;
+   bool ordered_path_context_attempted = false;
++  if (program->has_omitted_page_objects()) {
++    if (options_.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) ||
++        !IsFiniteVeloceMatrix(holder_to_device) ||
++        !IsAvailableMatrix(holder_to_device) ||
++        !program->native_line_bounds().has_value()) {
++      return false;
++    }
++    const CFX_FloatRect device_line_bounds =
++        holder_to_device.TransformRect(*program->native_line_bounds());
++    if (!IsFiniteVeloceRect(device_line_bounds)) {
++      return false;
++    }
++    for (const CFX_Matrix& path_matrix : program->path_matrices()) {
++      const CFX_Matrix device_matrix = path_matrix * holder_to_device;
++      if (!IsFiniteVeloceMatrix(device_matrix) ||
++          !IsAvailableMatrix(device_matrix)) {
++        return false;
++      }
++    }
++    for (const VeloceOpaquePathState& state :
++         program->opaque_path_states()) {
++      const FX_ARGB stroke_argb = options_.TranslateObjectStrokeColor(
++          AlphaAndColorRefToArgb(255, state.stroke_color_ref),
++          CPDF_PageObject::Type::kPath);
++      if (FXARGB_A(stroke_argb) == 0) {
++        return false;
++      }
++    }
++    ordered_path_context = device_->CreateOrderedPathBatchContext();
++    ordered_path_context_attempted = true;
++    if (!ordered_path_context) {
++      return false;
++    }
++  }
++  const auto retained_object_for_command =
++      [holder, program](uint32_t source_ordinal) -> CPDF_PageObject* {
++    const std::optional<size_t> retained_index =
++        program->RetainedPageObjectIndex(source_ordinal);
++    return retained_index.has_value()
++               ? holder->GetVeloceRetainedPageObjectByIndex(*retained_index)
++               : nullptr;
++  };
+   std::optional<VeloceOrderedCommandCursor> ordered_command_cursor;
+   if (!spatial_full_replay) {
+     ordered_command_cursor.emplace(
+@@ -482,7 +532,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     // Replay the same ordinals canonically and in order.
+     for (size_t i = 0; i < flushed_count; ++i) {
+       CPDF_PageObject* fallback_object =
+-          holder->GetPageObjectByIndex(line_batch_commands_by_ordinal[i]);
++          retained_object_for_command(line_batch_commands_by_ordinal[i]);
+       CHECK(fallback_object);
+       ++native_object_lookups;
+       RenderSingleObject(fallback_object, holder_to_device);
+@@ -506,9 +556,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0116 event=replay "
+-        "mode=exact_clip_interned_backend "
++        "revision=r25-3-0117 event=replay "
++        "mode=parser_compact_ordered_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
++        "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+         "darkenDraws=%zu darkenFallbacks=%zu blocksTested=%zu "
+@@ -526,7 +577,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "mandatoryRuns=%zu mandatoryCommands=%zu cursorWords=%zu "
+         "replayWorkUnits=%zu cancelChecks=%zu "
+         "replayUs=%llu",
+-        result, command_count, commands_skipped, program->native_line_count(),
++        result, command_count, commands_skipped,
++        program->command_count() - program->retained_page_object_count(),
++        program->retained_page_object_count(), program->native_line_count(),
+         program->native_stroke_path_count(), program->native_fill_path_count(),
+         program->clip_runs().size(),
+         canonical_draws, native_draws, native_path_draws,
+@@ -693,7 +746,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         return true;
+       }
+       native_clip_ready = false;
+-      CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++      CPDF_PageObject* object = retained_object_for_command(command_index);
+       CHECK(object);
+       if (!object->IsActive() ||
+           !VeloceRectsIntersect(object->GetRect(), holder_clip)) {
+@@ -771,13 +824,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     CHECK_NE(active_visibility_run_index,
+              std::numeric_limits<size_t>::max());
+     if (checked_visibility_run_index != active_visibility_run_index) {
+-      CPDF_PageObject* representative = holder->GetPageObjectByIndex(
+-          visibility_runs[active_visibility_run_index].first_command);
+-      CHECK(representative);
+       active_visibility_run_visible =
+-          options_.CheckPageObjectVisible(representative);
++          options_.CheckContentMarksVisible(
++              visibility_runs[active_visibility_run_index].content_marks);
+       checked_visibility_run_index = active_visibility_run_index;
+-      ++native_object_lookups;
+       ++visibility_run_checks;
+     }
+     if (!active_visibility_run_visible) {
+@@ -860,7 +910,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       }
+       native_clip_ready = false;
+       CPDF_PageObject* fallback_object =
+-          holder->GetPageObjectByIndex(command_index);
++          retained_object_for_command(command_index);
+       CHECK(fallback_object);
+       ++native_object_lookups;
+       RenderSingleObject(fallback_object, holder_to_device);
+@@ -898,7 +948,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         }
+         native_clip_ready = false;
+         CPDF_PageObject* fallback_object =
+-            holder->GetPageObjectByIndex(command_index);
++            retained_object_for_command(command_index);
+         CHECK(fallback_object);
+         ++native_object_lookups;
+         RenderSingleObject(fallback_object, holder_to_device);
+@@ -952,7 +1002,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       } else {
+         native_clip_ready = false;
+         CPDF_PageObject* fallback_object =
+-            holder->GetPageObjectByIndex(command_index);
++            retained_object_for_command(command_index);
+         CHECK(fallback_object);
+         ++native_object_lookups;
+         RenderSingleObject(fallback_object, holder_to_device);
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 701a430f..ea1d75e3 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1016,6 +1016,9 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+   if (!status || !holder) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
++  if (holder->HasVeloceOmittedPageObjects()) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   if (!IsPathDisplayListFeatureEnabled(status)) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
