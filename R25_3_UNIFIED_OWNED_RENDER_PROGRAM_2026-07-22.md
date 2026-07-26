@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0117 on 2026-07-26 (Asia/Taipei)
+**Updated through:** r25-3-0118 on 2026-07-26 (Asia/Taipei)
 
 ## Decision
 
@@ -718,6 +718,56 @@ executor still walks it. This must be corrected before adding another index.
     canonical ownership remain unchanged. Acceptance requires materially
     lower Q16 `compileWindowMs`, `acquireMs`, launch-to-first-tile time, and
     peak holder memory, plus exact normal-page, 11.pdf, Q16, and EP23 pixels.
+
+    Device results show the ownership change worked but did not remove most
+    parser work. Q16 omitted 2,940,123 of 3,165,420 source objects and reduced
+    `compileWindowMs` from 12,162 to 9,888 ms, `acquireMs` from 13,267 to
+    10,955 ms, and preview total from 15,089 to 12,986 ms. Dense tile replay
+    still selects about 2.2 million genuinely intersecting commands, so that
+    cost is separate from parser construction. 11.pdf and EP23 omitted no
+    objects, as designed; their one-run timing variation requires standalone
+    cold-process confirmation rather than a new routing rule.
+
+14. **r25-3-0118: direct parser line emission.** The parser no longer creates
+    a temporary `CPDF_PathObject`, copies all graphics-state snapshots into
+    it, calculates its bounds, and immediately decodes it back into the same
+    owned native line. For an already identified normal, stroke-only,
+    two-point path, it passes the two endpoints, matrix, and PDFium's immutable
+    copy-on-write graphics state and content marks directly to the shared
+    native-line lowerer.
+
+    The direct and page-object entries use the same exact eligibility, state
+    and matrix interning, clip and visibility retention, 96 MiB budget,
+    spatial insertion, source ordinal, and native-run append rules. A shared
+    two-point stroke-bounds primitive is also used by ordinary
+    `CFX_Path::GetBoundingBoxForStrokePath()`, so direct and canonical
+    construction cannot drift. Darken bypasses direct emission and preserves
+    its existing owned-path executor. Any unsupported state, unknown bound,
+    budget failure, or non-line shape creates and retains the ordinary PDFium
+    object at the same ordinal.
+
+    Successfully omitted, non-clipping lines do not allocate a `CPDF_Path` or
+    `CPDF_PathObject`. Lines that also update the clip still materialize the
+    path once because PDF clip state requires it. No parser-state generation,
+    classifier, threshold, cache, lock, second pass, or Kotlin work is added.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0118 event=compile
+    mode=parser_direct_line_program
+    parserDirectLineAttempts=...
+
+    revision=r25-3-0118 event=replay
+    mode=parser_direct_line_backend
+    ```
+
+    Q16 acceptance requires `parserDirectLineAttempts` near its exact opaque
+    line count, unchanged command/opcode/omission/spatial/replay counters and
+    pixels versus 0117, and materially lower `compileWindowMs`, `acquireMs`,
+    preview total, and launch-to-first-tile time. Replay itself is intentionally
+    unchanged. 11.pdf, EP23, and normal pages should have zero or few direct
+    attempts unless they contain the same universally eligible line commands.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
