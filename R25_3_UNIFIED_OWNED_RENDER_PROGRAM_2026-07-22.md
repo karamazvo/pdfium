@@ -827,6 +827,68 @@ executor still walks it. This must be corrected before adding another index.
     and normal documents without this exact operation should retain the 0118
     representation and performance within run-to-run noise.
 
+    Device results rejected the range representation as the final design.
+    Q16 retained 574,229 exact no-op commands as 364,160 ranges. Removing
+    their line payload reduced logical bytes from 80,768,903 to 75,145,199,
+    but actual retained bytes fell only from 95,660,975 to 94,481,359 while
+    native runs increased from 320,091 to 647,871. Acquire time increased
+    from 7,898 ms to 8,636 ms, preview total from 9,929 ms to 10,667 ms, and
+    launch-to-first-visible from 10,379 ms to 11,101 ms. Full replay remained
+    about 2.03 seconds. The semantic proof was sound; materializing each
+    alternating no-op interval as a source-run boundary was not.
+
+16. **r25-3-0120: ranked sparse line tape.** Exact zero-coverage commands
+    remain part of the surrounding `kNativeOpaqueLine` source run. Their only
+    representation is one bit per source ordinal in a lazily grown 64-bit
+    mask. A prefix rank is retained once per 256 source commands so sparse
+    replay can map a selected source ordinal to compact line payload in
+    bounded time. Full sequential replay carries the payload cursor forward
+    and therefore performs no rank lookup for consecutive commands.
+
+    No-op commands retain no geometry, state, matrix, clip, visibility,
+    bounds, spatial posting, or raster payload. They also do not split an
+    otherwise consecutive native line run. Full replay skips consecutive set
+    bits word by word; sparse replay never selects them because they have no
+    spatial posting. Canonical barriers and different native opcodes remain
+    hard source-order boundaries.
+
+    The immutable program validates all of the following before replay:
+
+    - the mask is bounded by source command count;
+    - prefix ranks exactly match mask population counts;
+    - every set bit is covered by a native line run;
+    - native line payload counts equal run commands minus set bits;
+    - no set bit can occur in a fill, path, or canonical span.
+
+    Construction charges mask words and rank blocks to the existing 96 MiB
+    ceiling. Pages with no exact no-op commands allocate neither structure.
+    The mechanism adds no classifier, threshold, second pass, page-sized
+    bitmap, global cache, lock, Kotlin work, or UI-thread work.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0120 event=compile
+    mode=ranked_sparse_line_program
+    nativeRuns=... exactNoOpLines=...
+    exactNoOpWords=... exactNoOpRankBlocks=... bytes=...
+
+    revision=r25-3-0120 event=replay
+    mode=ranked_sparse_line_backend
+    exactNoOpLinesSkipped=... replayUs=...
+    ```
+
+    Q16 must preserve the 0119 command, omission, native opcode, spatial,
+    draw, and pixel results. `exactNoOpLines` should remain about 574,229 and
+    `nativeOpaqueLines` about 2,365,894, while `nativeRuns` should return near
+    the pre-range level rather than 647,871. Mask storage is bounded by one
+    bit per covered source ordinal and rank storage by one 32-bit value per
+    256 ordinals. Acceptance requires lower retained bytes and compile/acquire
+    time than 0119. Full replay may improve from fewer run transitions, but
+    the remaining roughly 2.36 million drawable lines still define its raster
+    floor. 11.pdf, EP23, and pages without exact no-ops must report zero mask
+    and rank entries and remain within timing noise.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former
