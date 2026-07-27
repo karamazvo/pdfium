@@ -926,6 +926,67 @@ executor still walks it. This must be corrected before adding another index.
     - pages with no no-ops log `exactNoOpWords=0` and
       `exactNoOpRankBlocks=0` while remaining valid.
 
+    Device results confirmed the correction restored 11.pdf and EP23 to their
+    native programs. Q16 retained its 0120 representation
+    (`commands=3165420`, `nativeRuns=320091`, `bytes=82373915`) but exposed the
+    next first-render bottleneck: preview acquisition took about 9.42 seconds
+    of an 11.48-second render, while replay took about 2.07 seconds. The
+    builder performed 2,940,123 parser-direct line attempts and 2,590,767
+    incremental budget checks even though the final program had one paint
+    state, one clip run, and seven visibility runs. Spatial replay was already
+    effective; repeated exact parser-state lowering dominated construction.
+
+18. **r25-3-0122: exact parser-state line sink.** The parser remains the only
+    producer and the immutable RenderProgram remains the only accelerated
+    representation. The builder remembers the last successfully lowered line
+    context using PDFium's copy-on-write backing identity for general, color,
+    and graph state, plus the exact affine transform class and the existing
+    exact clip/visibility scopes.
+
+    A cache hit is not a page classification or semantic approximation. The
+    cached state objects keep the old backing stores alive, so any mutation
+    forces PDFium copy-on-write and changes identity. A mismatch returns to the
+    complete lowerer before recording the command. Only a complete exact
+    lowering may refresh the context. Matching commands still compute their
+    transformed stroke bounds and append their source ordinal, spatial
+    posting, line payload, and ordered run membership. Painter order, optional
+    content, clipping, no-op rank mapping, canonical barriers, and pixels are
+    unchanged.
+
+    Repeated per-line retained-memory arithmetic is replaced only on exact
+    context hits by bounded logical reservation packets: 4,096 line payloads,
+    4,096 native runs when needed, and 1,024 line-state runs when needed.
+    Reservations are charged to the existing 96 MiB ceiling before use; final
+    actual-capacity validation remains authoritative. The context is one
+    builder-local optional value. There is no global cache, lock, page-sized
+    allocation, second pass, classifier, threshold, JNI/Kotlin work, or
+    UI-thread work.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0122 event=compile
+    mode=exact_parser_state_line_sink
+    parserDirectLineAttempts=...
+    parserLineContextHits=...
+    parserLineContextBuilds=...
+    parserLineBudgetRefills=...
+    compileWindowMs=...
+    ```
+
+    For Q16, `parserLineContextHits` should approach parser-direct attempts,
+    context builds should track actual immutable-state changes rather than
+    object count, reservation refills should stay near fixed packet count, and
+    `incrementalBudgetChecks` should fall from about 2.59 million toward the
+    roughly 221,000 non-line native commands.
+    Command, omission, opcode, no-op, state, clip, visibility, spatial,
+    actual retained-byte, replay, draw, and pixel results must match 0121.
+    Logical charged bytes may differ by at most the bounded unused tail of the
+    current reservation packets. Acceptance requires a material reduction in
+    preview `acquireMs` and launch-to-first-visible time. 11.pdf, EP23, and
+    ordinary pages without parser-direct lines do not enter this sink and must
+    remain within measurement noise.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former

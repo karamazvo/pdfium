@@ -150,6 +150,7 @@ these patches:
 | r25-3-0119 | `0119-veloce-render-program-payload-free-exact-noop.patch` | Proves identical-endpoint butt-cap strokes have zero coverage and removes their geometry payload. It stores source ordinals as ranges, but Q16 device results showed 364,160 ranges split native line runs from 320,091 to 647,871 and regressed acquire time; retained for revision traceability and superseded by 0120. |
 | r25-3-0120 | `0120-veloce-render-program-ranked-sparse-line-tape.patch` | Keeps exact zero-coverage ordinals as bits inside surrounding native line runs instead of materialized ranges. One prefix rank per 256 source commands provides bounded sparse source-to-payload mapping; full replay uses a sequential cursor. No-op commands retain no geometry or spatial posting, no longer fragment line runs, and all mask/rank bytes remain under the existing 96 MiB program cap. |
 | r25-3-0121 | `0121-veloce-render-program-empty-rank-validation-correction.patch` | Corrects 0120's empty optional-rank invariant. Programs with no exact no-ops now validate with zero mask words and zero rank blocks instead of being discarded to canonical rendering. Adds a dedicated regression test and advances revision markers without changing representation, eligibility, pixels, replay, or memory policy. |
+| r25-3-0122 | `0122-veloce-parser-exact-state-line-sink.patch` | Adds a builder-local exact parser-line context keyed by PDFium copy-on-write backing identity for general, color, and graph state plus exact transform class, clip, and visibility scope. Matching lines bypass repeated semantic validation, state hashing, and table lookup but still produce the same transformed bounds, source ordinal, spatial posting, payload, and ordered runs. Any identity or scope change returns to the complete lowerer and refreshes the context only after exact success. Logical memory is charged in bounded 4,096-entry line/run and 1,024-entry line-run packets under the existing 96 MiB ceiling. No classifier, threshold, retained page cache, lock, bitmap, JNI/Kotlin work, or UI-thread work is added. |
 
 ## Why this directory exists
 
@@ -162,8 +163,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0117`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0117:
+blind numeric globbing. For `r25-3-0122`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0122:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -197,10 +198,15 @@ git apply patches/ship/0114-veloce-render-program-shared-exact-form-cache.patch
 git apply patches/ship/0115-veloce-render-program-exact-clip-interning.patch
 git apply patches/ship/0116-veloce-parser-adopt-path-point-storage.patch
 git apply patches/ship/0117-veloce-parser-compact-ordered-line-tape.patch
+git apply patches/ship/0118-veloce-parser-direct-line-emission.patch
+git apply patches/ship/0119-veloce-render-program-payload-free-exact-noop.patch
+git apply patches/ship/0120-veloce-render-program-ranked-sparse-line-tape.patch
+git apply patches/ship/0121-veloce-render-program-empty-rank-validation-correction.patch
+git apply patches/ship/0122-veloce-parser-exact-state-line-sink.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0117` build. The machine-checked list lives in the 0117 workflow.
+`r25-3-0122` build. The machine-checked list lives in the 0122 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

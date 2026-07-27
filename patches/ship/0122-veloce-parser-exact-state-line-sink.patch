@@ -1,0 +1,587 @@
+diff --git a/core/fpdfapi/page/cpdf_colorstate.h b/core/fpdfapi/page/cpdf_colorstate.h
+index 42b42a743..1cd8dd421 100644
+--- a/core/fpdfapi/page/cpdf_colorstate.h
++++ b/core/fpdfapi/page/cpdf_colorstate.h
+@@ -52,6 +52,9 @@ class CPDF_ColorState {
+                         pdfium::span<float> values);
+ 
+   bool HasRef() const { return !!ref_; }
++  bool HasSameBackingStore(const CPDF_ColorState& that) const {
++    return ref_ == that.ref_;
++  }
+ 
+  private:
+   class ColorData final : public Retainable {
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index 501378982..a064a81e5 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0121 event=form_cache result=hit "
++            "revision=r25-3-0122 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0121 event=form_cache result=store "
++          "revision=r25-3-0122 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_generalstate.h b/core/fpdfapi/page/cpdf_generalstate.h
+index d01a76feb..a11d0496c 100644
+--- a/core/fpdfapi/page/cpdf_generalstate.h
++++ b/core/fpdfapi/page/cpdf_generalstate.h
+@@ -76,6 +76,10 @@ class CPDF_GeneralState {
+   bool GetStrokeAdjust() const;
+   void SetStrokeAdjust(bool adjust);
+ 
++  bool HasSameBackingStore(const CPDF_GeneralState& that) const {
++    return ref_ == that.ref_;
++  }
++
+   void SetAlphaSource(bool source);
+   void SetTextKnockout(bool knockout);
+ 
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 5fb46250e..eb5272e9f 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1254,8 +1254,26 @@ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder(
+     spatial_holder_bounds_ = normalized_bounds;
+   }
+ }
++
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+ 
++VeloceRenderProgramBuilder::ParsedLineContext::ParsedLineContext(
++    const CPDF_GraphicStates& states,
++    const CFX_Matrix& matrix,
++    bool uses_inline_translation,
++    uint16_t state_index,
++    uint16_t matrix_index,
++    float line_width)
++    : general_state(states.general_state()),
++      color_state(states.color_state()),
++      graph_state(states.graph_state()),
++      matrix(matrix),
++      state_index(state_index),
++      matrix_index(matrix_index),
++      line_width(line_width),
++      uses_inline_translation(uses_inline_translation),
++      line_cap(states.graph_state().GetLineCap()) {}
++
+ bool VeloceRenderProgramBuilder::OmitLastPageObject() {
+   CHECK_GT(object_count_, 0u);
+   if (!has_omitted_page_objects_) {
+@@ -1528,6 +1546,83 @@ bool VeloceRenderProgramBuilder::TryReserveRetainedBudget(
+   return true;
+ }
+ 
++bool VeloceRenderProgramBuilder::TryReserveCachedParsedLineBudget(
++    bool needs_line_run,
++    bool needs_native_run) {
++  constexpr size_t kRunReservationEntries = 4096u;
++  constexpr size_t kLineRunReservationEntries = 1024u;
++
++  size_t line_slots =
++      cached_line_payload_budget_slots_ == 0u
++          ? std::min(VeloceNativeLineStorage::kChunkLines,
++                     kMaxNativeLines - native_lines_.size())
++          : 0u;
++  size_t native_run_slots =
++      needs_native_run && cached_native_run_budget_slots_ == 0u
++          ? std::min(kRunReservationEntries,
++                     kMaxNativeRuns - native_runs_.size())
++          : 0u;
++  size_t line_run_slots =
++      needs_line_run && cached_line_run_budget_slots_ == 0u
++          ? std::min(kLineRunReservationEntries,
++                     kMaxNativeLines - native_line_runs_.size())
++          : 0u;
++  if (line_slots == 0u && cached_line_payload_budget_slots_ == 0u) {
++    return false;
++  }
++  if (needs_native_run && native_run_slots == 0u &&
++      cached_native_run_budget_slots_ == 0u) {
++    return false;
++  }
++  if (needs_line_run && line_run_slots == 0u &&
++      cached_line_run_budget_slots_ == 0u) {
++    return false;
++  }
++
++  size_t additional_bytes =
++      line_slots * sizeof(VeloceNativeLine) +
++      native_run_slots * sizeof(VeloceNativeRun) +
++      line_run_slots * sizeof(VeloceNativeLineRun);
++  if (additional_bytes != 0u) {
++    if (logical_retained_bytes_ > kMaxRetainedProgramBytes) {
++      return false;
++    }
++    const size_t remaining_bytes =
++        kMaxRetainedProgramBytes - logical_retained_bytes_;
++    if (additional_bytes > remaining_bytes) {
++      // A packet is only an accounting optimization. Shrink the final refill
++      // so it cannot reject a command that fits under the exact byte ceiling.
++      line_slots = line_slots == 0u ? 0u : 1u;
++      native_run_slots = native_run_slots == 0u ? 0u : 1u;
++      line_run_slots = line_run_slots == 0u ? 0u : 1u;
++      additional_bytes =
++          line_slots * sizeof(VeloceNativeLine) +
++          native_run_slots * sizeof(VeloceNativeRun) +
++          line_run_slots * sizeof(VeloceNativeLineRun);
++    }
++    if (additional_bytes > remaining_bytes) {
++      return false;
++    }
++    ++parser_line_budget_refill_count_;
++    logical_retained_bytes_ += additional_bytes;
++    cached_line_payload_budget_slots_ += line_slots;
++    cached_native_run_budget_slots_ += native_run_slots;
++    cached_line_run_budget_slots_ += line_run_slots;
++  }
++
++  CHECK_GT(cached_line_payload_budget_slots_, 0u);
++  --cached_line_payload_budget_slots_;
++  if (needs_native_run) {
++    CHECK_GT(cached_native_run_budget_slots_, 0u);
++    --cached_native_run_budget_slots_;
++  }
++  if (needs_line_run) {
++    CHECK_GT(cached_line_run_budget_slots_, 0u);
++    --cached_line_run_budget_slots_;
++  }
++  return true;
++}
++
+ size_t VeloceRenderProgramBuilder::EstimatedRetainedBytesWithoutSpatialIndex()
+     const {
+   size_t native_path_bytes =
+@@ -1593,7 +1688,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+         source_path->GetPoints()[0].point_,
+         source_path->GetPoints()[1].point_, path->matrix(),
+         path->graphic_states(), *path->GetContentMarks(), command_index,
+-        bounds, bounds_known);
++        /*remember_parser_context=*/false, bounds, bounds_known);
+   }
+ 
+   CFX_Matrix owned_matrix = path->matrix();
+@@ -1838,6 +1933,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueLine(
+     const CPDF_GraphicStates& states,
+     const CPDF_ContentMarks& content_marks,
+     uint32_t command_index,
++    bool remember_parser_context,
+     CFX_FloatRect* bounds,
+     bool* bounds_known) {
+   last_native_was_exact_noop_ = false;
+@@ -2050,9 +2146,125 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueLine(
+   if (uses_inline_translation) {
+     ++inline_translation_line_count_;
+   }
++  if (remember_parser_context) {
++    RememberParsedLineContext(matrix, states, *state_index, *matrix_index,
++                              line_width);
++  }
+   return true;
+ }
+ 
++void VeloceRenderProgramBuilder::RememberParsedLineContext(
++    const CFX_Matrix& matrix,
++    const CPDF_GraphicStates& states,
++    uint16_t state_index,
++    uint16_t matrix_index,
++    float line_width) {
++  const bool uses_inline_translation = HasIdentityLinearPart(matrix);
++  parsed_line_context_.emplace(
++      states, uses_inline_translation ? CFX_Matrix() : matrix,
++      uses_inline_translation, state_index, matrix_index, line_width);
++  ++parser_line_context_build_count_;
++}
++
++VeloceRenderProgramBuilder::ParsedLineCacheResult
++VeloceRenderProgramBuilder::TryAppendCachedParsedLine(
++    const CFX_PointF& start,
++    const CFX_PointF& end,
++    const CFX_Matrix& matrix,
++    const CPDF_GraphicStates& states,
++    const CPDF_ContentMarks& content_marks,
++    uint32_t command_index,
++    CFX_FloatRect* bounds,
++    bool* bounds_known) {
++  if (!parsed_line_context_ || !IsFinitePoint(start) || !IsFinitePoint(end) ||
++      !IsFiniteMatrix(matrix)) {
++    return ParsedLineCacheResult::kMiss;
++  }
++  const bool uses_inline_translation = HasIdentityLinearPart(matrix);
++  if (uses_inline_translation !=
++          parsed_line_context_->uses_inline_translation ||
++      (!uses_inline_translation &&
++       !SameMatrix(parsed_line_context_->matrix, matrix)) ||
++      !parsed_line_context_->general_state.HasSameBackingStore(
++          states.general_state()) ||
++      !parsed_line_context_->color_state.HasSameBackingStore(
++          states.color_state()) ||
++      !parsed_line_context_->graph_state.HasSameBackingStore(
++          states.graph_state()) ||
++      content_marks.CountItems() > kMaxVisibilityMarks) {
++    return ParsedLineCacheResult::kMiss;
++  }
++
++  last_native_was_exact_noop_ = false;
++  last_native_was_darken_ = false;
++  last_native_was_fill_ = false;
++  if (start == end &&
++      parsed_line_context_->line_cap ==
++          CFX_GraphStateData::LineCap::kButt) {
++    ++parser_line_context_hit_count_;
++    return AppendExactNoOp(command_index)
++               ? ParsedLineCacheResult::kAppended
++               : ParsedLineCacheResult::kRejected;
++  }
++  if (!HasSameVisibilityScope(content_marks) ||
++      !HasSameClipScope(states.clip_path())) {
++    return ParsedLineCacheResult::kMiss;
++  }
++  ++parser_line_context_hit_count_;
++
++  *bounds = CFX_Path::GetBoundingBoxForStrokeLine(
++      start, end, parsed_line_context_->line_width);
++  *bounds = matrix.TransformRect(*bounds);
++  if (parsed_line_context_->line_width == 0.0f) {
++    bounds->Inflate(0.5f, 0.5f);
++  }
++  bounds->Normalize();
++  *bounds_known = IsFiniteRect(*bounds) && !bounds->IsEmpty();
++
++  const bool needs_native_run =
++      native_runs_.empty() ||
++      native_runs_.back().opcode != VeloceRenderOpcode::kNativeOpaqueLine ||
++      native_runs_.back().first_command + native_runs_.back().command_count !=
++          command_index;
++  const bool needs_line_run =
++      native_line_runs_.empty() ||
++      native_line_runs_.back().state_index !=
++          parsed_line_context_->state_index ||
++      native_line_runs_.back().matrix_index !=
++          parsed_line_context_->matrix_index;
++  if (native_lines_.size() >= kMaxNativeLines ||
++      (needs_native_run && native_runs_.size() >= kMaxNativeRuns) ||
++      !TryReserveCachedParsedLineBudget(needs_line_run, needs_native_run)) {
++    ++native_budget_fallbacks_;
++    Reject(VeloceNativeLineRejectReason::kBudget);
++    return ParsedLineCacheResult::kRejected;
++  }
++
++  VeloceNativeLine line;
++  line.start = start;
++  line.end = end;
++  line.translation_x = uses_inline_translation ? matrix.e : 0.0f;
++  line.translation_y = uses_inline_translation ? matrix.f : 0.0f;
++  CHECK(native_lines_.Append(line, kMaxNativeLines));
++  if (*bounds_known) {
++    if (native_line_bounds_) {
++      native_line_bounds_->Union(*bounds);
++    } else {
++      native_line_bounds_ = *bounds;
++    }
++  }
++  AppendNativeLineRun(parsed_line_context_->state_index,
++                      parsed_line_context_->matrix_index);
++  AppendSpatialOrdinal(command_index, *bounds, *bounds_known);
++  if (content_marks.CountItems() != 0u) {
++    ++visibility_scoped_line_count_;
++  }
++  if (uses_inline_translation) {
++    ++inline_translation_line_count_;
++  }
++  return ParsedLineCacheResult::kAppended;
++}
++
+ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueFill(
+     const CPDF_PageObject& object,
+     uint32_t command_index,
+@@ -2288,8 +2500,24 @@ bool VeloceRenderProgramBuilder::AppendParsedOpaqueLine(
+   ++parser_direct_line_attempt_count_;
+   CFX_FloatRect bounds;
+   bool bounds_known = false;
++  const ParsedLineCacheResult cached_result = TryAppendCachedParsedLine(
++      start, end, matrix, states, content_marks, command_index, &bounds,
++      &bounds_known);
++  if (cached_result == ParsedLineCacheResult::kRejected) {
++    return false;
++  }
++  if (cached_result == ParsedLineCacheResult::kAppended) {
++    if (last_native_was_exact_noop_) {
++      return true;
++    }
++    return CompleteNativeAppend(
++        command_index, VeloceRenderOpcode::kNativeOpaqueLine, bounds,
++        bounds_known, static_cast<uint32_t>(native_lines_.size() - 1u));
++  }
+   if (!TryAppendNativeOpaqueLine(start, end, matrix, states, content_marks,
+-                                 command_index, &bounds, &bounds_known)) {
++                                 command_index,
++                                 /*remember_parser_context=*/true, &bounds,
++                                 &bounds_known)) {
+     return false;
+   }
+   if (last_native_was_exact_noop_) {
+@@ -2426,7 +2654,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0121 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0122 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2436,11 +2664,13 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0121 event=compile "
+-        "mode=ranked_sparse_line_program "
++        "revision=r25-3-0122 event=compile "
++        "mode=exact_parser_state_line_sink "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+-        "parserDirectLineAttempts=%u nativeOpaqueLines=%zu "
++        "parserDirectLineAttempts=%u parserLineContextHits=%u "
++        "parserLineContextBuilds=%u parserLineBudgetRefills=%u "
++        "nativeOpaqueLines=%zu "
+         "nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u exactNoOpWords=%zu "
+         "exactNoOpRankBlocks=%zu "
+@@ -2461,7 +2691,8 @@ VeloceRenderProgramBuilder::Finish() {
+         "compileWindowMs=%llu",
+         program->command_count() - program->retained_page_object_count(),
+         program->retained_page_object_count(), program->command_count(),
+-        parser_direct_line_attempt_count_,
++        parser_direct_line_attempt_count_, parser_line_context_hit_count_,
++        parser_line_context_build_count_, parser_line_budget_refill_count_,
+         program->native_line_count(),
+         program->opcode_count(VeloceRenderOpcode::kNativeOpaqueStrokePath),
+         program->opcode_count(VeloceRenderOpcode::kNativeDarkenStrokePath),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 8dbbac3ff..ef25733d7 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -14,11 +14,14 @@
+ #include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_clippath.h"
++#include "core/fpdfapi/page/cpdf_colorstate.h"
+ #include "core/fpdfapi/page/cpdf_contentmarks.h"
+ #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
++#include "core/fpdfapi/page/cpdf_generalstate.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/span.h"
++#include "core/fxge/cfx_graphstate.h"
+ #include "core/fxge/cfx_path.h"
+ 
+ class CPDF_ContentMarks;
+@@ -26,7 +29,7 @@ class CPDF_GraphicStates;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 20u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 21u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -543,8 +546,38 @@ class VeloceRenderProgramBuilder final {
+   bool OmitLastPageObject();
+   void RetainLastPageObject();
+   std::unique_ptr<const VeloceRenderProgram> Finish();
++  uint32_t parser_line_context_hit_count_for_testing() const {
++    return parser_line_context_hit_count_;
++  }
++  uint32_t parser_line_context_build_count_for_testing() const {
++    return parser_line_context_build_count_;
++  }
+ 
+  private:
++  struct ParsedLineContext {
++    ParsedLineContext(const CPDF_GraphicStates& states,
++                      const CFX_Matrix& matrix,
++                      bool uses_inline_translation,
++                      uint16_t state_index,
++                      uint16_t matrix_index,
++                      float line_width);
++
++    CPDF_GeneralState general_state;
++    CPDF_ColorState color_state;
++    CFX_GraphState graph_state;
++    CFX_Matrix matrix;
++    uint16_t state_index;
++    uint16_t matrix_index;
++    float line_width;
++    bool uses_inline_translation;
++    CFX_GraphStateData::LineCap line_cap;
++  };
++  enum class ParsedLineCacheResult {
++    kMiss,
++    kAppended,
++    kRejected,
++  };
++
+   static constexpr size_t kMaxHolderCommands = 32u * 1024u * 1024u;
+   static constexpr size_t kMaxRetainedProgramBytes = 96u * 1024u * 1024u;
+   static constexpr size_t kMaxNativeRuns = 1024u * 1024u;
+@@ -573,8 +606,25 @@ class VeloceRenderProgramBuilder final {
+                                  const CPDF_GraphicStates& states,
+                                  const CPDF_ContentMarks& content_marks,
+                                  uint32_t command_index,
++                                 bool remember_parser_context,
+                                  CFX_FloatRect* bounds,
+                                  bool* bounds_known);
++  ParsedLineCacheResult TryAppendCachedParsedLine(
++      const CFX_PointF& start,
++      const CFX_PointF& end,
++      const CFX_Matrix& matrix,
++      const CPDF_GraphicStates& states,
++      const CPDF_ContentMarks& content_marks,
++      uint32_t command_index,
++      CFX_FloatRect* bounds,
++      bool* bounds_known);
++  void RememberParsedLineContext(const CFX_Matrix& matrix,
++                                 const CPDF_GraphicStates& states,
++                                 uint16_t state_index,
++                                 uint16_t matrix_index,
++                                 float line_width);
++  bool TryReserveCachedParsedLineBudget(bool needs_line_run,
++                                        bool needs_native_run);
+   bool TryAppendNativeOpaqueFill(const CPDF_PageObject& object,
+                                  uint32_t command_index,
+                                  CFX_FloatRect* bounds,
+@@ -638,6 +688,7 @@ class VeloceRenderProgramBuilder final {
+   VeloceCommandBlock pending_command_block_;
+   std::optional<CFX_FloatRect> spatial_holder_bounds_;
+   std::unique_ptr<VeloceSpatialOrdinalIndexBuilder> spatial_index_builder_;
++  std::optional<ParsedLineContext> parsed_line_context_;
+   std::vector<RetainPtr<const CPDF_ContentMarkItem>>
+       previous_visibility_marks_;
+   bool has_previous_visibility_scope_ = false;
+@@ -660,6 +711,12 @@ class VeloceRenderProgramBuilder final {
+   uint32_t exact_clip_equivalence_checks_ = 0;
+   uint32_t exact_clip_equivalence_matches_ = 0;
+   uint32_t parser_direct_line_attempt_count_ = 0;
++  uint32_t parser_line_context_hit_count_ = 0;
++  uint32_t parser_line_context_build_count_ = 0;
++  uint32_t parser_line_budget_refill_count_ = 0;
++  size_t cached_line_payload_budget_slots_ = 0;
++  size_t cached_native_run_budget_slots_ = 0;
++  size_t cached_line_run_budget_slots_ = 0;
+   uint32_t object_count_ = 0;
+   uint32_t path_object_count_ = 0;
+   bool has_omitted_page_objects_ = false;
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 76959bf97..e2c551ddc 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -192,6 +192,70 @@ TEST(VeloceRenderProgramTest,
+             direct_program->spatial_index()->posting_count());
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     ParserLineContextReusesExactStateAndPreservesTranslations) {
++  auto object = MakeOpaqueLine(1.0f, 3.0f);
++  VeloceRenderProgramBuilder builder(
++      0u, CFX_FloatRect(-100.0f, -100.0f, 100.0f, 100.0f));
++
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {1.0f, 2.0f}, {3.0f, 4.0f},
++      CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 5.0f, 6.0f),
++      object->graphic_states(), *object->GetContentMarks()));
++  EXPECT_EQ(0u, builder.parser_line_context_hit_count_for_testing());
++  EXPECT_EQ(1u, builder.parser_line_context_build_count_for_testing());
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {7.0f, 8.0f}, {9.0f, 10.0f},
++      CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 11.0f, 12.0f),
++      object->graphic_states(), *object->GetContentMarks()));
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {13.0f, 14.0f}, {15.0f, 16.0f},
++      CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 17.0f, 18.0f),
++      object->graphic_states(), *object->GetContentMarks()));
++
++  EXPECT_EQ(2u, builder.parser_line_context_hit_count_for_testing());
++  EXPECT_EQ(1u, builder.parser_line_context_build_count_for_testing());
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++  ASSERT_TRUE(program);
++  EXPECT_EQ(3u, program->native_line_count());
++  EXPECT_EQ(1u, program->opaque_path_states().size());
++  EXPECT_TRUE(program->path_matrices().empty());
++  ASSERT_EQ(1u, program->native_line_runs().size());
++  EXPECT_EQ(3u, program->native_line_runs()[0].line_count);
++  EXPECT_EQ(5.0f, program->native_line(0).translation_x);
++  EXPECT_EQ(6.0f, program->native_line(0).translation_y);
++  EXPECT_EQ(11.0f, program->native_line(1).translation_x);
++  EXPECT_EQ(12.0f, program->native_line(1).translation_y);
++  EXPECT_EQ(17.0f, program->native_line(2).translation_x);
++  EXPECT_EQ(18.0f, program->native_line(2).translation_y);
++}
++
++TEST(VeloceRenderProgramTest, ParserLineContextInvalidatesOnStateMutation) {
++  auto object = MakeOpaqueLine(1.0f, 3.0f);
++  VeloceRenderProgramBuilder builder;
++
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {1.0f, 2.0f}, {3.0f, 4.0f}, CFX_Matrix(),
++      object->graphic_states(), *object->GetContentMarks()));
++  object->mutable_graph_state().SetLineWidth(2.0f);
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {5.0f, 6.0f}, {7.0f, 8.0f}, CFX_Matrix(),
++      object->graphic_states(), *object->GetContentMarks()));
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      {9.0f, 10.0f}, {11.0f, 12.0f}, CFX_Matrix(),
++      object->graphic_states(), *object->GetContentMarks()));
++
++  EXPECT_EQ(1u, builder.parser_line_context_hit_count_for_testing());
++  EXPECT_EQ(2u, builder.parser_line_context_build_count_for_testing());
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++  ASSERT_TRUE(program);
++  EXPECT_EQ(3u, program->native_line_count());
++  EXPECT_EQ(2u, program->opaque_path_states().size());
++  ASSERT_EQ(2u, program->native_line_runs().size());
++  EXPECT_EQ(1u, program->native_line_runs()[0].line_count);
++  EXPECT_EQ(2u, program->native_line_runs()[1].line_count);
++}
++
+ TEST(VeloceRenderProgramTest,
+      ExactNoOpPreservesOrdinalWithoutGeometryOrReplayCandidate) {
+   VeloceRenderProgramBuilder builder(
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 33e13559b..a9021fc45 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -570,7 +570,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0121 event=replay "
++        "revision=r25-3-0122 event=replay "
+         "mode=ranked_sparse_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+diff --git a/core/fxge/cfx_graphstate.h b/core/fxge/cfx_graphstate.h
+index 351ff0258..593b5f659 100644
+--- a/core/fxge/cfx_graphstate.h
++++ b/core/fxge/cfx_graphstate.h
+@@ -42,6 +42,9 @@ class CFX_GraphState {
+ 
+   // FIXME(tsepez): remove when all GraphStateData usage gone.
+   const CFX_GraphStateData* GetObject() const { return ref_.GetObject(); }
++  bool HasSameBackingStore(const CFX_GraphState& that) const {
++    return ref_ == that.ref_;
++  }
+ 
+  private:
+   SharedCopyOnWrite<CFX_RetainableGraphStateData> ref_;
