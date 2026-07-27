@@ -1,0 +1,226 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index a064a81e5..04d18ed66 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0122 event=form_cache result=hit "
++            "revision=r25-3-0123 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0122 event=form_cache result=store "
++          "revision=r25-3-0123 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index 78d58e27f..d0454fa2f 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -52,6 +52,7 @@
+ namespace {
+ 
+ constexpr int kMaxFormLevel = 40;
++constexpr size_t kMaxRetainedOmittedPathPoints = 16u;
+ 
+ constexpr int kSingleCoordinatePair = 1;
+ constexpr int kTensorCoordinatePairs = 16;
+@@ -70,6 +71,13 @@ const char kPathOperatorRectangle[] = "re";
+ using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
+ OpCodes* g_opcodes = nullptr;
+ 
++void ResetOmittedPathPoints(std::vector<CFX_Path::Point>* path_points) {
++  path_points->clear();
++  if (path_points->capacity() > kMaxRetainedOmittedPathPoints) {
++    std::vector<CFX_Path::Point>().swap(*path_points);
++  }
++}
++
+ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
+                              const CFX_Matrix& matrix) {
+   ShadingType type = pShading->GetShadingType();
+@@ -1571,15 +1579,45 @@ void CPDF_StreamContentParser::AddPathPointAndClose(
+ void CPDF_StreamContentParser::AddPathObject(
+     CFX_FillRenderOptions::FillType fill_type,
+     RenderType render_type) {
+-  std::vector<CFX_Path::Point> path_points;
+-  path_points.swap(path_points_);
+   CFX_FillRenderOptions::FillType path_clip_type = path_clip_type_;
+   path_clip_type_ = CFX_FillRenderOptions::FillType::kNoFill;
+ 
+-  if (path_points.empty()) {
++  if (path_points_.empty()) {
+     return;
+   }
+ 
++  bool bStroke = render_type == RenderType::kStroke;
++  CFX_Matrix matrix;
++  bool matrix_initialized = false;
++  CPDF_PageObjectHolder::VeloceParsedPathDisposition disposition =
++      CPDF_PageObjectHolder::VeloceParsedPathDisposition::kNotRecorded;
++  const bool attempted_direct_line =
++      object_holder_->CanRecordVeloceParsedPath() && bStroke &&
++      fill_type == CFX_FillRenderOptions::FillType::kNoFill &&
++      cur_states_->general_state().GetBlendType() == BlendMode::kNormal &&
++      path_points_.size() == 2u &&
++      path_points_[0].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
++      path_points_[1].IsTypeAndOpen(CFX_Path::Point::Type::kLine);
++  if (attempted_direct_line) {
++    matrix =
++        cur_states_->current_transformation_matrix() * mt_content_to_user_;
++    matrix_initialized = true;
++    disposition = object_holder_->RecordVeloceParsedLine(
++        path_points_[0].point_, path_points_[1].point_, matrix,
++        cur_states_->graphic_states(), *content_marks_stack_.top());
++    if (disposition ==
++            CPDF_PageObjectHolder::VeloceParsedPathDisposition::kOmitRecorded &&
++        path_clip_type == CFX_FillRenderOptions::FillType::kNoFill) {
++      ResetOmittedPathPoints(&path_points_);
++      return;
++    }
++  }
++
++  // Canonical objects and clip paths take ownership. Exact omitted paths keep
++  // the parser's bounded scratch allocation for the next path.
++  std::vector<CFX_Path::Point> path_points;
++  path_points.swap(path_points_);
++
+   if (path_points.size() == 1) {
+     if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
+       CPDF_Path path;
+@@ -1609,14 +1647,14 @@ void CPDF_StreamContentParser::AddPathObject(
+     path_points.pop_back();
+   }
+ 
+-  CFX_Matrix matrix =
+-      cur_states_->current_transformation_matrix() * mt_content_to_user_;
+-  bool bStroke = render_type == RenderType::kStroke;
+-  CPDF_PageObjectHolder::VeloceParsedPathDisposition disposition =
+-      CPDF_PageObjectHolder::VeloceParsedPathDisposition::kNotRecorded;
++  if (!matrix_initialized) {
++    matrix =
++        cur_states_->current_transformation_matrix() * mt_content_to_user_;
++  }
+   CPDF_Path path;
+   if (bStroke || fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
+     const bool may_be_compact_line =
++        !attempted_direct_line &&
+         object_holder_->CanRecordVeloceParsedPath() && bStroke &&
+         fill_type == CFX_FillRenderOptions::FillType::kNoFill &&
+         cur_states_->general_state().GetBlendType() == BlendMode::kNormal &&
+@@ -1823,3 +1861,10 @@ ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
+     ByteStringView abbr) {
+   return FindFullName(kInlineValueAbbr, abbr);
+ }
++
++// static
++size_t CPDF_StreamContentParser::ResetOmittedPathPointsForTesting(
++    std::vector<CFX_Path::Point>* path_points) {
++  ResetOmittedPathPoints(path_points);
++  return path_points->capacity();
++}
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.h b/core/fpdfapi/page/cpdf_streamcontentparser.h
+index 8aa0be595..e6f79d31c 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.h
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.h
+@@ -70,6 +70,8 @@ class CPDF_StreamContentParser {
+ 
+   static ByteStringView FindKeyAbbreviationForTesting(ByteStringView abbr);
+   static ByteStringView FindValueAbbreviationForTesting(ByteStringView abbr);
++  static size_t ResetOmittedPathPointsForTesting(
++      std::vector<CFX_Path::Point>* path_points);
+ 
+  private:
+   enum class RenderType : bool { kFill = false, kStroke = true };
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp b/core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp
+index cb25710ad..a1a8089c4 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp
+@@ -3,6 +3,10 @@
+ // found in the LICENSE file.
+ 
+ #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
++
++#include <cstddef>
++#include <vector>
++
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
+ TEST(CPDFStreamContentParserTest, PDFFindKeyAbbreviation) {
+@@ -42,3 +46,32 @@ TEST(CPDFStreamContentParserTest, PDFFindValueAbbreviation) {
+             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
+                 ByteStringView("II")));
+ }
++
++TEST(CPDFStreamContentParserTest, RetainsBoundedOmittedPathScratch) {
++  std::vector<CFX_Path::Point> path_points;
++  path_points.reserve(2u);
++  path_points.emplace_back(CFX_PointF(1.0f, 2.0f),
++                           CFX_Path::Point::Type::kMove, false);
++  path_points.emplace_back(CFX_PointF(3.0f, 4.0f),
++                           CFX_Path::Point::Type::kLine, false);
++
++  const size_t capacity =
++      CPDF_StreamContentParser::ResetOmittedPathPointsForTesting(&path_points);
++
++  EXPECT_TRUE(path_points.empty());
++  EXPECT_GE(capacity, 2u);
++  EXPECT_LE(capacity, 16u);
++}
++
++TEST(CPDFStreamContentParserTest, ReleasesOversizedOmittedPathScratch) {
++  std::vector<CFX_Path::Point> path_points;
++  path_points.reserve(1024u);
++  path_points.emplace_back(CFX_PointF(1.0f, 2.0f),
++                           CFX_Path::Point::Type::kMove, false);
++
++  const size_t capacity =
++      CPDF_StreamContentParser::ResetOmittedPathPointsForTesting(&path_points);
++
++  EXPECT_TRUE(path_points.empty());
++  EXPECT_EQ(capacity, 0u);
++}
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index eb5272e9f..e76fc7d84 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -2654,7 +2654,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0122 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0123 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2664,8 +2664,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0122 event=compile "
+-        "mode=exact_parser_state_line_sink "
++        "revision=r25-3-0123 event=compile "
++        "mode=bounded_parser_path_scratch "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+         "parserDirectLineAttempts=%u parserLineContextHits=%u "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index a9021fc45..f3151f443 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -570,7 +570,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0122 event=replay "
++        "revision=r25-3-0123 event=replay "
+         "mode=ranked_sparse_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "

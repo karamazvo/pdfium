@@ -987,6 +987,58 @@ executor still walks it. This must be corrected before adding another index.
     ordinary pages without parser-direct lines do not enter this sink and must
     remain within measurement noise.
 
+    Device results confirmed that the exact state sink was effective but did
+    not remove the remaining parser allocation cost. On Q16,
+    `parserLineContextHits=2940118` of 2,940,123 direct attempts, context builds
+    fell to five, reservation refills to 613, and incremental budget checks
+    fell from 2,590,767 to 224,878. Preview acquisition improved from 9,418 ms
+    to 7,789 ms and total preview rendering from 11,484 ms to 9,602 ms.
+    Actual retained program bytes stayed exactly 82,373,915; logical charge
+    increased by only the bounded packet tail, from 67,432,547 to 67,496,923.
+    11.pdf remained stable and did not enter the parser-direct line sink. EP23
+    also reported zero direct-line attempts; its observed page-to-page timing
+    variance did not identify a 0122 native-path regression.
+
+19. **r25-3-0123: bounded omitted-path parser scratch.** `AddPathObject()`
+    previously swapped `path_points_` into a temporary vector before exact
+    lowering. Even when the lowerer returned `kOmitRecorded`, destruction of
+    that temporary discarded the two-point allocation. A Q16-class stream
+    therefore performed about 2.94 million small allocation/free cycles after
+    0122 had already removed most repeated semantic and budget work.
+
+    The parser now attempts the same exact two-point line lowering while the
+    points remain in parser-owned scratch. Only `kOmitRecorded` with no clip
+    clears and reuses that vector. `kRetainRecorded`, a clip consumer,
+    unsupported state, or any failed exact lowering transfers ownership through
+    the unchanged canonical `CPDF_Path` path. There is no second semantic
+    predicate and no approximate fallback.
+
+    Scratch retention is explicitly memory-bounded. Each parser may retain at
+    most 16 `CFX_Path::Point` slots; larger capacity is released immediately.
+    This is a storage ceiling, not a document classifier or an eligibility
+    threshold. It adds no global cache, page-sized allocation, bitmap, lock,
+    JNI/Kotlin work, or UI-thread work. RenderProgram format version 21 and its
+    96 MiB retained-memory ceiling are unchanged.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0123 event=compile
+    mode=bounded_parser_path_scratch
+    parserDirectLineAttempts=...
+    parserLineContextHits=...
+    parserLineContextBuilds=...
+    parserLineBudgetRefills=...
+    compileWindowMs=...
+    ```
+
+    Q16 must preserve 0122 command, opcode, omission, state, clip, visibility,
+    spatial, no-op, actual/logical retained-byte, replay, draw, and pixel
+    results. The acceptance signal is materially lower preview `acquireMs` and
+    `compileWindowMs`; replay time should remain within noise because replay is
+    unchanged. 11.pdf, EP23, and ordinary pages with zero parser-direct line
+    attempts should remain within timing noise.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former
