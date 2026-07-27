@@ -1,7 +1,12 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0119 on 2026-07-27 (Asia/Taipei)
+**Updated through:** r25-3-0123 on 2026-07-27 (Asia/Taipei)
+
+Generation 4 acquisition work continues in
+`R25_4_X10_EXACT_STREAMING_ACQUISITION_2026-07-27.md`. It preserves this
+sidecar and executor contract while replacing avoidable parser/construction
+work.
 
 ## Decision
 
@@ -1038,6 +1043,36 @@ executor still walks it. This must be corrected before adding another index.
     `compileWindowMs`; replay time should remain within noise because replay is
     unchanged. 11.pdf, EP23, and ordinary pages with zero parser-direct line
     attempts should remain within timing noise.
+
+    Device results satisfy the acceptance criteria. On Q16, acquisition fell
+    from 7,789 ms to 5,536 ms (-28.9%), bitmap replay fell from 1,812 ms to
+    1,434 ms (-20.9%), total render fell from 9,602 ms to 6,971 ms (-27.4%),
+    and launch-to-first-visible fell from 9,976 ms to 7,231 ms (-27.5%).
+    Relative to 0121, Q16 acquisition is down 41.2%, total render 39.3%, and
+    first visible 38.6%.
+
+    The Q16 representation remained exact and byte-identical to 0122:
+    3,165,420 commands, 225,297 retained commands, 2,940,123 exact no-op
+    omissions, 2,365,894 native opaque lines, 320,091 native runs, 535 spatial
+    cells, 2,662,901 spatial postings, 82,373,915 actual bytes, and 67,496,923
+    logical retained bytes. The parser scratch therefore removed allocation
+    churn without changing lowering, ordering, replay, or retained memory.
+
+    11.pdf improved from 304 ms to 221 ms total, EP23 p2 from 1,181 ms to
+    493 ms, and EP23 p3 from 1,168 ms to 355 ms. All three report
+    `parserDirectLineAttempts=0`, so these gains are runtime, filesystem-cache,
+    or device variance rather than causal 0123 gains. They establish no
+    regression; they must not be credited to the new scratch path.
+
+    Acquisition still consumes 5,536 ms, or 79.4% of Q16 total render time.
+    Inspection identifies the next general redundant work: `ParsePathObject()`
+    discovers a path paint terminator, rewinds, and lets the outer parser read
+    and dispatch that operator again. Dense `m l S` streams repeat this once
+    per exact line. The next revision should consume a recognized terminator
+    once inside the path parser and invoke the same existing exact handler.
+    Complex, clipping, or unsupported paths must preserve the canonical path;
+    the optimization needs only fixed parser-local state and no classifier,
+    command threshold, cache, or approximate semantics.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
