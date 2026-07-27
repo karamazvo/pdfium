@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0118 on 2026-07-26 (Asia/Taipei)
+**Updated through:** r25-3-0119 on 2026-07-27 (Asia/Taipei)
 
 ## Decision
 
@@ -768,6 +768,64 @@ executor still walks it. This must be corrected before adding another index.
     preview total, and launch-to-first-tile time. Replay itself is intentionally
     unchanged. 11.pdf, EP23, and normal pages should have zero or few direct
     attempts unless they contain the same universally eligible line commands.
+
+15. **r25-3-0119: payload-free exact no-op ranges.** Revision 0111 proved
+    that a two-point stroke with identical endpoints and a butt cap paints no
+    pixels, but 0118 still retained each such command as a 24-byte native line
+    plus line-run, native-run, state, matrix, clip, visibility, and replay
+    bookkeeping. Q16 contains 574,229 of these commands, so the representation
+    was paying construction and retained-memory cost for operations already
+    known to have no raster effect.
+
+    Both parser-direct and materialized-object lowering already converge on
+    `TryAppendNativeOpaqueLine()`. After that shared path has validated finite
+    geometry and matrix, normal opaque paint, exact graph state, and bounded
+    content marks, an identical-endpoint butt-cap line now emits only a source
+    ordinal into `VeloceExactNoOpRange`. Consecutive ordinals coalesce into one
+    8-byte range. No geometry, state, matrix, clip, visibility, bounds, spatial
+    posting, native run, or raster payload is retained for those ordinals.
+    Round and square caps remain drawable and follow the unchanged line path.
+    Any failed proof remains canonical at the same source ordinal.
+
+    The immutable program validates that no-op ranges are sorted, nonempty,
+    bounded by the source command count, disjoint from native runs, and equal
+    to the stored exact no-op count. Mandatory spatial ranges explicitly
+    exclude them, so sparse replay performs no query or cursor work for them.
+    Full replay advances over an entire consecutive no-op range in O(1).
+    The old per-native-line `start == end` replay test is removed: construction
+    owns this semantic fact once.
+
+    The mechanism is bounded by the existing 96 MiB program ceiling and by
+    at most 1,048,576 ranges. Pages with no exact no-op commands retain no
+    no-op vector allocation. The 574,229 Q16 no-ops previously consume about
+    13.8 MB of line geometry; the range table costs at most 4.6 MB and less
+    when ordinals coalesce. Removing commands from otherwise consecutive
+    native runs can add source-run boundaries, however, so worst-case total
+    retained memory is bounded rather than guaranteed to fall. This revision's
+    guaranteed gain is removal of no-op geometry construction and per-line
+    replay work; memory reduction is measured, not assumed.
+
+    Device proof must use:
+
+    ```text
+    revision=r25-3-0119 event=compile
+    mode=payload_free_noop_program
+    nativeOpaqueLines=... exactNoOpLines=... exactNoOpRanges=... bytes=...
+
+    revision=r25-3-0119 event=replay
+    mode=payload_free_noop_backend
+    exactNoOpLinesSkipped=... exactNoOpRanges=... replayUs=...
+    ```
+
+    Q16 acceptance requires the same `commands=3165420`, omission count,
+    retained canonical barriers, painter order, and pixels as 0118.
+    `exactNoOpLines` should remain about 574,229 while `nativeOpaqueLines`
+    falls by that count, `exactNoOpRanges` must not exceed it, and
+    compile/acquire timing should fall materially. Retained bytes should fall
+    when no-op ranges coalesce and must remain below the same 96 MiB ceiling
+    otherwise. Full replay must report the same skipped count. 11.pdf, EP23,
+    and normal documents without this exact operation should retain the 0118
+    representation and performance within run-to-run noise.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
