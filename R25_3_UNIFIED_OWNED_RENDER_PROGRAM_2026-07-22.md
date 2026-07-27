@@ -889,6 +889,43 @@ executor still walks it. This must be corrected before adding another index.
     floor. 11.pdf, EP23, and pages without exact no-ops must report zero mask
     and rank entries and remain within timing noise.
 
+    Device results confirmed that the ranked tape removed 0119's Q16
+    fragmentation: `nativeRuns` fell from 647,871 to 320,091, actual retained
+    bytes from 94,481,359 to 82,373,915, and logical bytes from 75,145,199 to
+    67,432,547. Preview replay fell from about 2.03 seconds to 1.79 seconds;
+    acquire remained effectively unchanged at 8,708 ms versus 8,636 ms.
+    Launch-to-first-visible improved slightly from 11,101 ms to 10,823 ms,
+    which is not a material first-render improvement.
+
+    The build also exposed a deterministic validation defect for programs
+    without exact no-ops. Validation initialized the consumed rank-block
+    cursor to one even when both the mask and rank table were empty, then
+    rejected the valid `1 != 0` final state. Consequently 11.pdf discarded its
+    3.7 MiB Darken program and preview regressed from 691 ms to 8,868 ms.
+    EP23 discarded its 10.3 MiB fill program and page-2 preview regressed from
+    1,293 ms to 26,532 ms. These were canonical fallback costs, not raster or
+    memory limits.
+
+17. **r25-3-0121: empty ranked-tape validation correction.** The validated
+    rank cursor now starts at zero when the optional rank table is empty and
+    at one only when the required zero-prefix entry exists. A dedicated
+    no-noop program test requires a valid program with zero mask words, zero
+    rank blocks, and its native payload intact.
+
+    This revision changes no command representation, eligibility, painter
+    order, pixel operation, spatial index, cache, memory ceiling, or thread.
+    It advances the revision because 0120 was already built and tested. Device
+    acceptance requires:
+
+    - 11.pdf logs `event=compile`, not `event=discard`, with the prior Darken
+      counts and preview/tile timing restored near 0119;
+    - EP23's 28,071-fill Form logs `event=compile` and form-cache
+      store/hit/replay, not discard, with timing restored near 0119;
+    - Q16 retains the exact 0120 tape counts, `nativeRuns=320091`, and retained
+      bytes within allocation noise;
+    - pages with no no-ops log `exactNoOpWords=0` and
+      `exactNoOpRankBlocks=0` while remaining valid.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former

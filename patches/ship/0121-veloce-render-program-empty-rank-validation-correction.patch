@@ -1,0 +1,91 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d79c36805..501378982 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-3-0120 event=form_cache result=hit "
++            "revision=r25-3-0121 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-3-0120 event=form_cache result=store "
++          "revision=r25-3-0121 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index f7716c010..5fb46250e 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1016,7 +1016,7 @@ bool VeloceRenderProgram::Validate() const {
+     return false;
+   }
+   uint32_t validated_noop_count = 0u;
+-  size_t rank_block = 1u;
++  size_t rank_block = exact_noop_rank_blocks_.empty() ? 0u : 1u;
+   for (size_t word = 0u; word < exact_noop_words_.size(); ++word) {
+     validated_noop_count += std::popcount(exact_noop_words_[word]);
+     if ((word + 1u) % kVeloceExactNoOpRankBlockWords == 0u ||
+@@ -2426,7 +2426,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0120 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0121 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2436,7 +2436,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0120 event=compile "
++        "revision=r25-3-0121 event=compile "
+         "mode=ranked_sparse_line_program "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 43441e3ce..76959bf97 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -304,6 +304,20 @@ TEST(VeloceRenderProgramTest,
+                       program->native_runs()[0], 258u));
+ }
+ 
++TEST(VeloceRenderProgramTest, EmptyExactNoOpTapeValidates) {
++  VeloceRenderProgramBuilder builder;
++  ASSERT_TRUE(builder.AppendPageObject(*MakeOpaqueLine(1.0f, 2.0f)));
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  EXPECT_TRUE(program->is_valid());
++  EXPECT_EQ(0u, program->exact_noop_count());
++  EXPECT_EQ(0u, program->exact_noop_word_count());
++  EXPECT_EQ(0u, program->exact_noop_rank_block_count());
++  EXPECT_EQ(1u, program->native_line_count());
++}
++
+ TEST(VeloceRenderProgramTest, AdoptedPathPointsPreserveExactPointMetadata) {
+   std::vector<CFX_Path::Point> points;
+   points.emplace_back(CFX_PointF(1.25f, -2.5f),
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 22824a4d9..33e13559b 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -570,7 +570,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0120 event=replay "
++        "revision=r25-3-0121 event=replay "
+         "mode=ranked_sparse_line_backend "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
