@@ -112,16 +112,56 @@ Acceptance:
 - RenderProgram format remains version 21 and retained memory remains capped at
   96 MiB.
 
-### r25-4-0125: Exact Direct Numeric Path Scanner
+### r25-4-0125: Exact Streaming Line Compiler
 
-Replace word-buffer and generic `FX_Number`/parameter-stack traffic inside the
-path-local parser with an exact span-based numeric scanner. The scanner follows
-the same PDF whitespace, comment, delimiter, sign, decimal, and malformed-token
-rules. Any token outside the proven path grammar falls back transactionally
-before modifying path or graphics state.
+0125 supersedes and excludes failed 0124. It applies directly after accepted
+0123 and does not invoke a path-paint handler from inside `Handle_MoveTo()`.
 
-The scanner feeds the same path points and operation handlers as canonical
-PDFium. It is syntax specialization, not semantic approximation.
+After the ordinary exact lowerer establishes one immutable parsed-line context,
+a fixed-scratch stream scanner transactionally recognizes a complete balanced
+graphics-state unit containing one transformed two-point stroke:
+
+```text
+q a b c d e f cm x0 y0 m x1 y1 l S Q
+```
+
+On a match, the scanner decodes the matrix and four points directly from the
+authoritative stream span. It composes the same `cm` matrix in the same order
+as PDFium and emits the line through the existing exact
+`RecordVeloceParsedLine()` lowerer. The outer `q` and `Q` are consumed as one
+transaction because their net graphics-state effect is exactly zero. The final
+CTM bookkeeping is updated to the restored state.
+
+Successful native ownership omits the temporary path object. A lowering
+rejection creates the ordinary canonical `CPDF_PathObject` at the same
+already-recorded source ordinal. A unit crossing a content-stream boundary is
+rejected. On any grammar or boundary miss, the stream position, outer parameter
+stack, path state, and graphics state remain unchanged and the existing parser
+consumes the unit normally.
+
+The first exact line remains on the existing parser and establishes exact
+lowering context. The scanner is then armed only after a valid `Q` restore.
+Therefore canonical-only pages and pages that never lower an exact line do not
+pay speculative stream scanning. This is exact operation-level reuse, not a
+document classifier, count threshold, or approximate parser.
+
+The decoded Q16 stream establishes why this grammar is the Pareto target:
+2,944,028 `S` operators exist, 2,940,604 are simple `m l S` lines, and
+2,940,119 match the complete balanced `q cm m l S Q` unit. A bare consecutive
+`m l S` scanner would match essentially none of that workload.
+
+Acceptance:
+
+- `parserFusedLines` is materially greater than zero on operation-dense exact
+  line streams and approaches consecutive eligible line count;
+- Q16 command, omission, opcode, state, clip, visibility, spatial, retained
+  byte, replay, draw, and pixel results remain identical to 0123;
+- Q16 acquisition falls materially relative to controlled 0123 runs;
+- a grammar miss leaves parser position unchanged;
+- a unit crossing a content-stream boundary leaves parser position unchanged;
+- a lowering rejection retains the canonical object at the same ordinal;
+- 11.pdf, EP23, and canonical-only pages remain within controlled timing noise;
+- RenderProgram format 21 and the 96 MiB retained ceiling remain unchanged.
 
 ### r25-4-0126: Packed Homogeneous Geometry Blocks
 
@@ -188,6 +228,66 @@ launch-to-first-visible=7,231 ms
 Acquisition is 79.4% of total rendering time. The r25-4 sequence must reduce
 that cost without changing the exact retained representation until the
 corresponding representation phase explicitly changes it.
+
+## 0124 Device Result
+
+**Measured:** 2026-07-27 (Asia/Taipei)
+**Status:** not accepted; do not start 0125 from this result
+
+The 0124 device run preserved the exact compiled representation for 11.pdf,
+Q16, and EP23. Q16 remained counter-for-counter identical to 0123:
+
+```text
+commands=3,165,420
+retained commands=225,297
+omitted page objects=2,940,123
+native opaque lines=2,365,894
+exact no-op lines=574,229
+native runs=320,091
+spatial cells=535
+spatial postings=2,662,901
+actual bytes=82,373,915
+logical retained bytes=67,496,923
+```
+
+The timing acceptance criterion failed:
+
+| Case | 0123 acquire / bitmap / total | 0124 acquire / bitmap / total | Result |
+| --- | --- | --- | --- |
+| 11.pdf preview | 109 / 111 / 221 ms | 265 / 350 / 618 ms | 2.80x slower total |
+| Q16 preview | 5,536 / 1,434 / 6,971 ms | 16,414 / 4,907 / 21,323 ms | 3.06x slower total |
+| EP23 p2 preview | 386 / 107 / 493 ms | 903 / 372 / 1,280 ms | 2.60x slower total |
+| EP23 p3 preview | 257 / 98 / 355 ms | 303 / 123 / 426 ms | 1.20x slower total |
+
+The data does not yet prove that direct terminator dispatch caused the entire
+regression. The unchanged replay path also slowed by about 3.2x on 11.pdf and
+3.4x on Q16 while executing identical work counters. EP23 p1 improved from
+115 ms to 79 ms and p3 remained much closer to baseline. That combination is
+consistent with device CPU/thermal/runtime variance, not a deterministic
+increase in RenderProgram work. Conversely, acquisition also regressed, so
+0124 has not demonstrated its intended benefit and cannot be accepted from
+representation equivalence alone.
+
+There is also a parser-state boundary that must be corrected or formally
+proved before this mechanism continues: direct dispatch currently invokes the
+paint handler from inside `Handle_MoveTo()` before the outer parser clears the
+two `m` operands. Existing path-paint handlers do not consume those operands,
+and the resulting program is identical in this corpus, but the optimized path
+must present exactly the same empty parameter state as ordinary outer-parser
+dispatch.
+
+Required decision procedure:
+
+1. Treat 0123 as the accepted performance baseline.
+2. Do not advance from the current 0124 implementation. Revision 0125 must
+   apply directly after 0123 and exclude 0124.
+3. Run isolated 0123/0124/0123 previews after process restart under comparable
+   device temperature and power state.
+4. Compare Q16 acquisition separately from replay. Identical replay work must
+   remain within normal run variance; otherwise the run or artifact is not a
+   valid parser benchmark.
+5. Revision 0125 supersedes 0124 with a transactional complete-operation
+   scanner. Keep 0124 only as rejected revision history.
 
 ## Proof Policy
 

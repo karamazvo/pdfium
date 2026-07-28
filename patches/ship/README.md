@@ -152,7 +152,8 @@ these patches:
 | r25-3-0121 | `0121-veloce-render-program-empty-rank-validation-correction.patch` | Corrects 0120's empty optional-rank invariant. Programs with no exact no-ops now validate with zero mask words and zero rank blocks instead of being discarded to canonical rendering. Adds a dedicated regression test and advances revision markers without changing representation, eligibility, pixels, replay, or memory policy. |
 | r25-3-0122 | `0122-veloce-parser-exact-state-line-sink.patch` | Adds a builder-local exact parser-line context keyed by PDFium copy-on-write backing identity for general, color, and graph state plus exact transform class, clip, and visibility scope. Matching lines bypass repeated semantic validation, state hashing, and table lookup but still produce the same transformed bounds, source ordinal, spatial posting, payload, and ordered runs. Any identity or scope change returns to the complete lowerer and refreshes the context only after exact success. Logical memory is charged in bounded 4,096-entry line/run and 1,024-entry line-run packets under the existing 96 MiB ceiling. No classifier, threshold, retained page cache, lock, bitmap, JNI/Kotlin work, or UI-thread work is added. |
 | r25-3-0123 | `0123-veloce-parser-bounded-omitted-path-scratch.patch` | Corrects parser ownership for exactly omitted, non-clipping two-point lines: successful lowering clears and reuses the parser's point vector instead of swapping it into a temporary vector and freeing it for every command. Retention is capped at 16 points per parser; any larger capacity is released. A clip, retain disposition, unsupported state, or failed exact lowering follows the unchanged canonical ownership path. No RenderProgram representation, command, pixel, cache, classifier, lock, JNI/Kotlin path, or UI-thread work changes. |
-| r25-4-0124 | `0124-veloce-parser-single-pass-path-paint-dispatch.patch` | Starts the generation-4 exact streaming acquisition frontend. `ParsePathObject()` consumes the existing `S`, `s`, `f`, `F`, `f*`, `B`, `B*`, `b`, `b*`, and `n` path paint/end operators and calls their unchanged handlers directly instead of rewinding and making the outer parser tokenize, look up, and dispatch the same operator again. Unknown operators retain the prior rewind and canonical parser behavior. RenderProgram format 21, exact lowering, canonical materialization, painter order, replay, pixels, and the 96 MiB ceiling are unchanged. |
+| r25-4-0124 | `0124-veloce-parser-single-pass-path-paint-dispatch.patch` | Rejected experiment retained for revision traceability. It invoked path-paint handlers from inside the nested path parser and failed device performance acceptance. Do not include it in 0125 or later stacks. |
+| r25-4-0125 | `0125-veloce-exact-streaming-line-compiler.patch` | Supersedes 0124 and applies directly after 0123. Once an ordinary exact line establishes immutable lowering context, a fixed-scratch scanner transactionally consumes the complete balanced `q a b c d e f cm x0 y0 m x1 y1 l S Q` unit and emits the transformed line through the existing exact owned-line lowerer. The wrapper has zero net graphics-state effect. A grammar or content-stream-boundary miss leaves stream and parser state untouched; a lowering rejection materializes the canonical two-point path at the same source ordinal. No document classifier, count threshold, approximate syntax, additional retained geometry, lock, bitmap, or UI-thread work is introduced. |
 
 ## Why this directory exists
 
@@ -165,8 +166,9 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-4-0124`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0124:
+blind numeric globbing. For `r25-4-0125`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0092 through 0123, and 0125. Do not apply
+rejected 0124:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -206,11 +208,11 @@ git apply patches/ship/0120-veloce-render-program-ranked-sparse-line-tape.patch
 git apply patches/ship/0121-veloce-render-program-empty-rank-validation-correction.patch
 git apply patches/ship/0122-veloce-parser-exact-state-line-sink.patch
 git apply patches/ship/0123-veloce-parser-bounded-omitted-path-scratch.patch
-git apply patches/ship/0124-veloce-parser-single-pass-path-paint-dispatch.patch
+git apply patches/ship/0125-veloce-exact-streaming-line-compiler.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-4-0124` build. The machine-checked list lives in the 0124 workflow.
+`r25-4-0125` build. The machine-checked list lives in the 0125 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
