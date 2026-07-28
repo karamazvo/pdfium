@@ -153,7 +153,8 @@ these patches:
 | r25-3-0122 | `0122-veloce-parser-exact-state-line-sink.patch` | Adds a builder-local exact parser-line context keyed by PDFium copy-on-write backing identity for general, color, and graph state plus exact transform class, clip, and visibility scope. Matching lines bypass repeated semantic validation, state hashing, and table lookup but still produce the same transformed bounds, source ordinal, spatial posting, payload, and ordered runs. Any identity or scope change returns to the complete lowerer and refreshes the context only after exact success. Logical memory is charged in bounded 4,096-entry line/run and 1,024-entry line-run packets under the existing 96 MiB ceiling. No classifier, threshold, retained page cache, lock, bitmap, JNI/Kotlin work, or UI-thread work is added. |
 | r25-3-0123 | `0123-veloce-parser-bounded-omitted-path-scratch.patch` | Corrects parser ownership for exactly omitted, non-clipping two-point lines: successful lowering clears and reuses the parser's point vector instead of swapping it into a temporary vector and freeing it for every command. Retention is capped at 16 points per parser; any larger capacity is released. A clip, retain disposition, unsupported state, or failed exact lowering follows the unchanged canonical ownership path. No RenderProgram representation, command, pixel, cache, classifier, lock, JNI/Kotlin path, or UI-thread work changes. |
 | r25-4-0124 | `0124-veloce-parser-single-pass-path-paint-dispatch.patch` | Rejected experiment retained for revision traceability. It invoked path-paint handlers from inside the nested path parser and failed device performance acceptance. Do not include it in 0125 or later stacks. |
-| r25-4-0125 | `0125-veloce-exact-streaming-line-compiler.patch` | Supersedes 0124 and applies directly after 0123. Once an ordinary exact line establishes immutable lowering context, a fixed-scratch scanner transactionally consumes the complete balanced `q a b c d e f cm x0 y0 m x1 y1 l S Q` unit and emits the transformed line through the existing exact owned-line lowerer. The wrapper has zero net graphics-state effect. A grammar or content-stream-boundary miss leaves stream and parser state untouched; a lowering rejection materializes the canonical two-point path at the same source ordinal. No document classifier, count threshold, approximate syntax, additional retained geometry, lock, bitmap, or UI-thread work is introduced. |
+| r25-4-0125 | `0125-veloce-exact-streaming-line-compiler.patch` | Supersedes 0124 and applies directly after 0123. Once an ordinary exact line establishes immutable lowering context, a fixed-scratch scanner transactionally consumes the complete balanced `q a b c d e f cm x0 y0 m x1 y1 l S Q` unit and emits the transformed line through the existing exact owned-line lowerer. The wrapper has zero net graphics-state effect. A grammar or content-stream-boundary miss leaves stream and parser state untouched; a lowering rejection materializes the canonical two-point path at the same source ordinal. Q16 matched 2,940,112 lines but acquisition remained statistically unchanged from 0123, so this is retained as a correctness foundation rather than an accepted standalone performance win. |
+| r25-4-0126 | `0126-veloce-exact-packed-translation-line-compiler.patch` | Extends 0125 with an exact transactional grammar for canonical `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q` units. It converts only `tx/ty/dx/dy` and stores drawable matches in fixed 4,096-entry chunks of 16-byte zero-origin endpoint/translation payloads. Replay reconstructs the exact zero start and shares the existing ordered run, state, matrix, clip, visibility, spatial, cancellation, and AGG batch mechanisms. Any mismatch follows the general scanner or canonical PDFium. No document classifier, threshold, mutable cache, additional thread/lock, JNI/Kotlin path, bitmap, or UI-thread work is introduced; the existing total-line and 96 MiB ceilings remain authoritative. |
 
 ## Why this directory exists
 
@@ -166,9 +167,9 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-4-0125`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0092 through 0123, and 0125. Do not apply
-rejected 0124:
+blind numeric globbing. For `r25-4-0126`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0092 through 0123, 0125, and 0126. Do not
+apply rejected 0124:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -209,10 +210,11 @@ git apply patches/ship/0121-veloce-render-program-empty-rank-validation-correcti
 git apply patches/ship/0122-veloce-parser-exact-state-line-sink.patch
 git apply patches/ship/0123-veloce-parser-bounded-omitted-path-scratch.patch
 git apply patches/ship/0125-veloce-exact-streaming-line-compiler.patch
+git apply patches/ship/0126-veloce-exact-packed-translation-line-compiler.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-4-0125` build. The machine-checked list lives in the 0125 workflow.
+`r25-4-0126` build. The machine-checked list lives in the 0126 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

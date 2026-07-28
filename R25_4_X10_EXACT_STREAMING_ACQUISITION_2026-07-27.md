@@ -1,6 +1,7 @@
 # r25-4 Exact Streaming Acquisition
 
 **Locked:** 2026-07-27 (Asia/Taipei)
+**Updated through:** r25-4-0126 on 2026-07-28 (Asia/Taipei)
 **Extends:** r25-3-0123
 **First revision:** r25-4-0124
 
@@ -163,18 +164,56 @@ Acceptance:
 - 11.pdf, EP23, and canonical-only pages remain within controlled timing noise;
 - RenderProgram format 21 and the 96 MiB retained ceiling remain unchanged.
 
-### r25-4-0126: Packed Homogeneous Geometry Blocks
+### r25-4-0126: Exact Packed Translation-Line Compiler
 
-Store consecutive exact operations with identical immutable render state in
-bounded blocks:
+The 0125 device result falsified the assumption that temporary page-object,
+path, and per-token dispatcher removal was the dominant remaining Q16 cost.
+The complete balanced-unit scanner matched 2,940,112 lines, but acquisition
+was 5,683 ms versus 5,536 ms on 0123. The retained representation was
+counter-for-counter unchanged.
+
+Decoded-stream analysis then identified a stronger exact invariant:
+2,940,119 balanced units use this canonical token grammar:
 
 ```text
-state identity + ordinal range + packed full-precision geometry
+q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q
 ```
 
-Each operation remains independently rasterized and composited in painter
-order. Blocks may reuse setup and storage but cannot cross canonical, clip,
-visibility, transparency, blend, or mutation boundaries.
+0126 therefore changes the work, not the routing:
+
+- transactionally require the six constant tokens to be the exact one-byte
+  PDF number tokens `1 0 0 1 0 0`;
+- convert only `tx`, `ty`, `dx`, and `dy`, reducing ten number conversions to
+  four for a proven unit;
+- lower the exact zero-origin line to a 16-byte immutable payload containing
+  `end`, `translation_x`, and `translation_y`, instead of the generic 24-byte
+  start/end/translation payload;
+- reconstruct the exact zero start point at replay and use the same state,
+  matrix, clip, visibility, spatial index, cancellation, ordered native run,
+  and AGG draw batch;
+- retain the general 0125 scanner and canonical PDFium path on any token,
+  state, transform, budget, or lowering mismatch.
+
+The compact payload is stored in fixed 4,096-entry chunks and shares the
+existing total 3 Mi-line and 96 MiB program ceilings. It adds no document
+classifier, threshold, page-sized temporary array, mutable cache, thread,
+lock, JNI/Kotlin path, bitmap, or UI-thread work. RenderProgram format advances
+from 21 to 22 because the immutable opcode and payload schema change.
+
+Acceptance:
+
+- `parserConstantFoldedLines` approaches `parserFusedLines` on exact canonical
+  translation-origin streams;
+- `compactTranslationLines` owns the non-no-op subset while
+  `nativeOpaqueLines` retains only general lines;
+- Q16 acquisition falls materially below 0123/0125 and retained bytes fall by
+  about eight bytes per compact drawable line, within chunk-capacity effects;
+- command count, omission count, exact no-op count, state, clip, visibility,
+  source order, spatial candidates, draw count, and pixels remain exact;
+- alternate but valid spellings such as `1.0` fail closed to the general
+  scanner without advancing parser state;
+- 11.pdf, EP23, and canonical-only pages remain within controlled timing
+  noise.
 
 ### r25-4-0127: Bounded Direct Spatial Construction
 
@@ -288,6 +327,39 @@ Required decision procedure:
    valid parser benchmark.
 5. Revision 0125 supersedes 0124 with a transactional complete-operation
    scanner. Keep 0124 only as rejected revision history.
+
+## 0125 Device Result
+
+**Measured:** 2026-07-28 (Asia/Taipei)
+
+**Status:** correctness foundation retained; standalone performance acceptance
+failed
+
+0125 proved that Q16 is dominated by the exact balanced transformed-line
+grammar:
+
+```text
+parserFusedLines=2,940,112
+commands=3,165,420
+retained commands=225,297
+omitted page objects=2,940,123
+native opaque lines=2,365,894
+exact no-op lines=574,229
+native runs=320,091
+spatial postings=2,662,901
+actual bytes=82,373,915
+```
+
+However, Q16 acquisition was 5,683 ms, statistically unchanged from the 0123
+baseline of 5,536 ms. The experiment therefore ruled out temporary path-object
+construction, path-vector allocation, and outer operator dispatch as the
+dominant remaining acquisition cost. The scanner still converted ten numbers,
+constructed the same generic six-float line payload, computed exact bounds,
+and inserted the same spatial postings for every accepted command.
+
+0126 keeps 0125 only as the transactionally correct parser foundation and
+targets the proven residual work: six unnecessary constant conversions and
+eight unnecessary retained bytes for each exact translation-origin line.
 
 ## Proof Policy
 
