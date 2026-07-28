@@ -1,7 +1,7 @@
 # r25-4 Exact Streaming Acquisition
 
 **Locked:** 2026-07-27 (Asia/Taipei)
-**Updated through:** r25-4-0126 on 2026-07-28 (Asia/Taipei)
+**Updated through:** r25-4-0127 on 2026-07-28 (Asia/Taipei)
 **Extends:** r25-3-0123
 **First revision:** r25-4-0124
 
@@ -215,13 +215,69 @@ Acceptance:
 - 11.pdf, EP23, and canonical-only pages remain within controlled timing
   noise.
 
-### r25-4-0127: Bounded Direct Spatial Construction
+Device result:
 
-Replace per-bin growing vectors and the flattening copy with a bounded final
-array construction. Prefer conservative block entries where useful and retain
-per-operation entries only where required for effective culling. Construction
-and final storage share the existing program budget and never coexist as two
-unbounded page-sized representations.
+- Q16 retained commands and exact lowering stayed stable:
+  `commands=3,165,420`, `parserFusedLines=2,940,112`,
+  `parserConstantFoldedLines=2,940,112`,
+  `compactTranslationLines=2,365,882`, and
+  `exactNoOpLines=574,229`;
+- retained bytes fell from 82,373,915 on 0123 to 63,532,399, a 22.9%
+  reduction;
+- the spatial representation did not improve:
+  `spatialPostings=2,662,901` remained one entry per drawable command;
+- Q16 measured `acquireMs=6049`, `replayMs=2246`, and `totalMs=8296`,
+  versus 5,536/1,434/6,971 on the controlled 0123 baseline;
+- 11.pdf and EP23 also ran slower in this sample.
+
+0126 is therefore accepted as an exact bounded-memory representation
+improvement, but not as a latency improvement. It identifies eager
+per-command spatial-posting construction and traversal as the next dominant
+duplicated work.
+
+### r25-4-0127: Bounded Spatial Command Blocks
+
+Replace the 32x32 grid's per-command ordinal postings, 1,024 growing bin
+vectors, and flattening copy with one immutable source-order block table:
+
+- each block covers at most 32 consecutive native source commands;
+- each 32-byte entry stores holder-space union bounds, source start/count,
+  flags, and an exact candidate bit mask;
+- exact no-ops may occupy source ordinals inside a block but never set a
+  candidate bit;
+- canonical gaps terminate a block, so the spatial table never spans an
+  unsupported painter-order barrier;
+- unknown or non-finite bounds produce an unbounded block that is always
+  selected, preserving fail-open correctness;
+- full-page replay returns before allocating or scanning candidate words when
+  the device clip contains the holder bounds;
+- region replay scans blocks, marks exact native candidates from intersecting
+  blocks, and merges them with existing mandatory canonical ranges in source
+  order;
+- the device clip remains the final exact coverage authority. A block false
+  positive can add bounded work but cannot change pixels.
+
+The builder owns at most 128K blocks and final retained storage remains under
+the existing 96 MiB RenderProgram ceiling. It introduces no classifier,
+threshold, mutable cache, page-sized bitmap, thread, lock, JNI/Kotlin path, or
+UI-thread work. RenderProgram format advances from 22 to 23 because the
+immutable spatial representation changes.
+
+Acceptance:
+
+- Q16 no longer reports `spatialPostings`; it reports bounded
+  `spatialBlocks`, `spatialCoveredCommands`, `spatialUnboundedBlocks`, and
+  `spatialIndexBytes`;
+- Q16 spatial bytes fall materially below the 0126 value of 10,663,988 bytes,
+  with block count near the drawable source span divided by 32;
+- full-page replay uses `spatialMode=0` and does not scan the block table;
+- a sparse tile tests bounded block metadata and submits only exact candidate
+  bits from selected blocks;
+- command counts, exact no-ops, native runs, canonical barriers, painter
+  order, draws, and pixels remain unchanged;
+- unsupported or unknown bounds fail open to rendering, never to omission;
+- 11.pdf, EP23, and canonical-only pages remain within controlled timing
+  noise.
 
 ### r25-4-0128: Bounded Immutable Program Cache
 
@@ -357,9 +413,10 @@ dominant remaining acquisition cost. The scanner still converted ten numbers,
 constructed the same generic six-float line payload, computed exact bounds,
 and inserted the same spatial postings for every accepted command.
 
-0126 keeps 0125 only as the transactionally correct parser foundation and
-targets the proven residual work: six unnecessary constant conversions and
-eight unnecessary retained bytes for each exact translation-origin line.
+0126 proved that those constant conversions and retained payload bytes were
+real memory costs but not the dominant latency cost. 0127 therefore removes
+the remaining eager per-command spatial-posting representation while
+preserving the exact ordered command program.
 
 ## Proof Policy
 
