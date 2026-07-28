@@ -156,6 +156,7 @@ these patches:
 | r25-4-0125 | `0125-veloce-exact-streaming-line-compiler.patch` | Supersedes 0124 and applies directly after 0123. Once an ordinary exact line establishes immutable lowering context, a fixed-scratch scanner transactionally consumes the complete balanced `q a b c d e f cm x0 y0 m x1 y1 l S Q` unit and emits the transformed line through the existing exact owned-line lowerer. The wrapper has zero net graphics-state effect. A grammar or content-stream-boundary miss leaves stream and parser state untouched; a lowering rejection materializes the canonical two-point path at the same source ordinal. Q16 matched 2,940,112 lines but acquisition remained statistically unchanged from 0123, so this is retained as a correctness foundation rather than an accepted standalone performance win. |
 | r25-4-0126 | `0126-veloce-exact-packed-translation-line-compiler.patch` | Extends 0125 with an exact transactional grammar for canonical `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q` units. It converts only `tx/ty/dx/dy` and stores drawable matches in fixed 4,096-entry chunks of 16-byte zero-origin endpoint/translation payloads. Replay reconstructs the exact zero start and shares the existing ordered run, state, matrix, clip, visibility, spatial, cancellation, and AGG batch mechanisms. Any mismatch follows the general scanner or canonical PDFium. No document classifier, threshold, mutable cache, additional thread/lock, JNI/Kotlin path, bitmap, or UI-thread work is introduced; the existing total-line and 96 MiB ceilings remain authoritative. |
 | r25-4-0127 | `0127-veloce-bounded-spatial-command-blocks.patch` | Replaces per-command 32x32 spatial postings with immutable 32-command source-order blocks. Each bounded 32-byte entry owns holder-space union bounds plus an exact candidate mask. Canonical gaps split blocks, exact no-ops do not become candidates, and unknown bounds are fail-open always-selected blocks. Full-page replay bypasses spatial candidate construction; region replay merges selected native bits with canonical mandatory ranges in original order. Construction is capped at 128K blocks and the final table remains under the 96 MiB program ceiling. No classifier, approximation, mutable cache, thread, lock, JNI/Kotlin path, bitmap, or UI-thread work is added. |
+| r25-4-0128 | `0128-veloce-render-program-success-lazy-sidecar.patch` | Makes RenderProgram activation depend on exact native ownership instead of the first path object. Allocation-free semantic preflight rejects unsupported page-object and parser-direct line candidates before builder construction; the unchanged complete lowerer must record a native command before the builder is installed. A later activation starts after an implicit canonical prefix and preserves source order. Adds one root-holder `acquire_policy` line with parse/finish time, preactivation probes/rejects, activation source/ordinal, native commands, and program bytes; there are no per-object clocks or logs. No classifier, threshold, cache, thread, lock, JNI/Kotlin path, or UI-thread work is added. |
 
 ## Why this directory exists
 
@@ -168,9 +169,9 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-4-0127`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0092 through 0123, 0125, 0126, and 0127. Do not
-apply rejected 0124:
+blind numeric globbing. For `r25-4-0128`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0092 through 0123, and 0125 through 0128. Do
+not apply rejected 0124:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -213,10 +214,11 @@ git apply patches/ship/0123-veloce-parser-bounded-omitted-path-scratch.patch
 git apply patches/ship/0125-veloce-exact-streaming-line-compiler.patch
 git apply patches/ship/0126-veloce-exact-packed-translation-line-compiler.patch
 git apply patches/ship/0127-veloce-bounded-spatial-command-blocks.patch
+git apply patches/ship/0128-veloce-render-program-success-lazy-sidecar.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-4-0127` build. The machine-checked list lives in the 0127 workflow.
+`r25-4-0128` build. The machine-checked list lives in the 0128 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

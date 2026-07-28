@@ -1,7 +1,7 @@
 # r25-4 Exact Streaming Acquisition
 
 **Locked:** 2026-07-27 (Asia/Taipei)
-**Updated through:** r25-4-0127 on 2026-07-28 (Asia/Taipei)
+**Updated through:** r25-4-0128 on 2026-07-28 (Asia/Taipei)
 **Extends:** r25-3-0123
 **First revision:** r25-4-0124
 
@@ -279,7 +279,70 @@ Acceptance:
 - 11.pdf, EP23, and canonical-only pages remain within controlled timing
   noise.
 
-### r25-4-0128: Bounded Immutable Program Cache
+### r25-4-0128: Success-Lazy Sidecar Activation
+
+Normal PDF pages commonly contain a small number of paths among text and
+images. Before 0128, `CPDF_PageObjectHolder::AppendPageObject()` allocated a
+full `VeloceRenderProgramBuilder` on the first path before exact lowering had
+succeeded. The builder then observed every remaining object even when every
+path was rejected and `Finish()` returned no program.
+
+0128 makes activation depend on exact native ownership:
+
+- an allocation-free semantic preflight rejects unsupported page-object and
+  parser-direct line candidates before builder construction;
+- the existing complete lowerer remains authoritative and must record a native
+  command before the candidate builder is installed;
+- rejected paths remain ordinary canonical PDFium objects and no builder,
+  command table, spatial table, or sidecar is retained;
+- activation at a later source ordinal initializes one implicit canonical
+  prefix, preserving exact painter order without revisiting earlier objects;
+- after activation, canonical gaps and native commands continue through the
+  unchanged ordered RenderProgram;
+- fill, complex stroke, Darken, exact no-op, and parser-direct line ownership
+  remain supported;
+- budget or structural rejection still leaves the affected object canonical
+  before its first pixel.
+
+The preflight performs no allocation and uses no filename, page identity,
+object-count threshold, classifier, cache, thread, lock, JNI/Kotlin path, or
+UI-thread work. Only the first successful candidate receives the complete
+lowerer twice: once through the allocation-free semantic gate and once through
+the authoritative commit. Rejected normal-page paths are checked once and do
+not activate broad holder bookkeeping.
+
+One bounded Android log is emitted when a root page finishes acquisition:
+
+```text
+revision=r25-4-0128 event=acquire_policy
+mode=success_lazy_sidecar
+result=canonical_no_exact_candidate|activated|canonical_program_discarded
+parseUs=... finishUs=...
+preactivationPathProbes=... preactivationLineProbes=...
+preactivationRejects=... builderActivated=...
+activationSource=none|path|line activationOrdinal=...
+nativeCommands=... programBytes=...
+```
+
+There are no per-object clocks or logs. Compare `parseUs` with the existing
+app `PdfOpenTiming` acquisition timing and compare the existing `event=replay
+replayUs` line separately. This distinguishes canonical acquisition overhead
+from mixed-program replay overhead.
+
+Acceptance:
+
+- pages with only rejected paths report
+  `result=canonical_no_exact_candidate`, `builderActivated=0`,
+  `nativeCommands=0`, and `programBytes=0`;
+- exact candidates still produce the same commands, opcodes, payloads, source
+  ordinals, spatial blocks, retained bytes, and pixels as 0127;
+- normal-page preview acquisition is no slower than canonical PDFium within
+  controlled process-restart variance;
+- 11.pdf, Q16, and EP23 retain their 0127 native command and replay counters;
+- no new UI-thread work, lock, mutable cache, page-specific rule, or unbounded
+  allocation is introduced.
+
+### r25-4-0129: Bounded Immutable Program Cache
 
 Cache only sealed, resource-independent immutable programs. Cache identity must
 include document/content identity, stream generation, resource dependencies,
