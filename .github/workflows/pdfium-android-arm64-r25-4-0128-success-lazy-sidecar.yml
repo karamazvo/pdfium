@@ -442,7 +442,7 @@ jobs:
           grep -q 'RenderSingleObject(fallback_object, holder_to_device)' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q '(replay_work_units++ & 63u) == 0u' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'revision=r25-4-0128 event=replay' core/fpdfapi/render/cpdf_renderstatus.cpp
-          grep -q 'mode=bounded_spatial_command_blocks' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'mode=success_lazy_sidecar' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'ComposeVeloceInlineTranslation' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'lineRasterPasses=%zu exactNoOpLinesSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'exactNoOpWords=%zu exactNoOpRankBlocks=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
