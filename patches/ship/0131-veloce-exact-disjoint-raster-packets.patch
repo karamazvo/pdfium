@@ -1,0 +1,404 @@
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -429,6 +429,8 @@
+   CFX_FillRenderOptions current_fill_options;
+   FX_ARGB current_stroke_argb = 0;
+   size_t dense_raster_passes = 0;
++  size_t coalesced_source_draws = 0;
++  size_t coalesced_raster_passes = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
+   size_t direct_butt_line_draws = 0;
+@@ -534,7 +536,11 @@
+             &current_graph_state, current_stroke_argb,
+             current_fill_options, &batch_stats)) {
+       CHECK_EQ(batch_stats.source_draws, flushed_count);
+-      CHECK_EQ(batch_stats.raster_passes, batch_stats.source_draws);
++      CHECK_LE(batch_stats.raster_passes, batch_stats.source_draws);
++      CHECK_LE(batch_stats.coalesced_raster_passes,
++               batch_stats.raster_passes);
++      CHECK_LE(batch_stats.coalesced_source_draws,
++               batch_stats.source_draws);
+       CHECK_LE(batch_stats.stroke_transform_builds +
+                    batch_stats.stroke_transform_hits,
+                batch_stats.source_draws);
+@@ -544,6 +550,8 @@
+       native_draws += flushed_count;
+       line_batch_commands += flushed_count;
+       dense_raster_passes += batch_stats.raster_passes;
++      coalesced_source_draws += batch_stats.coalesced_source_draws;
++      coalesced_raster_passes += batch_stats.coalesced_raster_passes;
+       stroke_transform_builds += batch_stats.stroke_transform_builds;
+       stroke_transform_hits += batch_stats.stroke_transform_hits;
+       direct_butt_line_draws += batch_stats.direct_butt_line_draws;
+@@ -582,8 +590,8 @@
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0130 event=replay "
+-        "mode=chunk_native_homogeneous_stream "
++        "revision=r25-5-0131 event=replay "
++        "mode=exact_disjoint_raster_packets "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
+@@ -594,6 +602,7 @@
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
+         "lineRasterPasses=%zu exactNoOpLinesSkipped=%zu "
++        "coalescedSourceDraws=%zu coalescedRasterPasses=%zu "
+         "exactNoOpWords=%zu exactNoOpRankBlocks=%zu "
+         "strokeTransformBuilds=%zu strokeTransformHits=%zu "
+         "directButtLineDraws=%zu genericStrokeDraws=%zu "
+@@ -616,7 +625,8 @@
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+         max_line_batch, native_fill_draws, dense_raster_passes,
+-        exact_noop_lines_skipped, program->exact_noop_word_count(),
++        exact_noop_lines_skipped, coalesced_source_draws,
++        coalesced_raster_passes, program->exact_noop_word_count(),
+         program->exact_noop_rank_block_count(),
+         stroke_transform_builds,
+         stroke_transform_hits, direct_butt_line_draws,
+@@ -658,6 +668,8 @@
+     static_cast<void>(max_line_batch);
+     static_cast<void>(native_fill_draws);
+     static_cast<void>(dense_raster_passes);
++    static_cast<void>(coalesced_source_draws);
++    static_cast<void>(coalesced_raster_passes);
+     static_cast<void>(stroke_transform_builds);
+     static_cast<void>(stroke_transform_hits);
+     static_cast<void>(direct_butt_line_draws);
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <array>
+ #include <optional>
+ #include <utility>
+ 
+@@ -1068,17 +1069,18 @@
+   path->line_to(end.x, end.y);
+ }
+ 
+-bool RasterizeDirectButtStrokeLine(
+-    agg::rasterizer_scanline_aa* rasterizer,
++std::optional<FX_RECT> BuildDirectButtStrokeLine(
+     agg::path_storage* path,
+     const CFX_StrokeLine& line,
+     const CFX_Matrix& object_to_stroke,
+     const CFX_Matrix& stroke_to_device,
+     const CFX_GraphStateData& graph_state,
+-    float stroke_scale) {
++    float stroke_scale,
++    int pixel_width,
++    int pixel_height) {
+   if (graph_state.line_cap() != CFX_GraphStateData::LineCap::kButt ||
+       !graph_state.dash_array().empty() || line.start == line.end) {
+-    return false;
++    return std::nullopt;
+   }
+ 
+   const CFX_PointF start =
+@@ -1088,7 +1090,7 @@
+   const float segment_y = end.y - start.y;
+   const float segment_length = FXSYS_sqrt2(segment_x, segment_y);
+   if (!std::isfinite(segment_length) || segment_length <= 1.0e-14f) {
+-    return false;
++    return std::nullopt;
+   }
+ 
+   const float device_unit =
+@@ -1097,7 +1099,7 @@
+   const float stroke_width =
+       std::max(graph_state.line_width() * stroke_scale, device_unit);
+   if (!std::isfinite(stroke_width) || stroke_width <= 0.0f) {
+-    return false;
++    return std::nullopt;
+   }
+ 
+   // This is the exact four-vertex polygon emitted by AGG's conv_stroke for
+@@ -1106,16 +1108,44 @@
+   const float half_width = stroke_width / 2.0f;
+   const float normal_x = segment_y * half_width / segment_length;
+   const float normal_y = segment_x * half_width / segment_length;
+-  path->remove_all();
+-  path->move_to(start.x - normal_x, start.y + normal_y);
+-  path->line_to(start.x + normal_x, start.y - normal_y);
+-  path->line_to(end.x + normal_x, end.y - normal_y);
+-  path->line_to(end.x - normal_x, end.y + normal_y);
++  std::array<CFX_PointF, 4> vertices = {
++      CFX_PointF(start.x - normal_x, start.y + normal_y),
++      CFX_PointF(start.x + normal_x, start.y - normal_y),
++      CFX_PointF(end.x + normal_x, end.y - normal_y),
++      CFX_PointF(end.x - normal_x, end.y + normal_y),
++  };
++  path->remove_all();
++  path->move_to(vertices[0].x, vertices[0].y);
++  path->line_to(vertices[1].x, vertices[1].y);
++  path->line_to(vertices[2].x, vertices[2].y);
++  path->line_to(vertices[3].x, vertices[3].y);
+   path->end_poly();
+-  rasterizer->add_path_transformed(*path, &stroke_to_device);
+-  return true;
++
++  for (CFX_PointF& vertex : vertices) {
++    vertex = stroke_to_device.Transform(vertex);
++    if (!std::isfinite(vertex.x) || !std::isfinite(vertex.y) ||
++        fabs(vertex.x) > kMaxPos || fabs(vertex.y) > kMaxPos) {
++      return std::nullopt;
++    }
++  }
++  CFX_FloatRect pixel_support = CFX_FloatRect::GetBBox(vertices);
++  // AGG anti-alias coverage cannot escape this conservative two-pixel halo.
++  // Disjoint halos prove that combining polygons cannot change destination
++  // pixels or source-over order.
++  pixel_support.Inflate(2.0f, 2.0f);
++  FX_RECT bounds = pixel_support.GetOuterRect();
++  bounds.Intersect(0, 0, pixel_width, pixel_height);
++  return bounds;
+ }
+ 
++bool DeviceBoundsOverlap(const FX_RECT& lhs, const FX_RECT& rhs) {
++  if (lhs.IsEmpty() || rhs.IsEmpty()) {
++    return false;
++  }
++  return lhs.left < rhs.right && rhs.left < lhs.right &&
++         lhs.top < rhs.bottom && rhs.top < lhs.bottom;
++}
++
+ }  // namespace
+ 
+ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
+@@ -1581,10 +1611,12 @@
+     } else {
+       const CFX_StrokeLine line{draw.line_start, draw.line_end,
+                                 draw.object_to_device};
+-      if (RasterizeDirectButtStrokeLine(
+-              &agg_context->rasterizer, &agg_context->path_data, line,
+-              matrix1, agg_context->stroke_normalized, *stroke_state,
+-              matrix1.a)) {
++      if (BuildDirectButtStrokeLine(
++              &agg_context->path_data, line, matrix1,
++              agg_context->stroke_normalized, *stroke_state, matrix1.a,
++              GetPixelWidth(), GetPixelHeight())) {
++        agg_context->rasterizer.add_path_transformed(
++            agg_context->path_data, &agg_context->stroke_normalized);
+         ++packet_stats.direct_butt_line_draws;
+         return;
+       }
+@@ -1604,12 +1636,36 @@
+                              draw.fill_options.full_cover, rgb_byte_order_);
+     agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
+                           renderer, draw.fill_options.aliased_path);
++    ++packet_stats.raster_passes;
++  };
++
++  constexpr size_t kMaxDisjointDrawsPerRasterPass = 16u;
++  std::array<FX_RECT, kMaxDisjointDrawsPerRasterPass> disjoint_bounds;
++  size_t disjoint_draw_count = 0u;
++  const CFX_FillRenderOptions* disjoint_options = nullptr;
++  const auto flush_disjoint_strokes = [&]() {
++    if (disjoint_draw_count == 0u) {
++      return;
++    }
++    CHECK(disjoint_options);
++    fill_options_ = *disjoint_options;
++    CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                             disjoint_options->full_cover, rgb_byte_order_);
++    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                          renderer, disjoint_options->aliased_path);
+     ++packet_stats.raster_passes;
++    if (disjoint_draw_count > 1u) {
++      packet_stats.coalesced_source_draws += disjoint_draw_count;
++      ++packet_stats.coalesced_raster_passes;
++    }
++    disjoint_draw_count = 0u;
++    disjoint_options = nullptr;
+   };
+ 
+   for (const CFX_OrderedPathDraw& draw : draws) {
+     if (draw.path && draw.fill_options.fill_type !=
+                          CFX_FillRenderOptions::FillType::kNoFill) {
++      flush_disjoint_strokes();
+       reset_stroke_rasterizer();
+       fill_options_ = draw.fill_options;
+       BuildAggPathInto(*draw.path, &draw.object_to_device,
+@@ -1626,11 +1682,79 @@
+       ++packet_stats.raster_passes;
+       continue;
+     }
++
++    if (!draw.path && !draw.fill_options.zero_area &&
++        stroke_state->line_cap() == CFX_GraphStateData::LineCap::kButt &&
++        stroke_state->dash_array().empty() &&
++        draw.line_start != draw.line_end) {
++      const CFX_Matrix& object_matrix = draw.object_to_device;
++      bool built_stroke_transform = false;
++      if (!agg_context->stroke_transform_valid ||
++          agg_context->stroke_a != object_matrix.a ||
++          agg_context->stroke_b != object_matrix.b ||
++          agg_context->stroke_c != object_matrix.c ||
++          agg_context->stroke_d != object_matrix.d) {
++        agg_context->stroke_scale =
++            std::max(fabs(object_matrix.a), fabs(object_matrix.b));
++        agg_context->stroke_normalized = CFX_Matrix(
++            object_matrix.a / agg_context->stroke_scale,
++            object_matrix.b / agg_context->stroke_scale,
++            object_matrix.c / agg_context->stroke_scale,
++            object_matrix.d / agg_context->stroke_scale, 0, 0);
++        agg_context->stroke_normalized_inverse =
++            agg_context->stroke_normalized.GetInverse();
++        agg_context->stroke_a = object_matrix.a;
++        agg_context->stroke_b = object_matrix.b;
++        agg_context->stroke_c = object_matrix.c;
++        agg_context->stroke_d = object_matrix.d;
++        agg_context->stroke_transform_valid = true;
++        built_stroke_transform = true;
++      }
++      const CFX_Matrix object_to_stroke =
++          object_matrix * agg_context->stroke_normalized_inverse;
++      const CFX_StrokeLine line{draw.line_start, draw.line_end,
++                                draw.object_to_device};
++      std::optional<FX_RECT> bounds = BuildDirectButtStrokeLine(
++          &agg_context->path_data, line, object_to_stroke,
++          agg_context->stroke_normalized, *stroke_state, object_to_stroke.a,
++          GetPixelWidth(), GetPixelHeight());
++      if (bounds) {
++        if (built_stroke_transform) {
++          ++packet_stats.stroke_transform_builds;
++        } else {
++          ++packet_stats.stroke_transform_hits;
++        }
++        bool can_join = disjoint_draw_count != 0u &&
++                        *disjoint_options == draw.fill_options &&
++                        disjoint_draw_count <
++                            kMaxDisjointDrawsPerRasterPass;
++        for (size_t i = 0u; can_join && i < disjoint_draw_count; ++i) {
++          can_join = !DeviceBoundsOverlap(disjoint_bounds[i], *bounds);
++        }
++        if (disjoint_draw_count != 0u && !can_join) {
++          flush_disjoint_strokes();
++        }
++        if (disjoint_draw_count == 0u) {
++          reset_stroke_rasterizer();
++          disjoint_options = &draw.fill_options;
++        }
++        agg_context->rasterizer.add_path_transformed(
++            agg_context->path_data, &agg_context->stroke_normalized);
++        disjoint_bounds[disjoint_draw_count++] = *bounds;
++        ++packet_stats.direct_butt_line_draws;
++        continue;
++      }
++    }
++
++    flush_disjoint_strokes();
+     render_independent_stroke(draw);
+   }
++  flush_disjoint_strokes();
+   if (stats) {
+     stats->source_draws += packet_stats.source_draws;
+     stats->raster_passes += packet_stats.raster_passes;
++    stats->coalesced_source_draws += packet_stats.coalesced_source_draws;
++    stats->coalesced_raster_passes += packet_stats.coalesced_raster_passes;
+     stats->stroke_transform_builds += packet_stats.stroke_transform_builds;
+     stats->stroke_transform_hits += packet_stats.stroke_transform_hits;
+     stats->direct_butt_line_draws += packet_stats.direct_butt_line_draws;
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -241,7 +241,9 @@
+       context.get(), draws, &graphics_state, kStrokeColor, stroke_options,
+       &stats));
+   EXPECT_EQ(draws.size(), stats.source_draws);
+-  EXPECT_EQ(draws.size(), stats.raster_passes);
++  EXPECT_EQ(1u, stats.raster_passes);
++  EXPECT_EQ(draws.size(), stats.coalesced_source_draws);
++  EXPECT_EQ(1u, stats.coalesced_raster_passes);
+   EXPECT_EQ(1u, stats.stroke_transform_builds);
+   EXPECT_EQ(draws.size() - 1u, stats.stroke_transform_hits);
+   EXPECT_EQ(draws.size(), stats.direct_butt_line_draws);
+@@ -251,6 +253,51 @@
+ }
+ 
+ TEST(CFXDefaultRenderDeviceTest,
++     OrderedOverlappingLinesPreserveIndependentRasterOrder) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  batched.GetBitmap()->Clear(0xffffffff);
++
++  constexpr uint32_t kStrokeColor = 0x80204080;
++  CFX_GraphStateData graphics_state;
++  graphics_state.set_line_width(3.0f);
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  const std::array<CFX_OrderedPathDraw, 2> draws = {
++      CFX_OrderedPathDraw{nullptr, {4.0f, 4.0f}, {58.0f, 58.0f},
++                          CFX_Matrix(), 0, stroke_options},
++      CFX_OrderedPathDraw{nullptr, {4.0f, 58.0f}, {58.0f, 4.0f},
++                          CFX_Matrix(), 0, stroke_options},
++  };
++
++  for (const CFX_OrderedPathDraw& draw : draws) {
++    CFX_Path line;
++    line.AppendLine(draw.line_start, draw.line_end);
++    ASSERT_TRUE(baseline.DrawPath(
++        line, &draw.object_to_device, &graphics_state, /*fill_color=*/0,
++        kStrokeColor, draw.fill_options));
++  }
++
++  auto context = batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), draws, &graphics_state, kStrokeColor, stroke_options,
++      &stats));
++  EXPECT_EQ(draws.size(), stats.source_draws);
++  EXPECT_EQ(draws.size(), stats.raster_passes);
++  EXPECT_EQ(0u, stats.coalesced_source_draws);
++  EXPECT_EQ(0u, stats.coalesced_raster_passes);
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
++
++TEST(CFXDefaultRenderDeviceTest,
+      OrderedRoundLinesFailClosedToGenericStroke) {
+   CFX_DefaultRenderDevice baseline;
+   CFX_DefaultRenderDevice batched;
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -39,7 +39,7 @@
+   CFX_Matrix object_to_device;
+ };
+ 
+-// One independently composited operation in an exact painter-ordered packet.
++// One painter-ordered operation in an exact packet.
+ // A null path denotes a stroke line. A non-null path is either fill-only or
+ // stroke-only according to fill_options. All pointed-to geometry remains
+ // owned by the caller for the duration of the synchronous draw.
+@@ -55,6 +55,8 @@
+ struct CFX_OrderedPathBatchStats {
+   size_t source_draws = 0;
+   size_t raster_passes = 0;
++  size_t coalesced_source_draws = 0;
++  size_t coalesced_raster_passes = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
+   size_t direct_butt_line_draws = 0;
+@@ -171,7 +173,9 @@
+   CreateOrderedPathBatchContext();
+   // `context` must come from this driver. Returning false must happen before
+   // changing a destination pixel for this packet, allowing ordered canonical
+-  // fallback after earlier successful packets.
++  // fallback after earlier successful packets. Implementations may share a
++  // raster pass only after proving that affected destination pixels are
++  // disjoint; otherwise source order remains a hard barrier.
+   virtual bool DrawOrderedPathBatch(
+       OrderedPathBatchContext* context,
+       pdfium::span<const CFX_OrderedPathDraw> draws,
