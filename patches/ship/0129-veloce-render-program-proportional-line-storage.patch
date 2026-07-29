@@ -1,0 +1,528 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index 71b6f21a1..bece18452 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-4-0128 event=form_cache result=hit "
++            "revision=r25-4-0129 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-4-0128 event=form_cache result=store "
++          "revision=r25-4-0129 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index f0ce194a0..969908e22 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -171,7 +171,7 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0128 event=acquire_policy "
++        "revision=r25-4-0129 event=acquire_policy "
+         "mode=success_lazy_sidecar result=%s parseUs=%llu finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 30f92ed51..048f5a518 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -766,73 +766,6 @@ std::vector<uint32_t> BuildExactNoOpRankBlocks(
+ 
+ }  // namespace
+ 
+-VeloceNativeLineStorage::VeloceNativeLineStorage() = default;
+-VeloceNativeLineStorage::VeloceNativeLineStorage(
+-    VeloceNativeLineStorage&& other) noexcept = default;
+-VeloceNativeLineStorage::~VeloceNativeLineStorage() = default;
+-VeloceNativeLineStorage& VeloceNativeLineStorage::operator=(
+-    VeloceNativeLineStorage&& other) noexcept = default;
+-
+-bool VeloceNativeLineStorage::Append(const VeloceNativeLine& line,
+-                                     size_t max_lines) {
+-  if (size_ >= max_lines) {
+-    return false;
+-  }
+-  const size_t chunk_index = size_ / kChunkLines;
+-  if (chunk_index == chunks_.size()) {
+-    chunks_.push_back(std::make_unique<Chunk>());
+-  }
+-  (*chunks_[chunk_index])[size_ % kChunkLines] = line;
+-  ++size_;
+-  return true;
+-}
+-
+-const VeloceNativeLine& VeloceNativeLineStorage::at(size_t index) const {
+-  CHECK_LT(index, size_);
+-  return (*chunks_[index / kChunkLines])[index % kChunkLines];
+-}
+-
+-size_t VeloceNativeLineStorage::EstimatedBytes() const {
+-  return chunks_.capacity() * sizeof(std::unique_ptr<Chunk>) +
+-         chunks_.size() * sizeof(Chunk);
+-}
+-
+-VeloceNativeTranslationLineStorage::VeloceNativeTranslationLineStorage() =
+-    default;
+-VeloceNativeTranslationLineStorage::VeloceNativeTranslationLineStorage(
+-    VeloceNativeTranslationLineStorage&& other) noexcept = default;
+-VeloceNativeTranslationLineStorage::~VeloceNativeTranslationLineStorage() =
+-    default;
+-VeloceNativeTranslationLineStorage&
+-VeloceNativeTranslationLineStorage::operator=(
+-    VeloceNativeTranslationLineStorage&& other) noexcept = default;
+-
+-bool VeloceNativeTranslationLineStorage::Append(
+-    const VeloceNativeTranslationOriginLine& line,
+-    size_t max_lines) {
+-  if (size_ >= max_lines) {
+-    return false;
+-  }
+-  const size_t chunk_index = size_ / kChunkLines;
+-  if (chunk_index == chunks_.size()) {
+-    chunks_.push_back(std::make_unique<Chunk>());
+-  }
+-  (*chunks_[chunk_index])[size_ % kChunkLines] = line;
+-  ++size_;
+-  return true;
+-}
+-
+-const VeloceNativeTranslationOriginLine&
+-VeloceNativeTranslationLineStorage::at(size_t index) const {
+-  CHECK_LT(index, size_);
+-  return (*chunks_[index / kChunkLines])[index % kChunkLines];
+-}
+-
+-size_t VeloceNativeTranslationLineStorage::EstimatedBytes() const {
+-  return chunks_.capacity() * sizeof(std::unique_ptr<Chunk>) +
+-         chunks_.size() * sizeof(Chunk);
+-}
+-
+ VeloceRenderProgram::VeloceRenderProgram(
+     uint32_t command_count,
+     std::vector<VeloceNativeRun> native_runs,
+@@ -1785,9 +1718,13 @@ bool VeloceRenderProgramBuilder::TryReserveCachedParsedLineBudget(
+   if (total_line_count >= kMaxNativeLines) {
+     return false;
+   }
++  const size_t next_line_reservation =
++      translation_origin
++          ? native_translation_lines_.NextAppendReservationLines()
++          : native_lines_.NextAppendReservationLines();
+   size_t line_slots =
+       cached_line_payload_budget_slots == 0u
+-          ? std::min(VeloceNativeLineStorage::kChunkLines,
++          ? std::min(next_line_reservation,
+                      kMaxNativeLines - total_line_count)
+           : 0u;
+   size_t native_run_slots =
+@@ -2942,7 +2879,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0128 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-4-0129 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2952,14 +2889,21 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0128 event=compile "
++        "revision=r25-4-0129 event=compile "
+         "mode=success_lazy_sidecar "
++        "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+         "parserDirectLineAttempts=%u parserLineContextHits=%u "
+         "parserLineContextBuilds=%u parserLineBudgetRefills=%u "
+         "parserFusedLines=%u parserConstantFoldedLines=%u "
+         "nativeOpaqueLines=%zu compactTranslationLines=%zu "
++        "nativeLineStorageBytes=%zu nativeLineCapacity=%zu "
++        "nativeLineChunks=%zu nativeLineDenseChunks=%zu "
++        "nativeTranslationLineStorageBytes=%zu "
++        "nativeTranslationLineCapacity=%zu "
++        "nativeTranslationLineChunks=%zu "
++        "nativeTranslationLineDenseChunks=%zu "
+         "nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "nativeOpaqueFills=%zu exactNoOpLines=%u exactNoOpWords=%zu "
+         "exactNoOpRankBlocks=%zu "
+@@ -2987,6 +2931,14 @@ VeloceRenderProgramBuilder::Finish() {
+         parser_fused_line_count_, parser_constant_folded_line_count_,
+         program->native_line_count(),
+         program->native_translation_line_count(),
++        program->native_line_storage_bytes(),
++        program->native_line_storage_capacity(),
++        program->native_line_storage_chunk_count(),
++        program->native_line_dense_chunk_count(),
++        program->native_translation_line_storage_bytes(),
++        program->native_translation_line_storage_capacity(),
++        program->native_translation_line_storage_chunk_count(),
++        program->native_translation_line_dense_chunk_count(),
+         program->opcode_count(VeloceRenderOpcode::kNativeOpaqueStrokePath),
+         program->opcode_count(VeloceRenderOpcode::kNativeDarkenStrokePath),
+         program->native_fill_path_count(), exact_noop_line_count_,
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 35d961b87..5f3dd7992 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -18,6 +18,7 @@
+ #include "core/fpdfapi/page/cpdf_contentmarks.h"
+ #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
+ #include "core/fpdfapi/page/cpdf_generalstate.h"
++#include "core/fxcrt/check.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/span.h"
+@@ -29,7 +30,7 @@ class CPDF_GraphicStates;
+ class CPDF_PageObject;
+ class VeloceSpatialOrdinalIndexBuilder;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 23u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 24u;
+ 
+ // Native instructions and implicit canonical PDFium spans share one source
+ // order; page size does not select a different representation or executor.
+@@ -334,65 +335,135 @@ enum class VeloceNativeLineRejectReason : uint8_t {
+ inline constexpr size_t kVeloceNativeLineRejectReasonCount =
+     static_cast<size_t>(VeloceNativeLineRejectReason::kCount);
+ 
+-// Fixed-size chunks avoid repeated copies and vector capacity cliffs while
+-// preserving O(1) indexed access for the later spatial executor.
+-class VeloceNativeLineStorage final {
++// Geometric prefix chunks keep small programs proportional. Dense programs
++// transition to fixed-size chunks without ever copying retained payloads.
++template <typename LineType>
++class VeloceTieredLineStorage final {
+  public:
+-  static constexpr size_t kChunkLines = 4096u;
+-
+-  VeloceNativeLineStorage();
+-  VeloceNativeLineStorage(VeloceNativeLineStorage&& other) noexcept;
+-  ~VeloceNativeLineStorage();
++  static constexpr size_t kFirstChunkLines = 16u;
++  static constexpr size_t kSecondChunkLines = 64u;
++  static constexpr size_t kThirdChunkLines = 256u;
++  static constexpr size_t kFourthChunkLines = 1024u;
++  static constexpr size_t kDenseChunkLines = 4096u;
++  static constexpr size_t kPrefixChunkCount = 4u;
++  static constexpr size_t kPrefixLines =
++      kFirstChunkLines + kSecondChunkLines + kThirdChunkLines +
++      kFourthChunkLines;
++
++  VeloceTieredLineStorage() = default;
++  VeloceTieredLineStorage(VeloceTieredLineStorage&& other) noexcept = default;
++  ~VeloceTieredLineStorage() = default;
++
++  VeloceTieredLineStorage(const VeloceTieredLineStorage&) = delete;
++  VeloceTieredLineStorage& operator=(const VeloceTieredLineStorage&) = delete;
++  VeloceTieredLineStorage& operator=(
++      VeloceTieredLineStorage&& other) noexcept = default;
++
++  bool Append(const LineType& line, size_t max_lines) {
++    if (size_ >= max_lines) {
++      return false;
++    }
++    const Location location = LocationForIndex(size_);
++    if (location.chunk == chunks_.size()) {
++      chunks_.push_back(
++          std::make_unique<LineType[]>(ChunkCapacity(location.chunk)));
++    }
++    chunks_[location.chunk][location.offset] = line;
++    ++size_;
++    return true;
++  }
+ 
+-  VeloceNativeLineStorage(const VeloceNativeLineStorage&) = delete;
+-  VeloceNativeLineStorage& operator=(const VeloceNativeLineStorage&) = delete;
+-  VeloceNativeLineStorage& operator=(
+-      VeloceNativeLineStorage&& other) noexcept;
++  const LineType& at(size_t index) const {
++    CHECK_LT(index, size_);
++    const Location location = LocationForIndex(index);
++    return chunks_[location.chunk][location.offset];
++  }
+ 
+-  bool Append(const VeloceNativeLine& line, size_t max_lines);
+-  const VeloceNativeLine& at(size_t index) const;
+   size_t size() const { return size_; }
+-  size_t EstimatedBytes() const;
++  size_t chunk_count() const { return chunks_.size(); }
++  size_t dense_chunk_count() const {
++    return chunks_.size() > kPrefixChunkCount
++               ? chunks_.size() - kPrefixChunkCount
++               : 0u;
++  }
++  size_t allocated_line_capacity() const {
++    const size_t chunk_count = chunks_.size();
++    if (chunk_count == 0u) {
++      return 0u;
++    }
++    if (chunk_count == 1u) {
++      return kFirstChunkLines;
++    }
++    if (chunk_count == 2u) {
++      return kFirstChunkLines + kSecondChunkLines;
++    }
++    if (chunk_count == 3u) {
++      return kFirstChunkLines + kSecondChunkLines + kThirdChunkLines;
++    }
++    return kPrefixLines +
++           (chunk_count - kPrefixChunkCount) * kDenseChunkLines;
++  }
++  size_t NextAppendReservationLines() const {
++    const Location location = LocationForIndex(size_);
++    return ChunkCapacity(location.chunk) - location.offset;
++  }
++  size_t EstimatedBytes() const {
++    return chunks_.capacity() * sizeof(std::unique_ptr<LineType[]>) +
++           allocated_line_capacity() * sizeof(LineType);
++  }
+ 
+  private:
+-  using Chunk = std::array<VeloceNativeLine, kChunkLines>;
+-
+-  std::vector<std::unique_ptr<Chunk>> chunks_;
+-  size_t size_ = 0;
+-};
++  struct Location {
++    size_t chunk;
++    size_t offset;
++  };
+ 
+-// Separate fixed-size chunks keep the compact representation dense without
+-// adding a tag or indirection to ordinary six-float native lines.
+-class VeloceNativeTranslationLineStorage final {
+- public:
+-  static constexpr size_t kChunkLines = 4096u;
+-
+-  VeloceNativeTranslationLineStorage();
+-  VeloceNativeTranslationLineStorage(
+-      VeloceNativeTranslationLineStorage&& other) noexcept;
+-  ~VeloceNativeTranslationLineStorage();
+-
+-  VeloceNativeTranslationLineStorage(
+-      const VeloceNativeTranslationLineStorage&) = delete;
+-  VeloceNativeTranslationLineStorage& operator=(
+-      const VeloceNativeTranslationLineStorage&) = delete;
+-  VeloceNativeTranslationLineStorage& operator=(
+-      VeloceNativeTranslationLineStorage&& other) noexcept;
+-
+-  bool Append(const VeloceNativeTranslationOriginLine& line,
+-              size_t max_lines);
+-  const VeloceNativeTranslationOriginLine& at(size_t index) const;
+-  size_t size() const { return size_; }
+-  size_t EstimatedBytes() const;
++  static constexpr size_t ChunkCapacity(size_t chunk) {
++    switch (chunk) {
++      case 0u:
++        return kFirstChunkLines;
++      case 1u:
++        return kSecondChunkLines;
++      case 2u:
++        return kThirdChunkLines;
++      case 3u:
++        return kFourthChunkLines;
++      default:
++        return kDenseChunkLines;
++    }
++  }
+ 
+- private:
+-  using Chunk =
+-      std::array<VeloceNativeTranslationOriginLine, kChunkLines>;
++  static constexpr Location LocationForIndex(size_t index) {
++    if (index >= kPrefixLines) {
++      const size_t dense_index = index - kPrefixLines;
++      return {kPrefixChunkCount + dense_index / kDenseChunkLines,
++              dense_index % kDenseChunkLines};
++    }
++    constexpr size_t kThirdChunkEnd =
++        kFirstChunkLines + kSecondChunkLines + kThirdChunkLines;
++    if (index >= kThirdChunkEnd) {
++      return {3u, index - kThirdChunkEnd};
++    }
++    constexpr size_t kSecondChunkEnd =
++        kFirstChunkLines + kSecondChunkLines;
++    if (index >= kSecondChunkEnd) {
++      return {2u, index - kSecondChunkEnd};
++    }
++    if (index >= kFirstChunkLines) {
++      return {1u, index - kFirstChunkLines};
++    }
++    return {0u, index};
++  }
+ 
+-  std::vector<std::unique_ptr<Chunk>> chunks_;
++  std::vector<std::unique_ptr<LineType[]>> chunks_;
+   size_t size_ = 0;
+ };
+ 
++using VeloceNativeLineStorage =
++    VeloceTieredLineStorage<VeloceNativeLine>;
++using VeloceNativeTranslationLineStorage =
++    VeloceTieredLineStorage<VeloceNativeTranslationOriginLine>;
++
+ // Immutable native rendering representation owned by a live page-object
+ // holder or shared by exact equivalent Form holders. PDFium page objects
+ // remain authoritative for fidelity and editing. The sidecar contains no
+@@ -441,6 +512,18 @@ class VeloceRenderProgram final {
+       uint32_t command_index) const;
+   bool is_valid() const { return valid_; }
+   size_t native_line_count() const { return native_lines_.size(); }
++  size_t native_line_storage_bytes() const {
++    return native_lines_.EstimatedBytes();
++  }
++  size_t native_line_storage_capacity() const {
++    return native_lines_.allocated_line_capacity();
++  }
++  size_t native_line_storage_chunk_count() const {
++    return native_lines_.chunk_count();
++  }
++  size_t native_line_dense_chunk_count() const {
++    return native_lines_.dense_chunk_count();
++  }
+   const VeloceNativeLine& native_line(size_t index) const {
+     return native_lines_.at(index);
+   }
+@@ -450,6 +533,18 @@ class VeloceRenderProgram final {
+   size_t native_translation_line_count() const {
+     return native_translation_lines_.size();
+   }
++  size_t native_translation_line_storage_bytes() const {
++    return native_translation_lines_.EstimatedBytes();
++  }
++  size_t native_translation_line_storage_capacity() const {
++    return native_translation_lines_.allocated_line_capacity();
++  }
++  size_t native_translation_line_storage_chunk_count() const {
++    return native_translation_lines_.chunk_count();
++  }
++  size_t native_translation_line_dense_chunk_count() const {
++    return native_translation_lines_.dense_chunk_count();
++  }
+   const VeloceNativeTranslationOriginLine& native_translation_line(
+       size_t index) const {
+     return native_translation_lines_.at(index);
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index b280c72da..c289f247a 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -86,6 +86,79 @@ bool IsCandidate(pdfium::span<const uint64_t> words, uint32_t ordinal) {
+          (words[ordinal / 64u] & (uint64_t{1} << (ordinal % 64u))) != 0u;
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     NativeLineStorageIsProportionalAndPreservesTierBoundaries) {
++  VeloceNativeLineStorage storage;
++  constexpr size_t kLineCount =
++      VeloceNativeLineStorage::kPrefixLines + 1u;
++  for (size_t i = 0u; i < kLineCount; ++i) {
++    VeloceNativeLine line;
++    line.start = CFX_PointF(static_cast<float>(i), 1.0f);
++    line.end = CFX_PointF(static_cast<float>(i + 1u), 2.0f);
++    ASSERT_TRUE(storage.Append(line, kLineCount));
++    if (i == 0u) {
++      EXPECT_EQ(VeloceNativeLineStorage::kFirstChunkLines,
++                storage.allocated_line_capacity());
++      EXPECT_EQ(1u, storage.chunk_count());
++      EXPECT_EQ(0u, storage.dense_chunk_count());
++      EXPECT_LT(storage.EstimatedBytes(),
++                VeloceNativeLineStorage::kDenseChunkLines *
++                    sizeof(VeloceNativeLine));
++    } else if (i == VeloceNativeLineStorage::kFirstChunkLines) {
++      EXPECT_EQ(VeloceNativeLineStorage::kFirstChunkLines +
++                    VeloceNativeLineStorage::kSecondChunkLines,
++                storage.allocated_line_capacity());
++      EXPECT_EQ(2u, storage.chunk_count());
++    } else if (i == VeloceNativeLineStorage::kFirstChunkLines +
++                        VeloceNativeLineStorage::kSecondChunkLines) {
++      EXPECT_EQ(VeloceNativeLineStorage::kFirstChunkLines +
++                    VeloceNativeLineStorage::kSecondChunkLines +
++                    VeloceNativeLineStorage::kThirdChunkLines,
++                storage.allocated_line_capacity());
++      EXPECT_EQ(3u, storage.chunk_count());
++    } else if (i == VeloceNativeLineStorage::kFirstChunkLines +
++                        VeloceNativeLineStorage::kSecondChunkLines +
++                        VeloceNativeLineStorage::kThirdChunkLines) {
++      EXPECT_EQ(VeloceNativeLineStorage::kPrefixLines,
++                storage.allocated_line_capacity());
++      EXPECT_EQ(4u, storage.chunk_count());
++    }
++  }
++
++  EXPECT_EQ(VeloceNativeLineStorage::kPrefixLines +
++                VeloceNativeLineStorage::kDenseChunkLines,
++            storage.allocated_line_capacity());
++  EXPECT_EQ(5u, storage.chunk_count());
++  EXPECT_EQ(1u, storage.dense_chunk_count());
++  for (size_t boundary :
++       {15u, 16u, 79u, 80u, 335u, 336u, 1359u, 1360u}) {
++    EXPECT_EQ(static_cast<float>(boundary), storage.at(boundary).start.x);
++    EXPECT_EQ(static_cast<float>(boundary + 1u),
++              storage.at(boundary).end.x);
++  }
++}
++
++TEST(VeloceRenderProgramTest,
++     TranslationLineStorageUsesTheSameProportionalLayout) {
++  VeloceNativeTranslationLineStorage storage;
++  constexpr size_t kLineCount =
++      VeloceNativeTranslationLineStorage::kFirstChunkLines + 1u;
++  for (size_t i = 0u; i < kLineCount; ++i) {
++    VeloceNativeTranslationOriginLine line;
++    line.end = CFX_PointF(static_cast<float>(i), 2.0f);
++    line.translation_x = static_cast<float>(i + 10u);
++    ASSERT_TRUE(storage.Append(line, kLineCount));
++  }
++
++  EXPECT_EQ(VeloceNativeTranslationLineStorage::kFirstChunkLines +
++                VeloceNativeTranslationLineStorage::kSecondChunkLines,
++            storage.allocated_line_capacity());
++  EXPECT_EQ(2u, storage.chunk_count());
++  EXPECT_EQ(0u, storage.dense_chunk_count());
++  EXPECT_EQ(15.0f, storage.at(15u).end.x);
++  EXPECT_EQ(16.0f, storage.at(16u).end.x);
++}
++
+ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+   auto first = MakeOpaqueLine(1.0f, 3.0f);
+   auto second = MakeOpaqueLine(5.0f, 7.0f);
+@@ -104,6 +177,13 @@ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+             program->header().format_version);
+   EXPECT_EQ(2u, program->command_count());
+   EXPECT_EQ(2u, program->native_line_count());
++  EXPECT_EQ(VeloceNativeLineStorage::kFirstChunkLines,
++            program->native_line_storage_capacity());
++  EXPECT_EQ(1u, program->native_line_storage_chunk_count());
++  EXPECT_EQ(0u, program->native_line_dense_chunk_count());
++  EXPECT_LT(program->native_line_storage_bytes(),
++            VeloceNativeLineStorage::kDenseChunkLines *
++                sizeof(VeloceNativeLine));
+   EXPECT_EQ(1u, program->opaque_path_states().size());
+   EXPECT_EQ(1u, program->path_matrices().size());
+   ASSERT_EQ(1u, program->visibility_runs().size());
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 1330a80b2..0f6830483 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -582,7 +582,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0128 event=replay "
++        "revision=r25-4-0129 event=replay "
+         "mode=success_lazy_sidecar "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "

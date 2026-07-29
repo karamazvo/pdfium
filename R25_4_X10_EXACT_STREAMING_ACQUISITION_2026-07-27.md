@@ -1,7 +1,7 @@
 # r25-4 Exact Streaming Acquisition
 
 **Locked:** 2026-07-27 (Asia/Taipei)
-**Updated through:** r25-4-0128 on 2026-07-28 (Asia/Taipei)
+**Updated through:** r25-4-0129 on 2026-07-29 (Asia/Taipei)
 **Extends:** r25-3-0123
 **First revision:** r25-4-0124
 
@@ -342,7 +342,68 @@ Acceptance:
 - no new UI-thread work, lock, mutable cache, page-specific rule, or unbounded
   allocation is introduced.
 
-### r25-4-0129: Bounded Immutable Program Cache
+### r25-4-0129: Proportional Line Storage
+
+The 0128 device log validates success-lazy activation for ordinary root pages:
+all 35 observed `6-steps` root pages reported
+`canonical_no_exact_candidate`, with average root parse time about 6.6 ms.
+It also exposed a separate retained-memory defect in exact nested Forms. The
+document compiled 23 one-command Form programs; 22 one-line programs each
+retained about 99,112 bytes because the first line allocated a full
+4,096-entry chunk. Those tiny immutable programs consumed about 2.18 MiB
+before cache ownership and other program tables.
+
+0129 corrects storage representation without changing lowering eligibility or
+pixels:
+
+- generic and translation-origin lines share one tiered storage type;
+- the first chunks hold 16, 64, 256, and 1,024 lines;
+- only dense programs continue with fixed 4,096-line chunks;
+- retained line payloads never move or copy when a later chunk is allocated;
+- index lookup is O(1), using fixed prefix boundaries and arithmetic for dense
+  chunks;
+- parser budget reservations use the next real chunk capacity instead of
+  assuming 4,096 lines;
+- the existing total-line and 96 MiB program ceilings remain authoritative.
+
+This is not a page-size or object-count heuristic. Every exact-lowerable
+program uses the same representation. Small programs become proportional;
+Q16's dense storage reaches the same 4,096-line steady state after a bounded
+1,360-line prefix. Canonical-only pages retain no sidecar under 0128.
+
+The compile log adds:
+
+```text
+revision=r25-4-0129 event=compile
+lineStorage=geometric_16_64_256_1024_4096
+nativeLineStorageBytes=... nativeLineCapacity=...
+nativeLineChunks=... nativeLineDenseChunks=...
+nativeTranslationLineStorageBytes=...
+nativeTranslationLineCapacity=...
+nativeTranslationLineChunks=...
+nativeTranslationLineDenseChunks=...
+```
+
+Acceptance:
+
+- a one-line native program has capacity 16, not 4,096;
+- the observed one-line Form storage falls from about 98 KiB of line payload
+  to hundreds of bytes;
+- 16/64/256/1,024/4,096 chunk boundaries preserve exact indexed payloads;
+- 11.pdf, Q16, and EP23 command counts, source ordinals, opcodes, spatial
+  blocks, replay draws, and pixels remain unchanged;
+- Q16 dense replay remains O(1) and within controlled timing noise;
+- no classifier, mutable cache, thread, lock, JNI/Kotlin path, UI-thread work,
+  or unbounded allocation is introduced.
+
+The 0128 timing sample was 312/385/700 ms for 11.pdf and
+4,793/1,900/6,694 ms for Q16 (acquire/bitmap/total). Q16 improved 8.7% versus
+the preceding sample, while 11.pdf and EP23 showed runtime variance despite
+unchanged replay counters. Use process-restart A/B runs to evaluate 0129
+latency; its deterministic acceptance target is retained bytes for small exact
+programs.
+
+### r25-4-0130: Bounded Immutable Program Cache
 
 Cache only sealed, resource-independent immutable programs. Cache identity must
 include document/content identity, stream generation, resource dependencies,
