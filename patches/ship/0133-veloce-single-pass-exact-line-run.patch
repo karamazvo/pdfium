@@ -1,0 +1,402 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index bece18452..f00be6540 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-4-0129 event=form_cache result=hit "
++            "revision=r25-6-0133 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-4-0129 event=form_cache result=store "
++          "revision=r25-6-0133 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 969908e22..c0e7d95b7 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -111,6 +111,8 @@ void CPDF_PageObjectHolder::StartParse(
+   veloce_preactivation_path_probes_ = 0u;
+   veloce_preactivation_line_probes_ = 0u;
+   veloce_preactivation_rejects_ = 0u;
++  veloce_parsed_line_run_count_ = 0u;
++  veloce_parsed_line_run_command_count_ = 0u;
+   veloce_activation_ordinal_ = UINT32_MAX;
+ #if BUILDFLAG(IS_ANDROID)
+   veloce_acquisition_measurement_active_ =
+@@ -171,17 +173,20 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0129 event=acquire_policy "
+-        "mode=success_lazy_sidecar result=%s parseUs=%llu finishUs=%llu "
++        "revision=r25-6-0133 event=acquire_policy "
++        "mode=single_pass_exact_line_run result=%s parseUs=%llu finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+         "preactivationRejects=%u builderActivated=%d activationSource=%s "
+-        "activationOrdinal=%u nativeCommands=%u programBytes=%zu",
++        "activationOrdinal=%u directLineRuns=%u directLineRunCommands=%zu "
++        "nativeCommands=%u programBytes=%zu",
+         result, VeloceNowMicros() - veloce_parse_start_micros_, finish_micros,
+         veloce_source_object_count_, page_object_list_.size(),
+         veloce_omitted_page_object_count_, veloce_preactivation_path_probes_,
+         veloce_preactivation_line_probes_, veloce_preactivation_rejects_,
+         builder_activated, activation_source, veloce_activation_ordinal_,
++        veloce_parsed_line_run_count_,
++        veloce_parsed_line_run_command_count_,
+         program ? program->header().native_command_count : 0u,
+         program ? program->EstimatedBytes() : 0u);
+   }
+@@ -405,6 +410,14 @@ CPDF_PageObjectHolder::RecordVeloceParsedLine(
+   return VeloceParsedPathDisposition::kRetainRecorded;
+ }
+ 
++void CPDF_PageObjectHolder::RecordVeloceParsedLineRun(size_t command_count) {
++  if (command_count == 0u) {
++    return;
++  }
++  ++veloce_parsed_line_run_count_;
++  veloce_parsed_line_run_command_count_ += command_count;
++}
++
+ bool CPDF_PageObjectHolder::HasVeloceParsedLineContext() const {
+   return veloce_render_program_builder_ &&
+          veloce_render_program_builder_->HasParsedLineContext();
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 564a7653b..dbbef25ae 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -117,6 +117,7 @@ class CPDF_PageObjectHolder {
+       const CPDF_ContentMarks& content_marks,
+       bool stream_fused = false,
+       bool translation_origin = false);
++  void RecordVeloceParsedLineRun(size_t command_count);
+   bool HasVeloceParsedLineContext() const;
+   void AppendRecordedPageObject(std::unique_ptr<CPDF_PageObject> page_obj);
+   bool CanRecordVeloceParsedPath() const {
+@@ -229,6 +230,8 @@ class CPDF_PageObjectHolder {
+   uint32_t veloce_preactivation_path_probes_ = 0u;
+   uint32_t veloce_preactivation_line_probes_ = 0u;
+   uint32_t veloce_preactivation_rejects_ = 0u;
++  uint32_t veloce_parsed_line_run_count_ = 0u;
++  size_t veloce_parsed_line_run_command_count_ = 0u;
+   uint32_t veloce_activation_ordinal_ = UINT32_MAX;
+   uint64_t veloce_parse_start_micros_ = 0u;
+   bool veloce_acquisition_measurement_active_ = false;
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index efd33158a..0896a1e44 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -8,6 +8,7 @@
+ 
+ #include <algorithm>
+ #include <array>
++#include <limits>
+ #include <map>
+ #include <memory>
+ #include <utility>
+@@ -1396,6 +1397,20 @@ int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
+   return (it - stream_start_offsets_.begin()) - 1;
+ }
+ 
++uint32_t CPDF_StreamContentParser::GetCurrentStreamEndPosition() {
++  const int32_t stream_index = GetCurrentStreamIndex();
++  const size_t next_stream_index = static_cast<size_t>(stream_index + 1);
++  if (stream_index >= 0 &&
++      next_stream_index < stream_start_offsets_.size()) {
++    const uint32_t next_stream_offset =
++        stream_start_offsets_[next_stream_index];
++    if (next_stream_offset > start_parse_offset_) {
++      return next_stream_offset - start_parse_offset_;
++    }
++  }
++  return std::numeric_limits<uint32_t>::max();
++}
++
+ void CPDF_StreamContentParser::Handle_ShowText() {
+   ByteString str = GetString(0);
+   if (!str.IsEmpty()) {
+@@ -1736,7 +1751,9 @@ uint32_t CPDF_StreamContentParser::Parse(
+     if (max_cost && cost >= max_cost) {
+       break;
+     }
+-    if (TryParseVeloceTransformedSimpleStrokeLine()) {
++    const uint32_t remaining_cost =
++        max_cost ? static_cast<uint32_t>(max_cost - cost) : 0u;
++    if (TryParseVeloceTransformedSimpleStrokeLine(remaining_cost)) {
+       continue;
+     }
+     switch (syntax_->ParseNextElement()) {
+@@ -1761,7 +1778,66 @@ uint32_t CPDF_StreamContentParser::Parse(
+   return syntax_->GetPos();
+ }
+ 
+-bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine() {
++size_t CPDF_StreamContentParser::TryParseVeloceTranslationOriginStrokeLineRun(
++    uint32_t max_units) {
++  // Keep progressive parsing responsive even when a caller has no cost limit.
++  constexpr size_t kMaxRunCommands = 256u;
++  const size_t command_limit =
++      max_units == 0u
++          ? kMaxRunCommands
++          : std::min(kMaxRunCommands, static_cast<size_t>(max_units));
++  const int32_t stream_index = GetCurrentStreamIndex();
++  const uint32_t stream_end = GetCurrentStreamEndPosition();
++  size_t processed_count = 0u;
++  while (processed_count < command_limit) {
++    const uint32_t unit_start = syntax_->GetPos();
++    std::array<float, 4> operands = {};
++    if (!syntax_->TryParseTranslationOriginStrokeLine(&operands)) {
++      break;
++    }
++    const uint32_t unit_end = syntax_->GetPos();
++    if (unit_end > stream_end) {
++      syntax_->SetPos(unit_start);
++      break;
++    }
++
++    const CFX_PointF end(operands[2], operands[3]);
++    const CFX_Matrix matrix =
++        CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, operands[0], operands[1]) *
++        cur_states_->current_transformation_matrix() * mt_content_to_user_;
++    const CPDF_PageObjectHolder::VeloceParsedPathDisposition disposition =
++        object_holder_->RecordVeloceParsedLine(
++            CFX_PointF(), end, matrix, cur_states_->graphic_states(),
++            *content_marks_stack_.top(), /*stream_fused=*/true,
++            /*translation_origin=*/true);
++    CHECK_NE(disposition,
++             CPDF_PageObjectHolder::VeloceParsedPathDisposition::kNotRecorded);
++
++    path_start_ = CFX_PointF();
++    path_current_ = end;
++    all_ctms_[stream_index] =
++        cur_states_->current_transformation_matrix();
++    ++processed_count;
++    if (disposition ==
++        CPDF_PageObjectHolder::VeloceParsedPathDisposition::kOmitRecorded) {
++      continue;
++    }
++
++    // A failed exact lowering is still a successfully parsed PDF command.
++    // Materialize that one command canonically, then let the ordinary parser
++    // own the following bytes.
++    AppendVeloceCanonicalStrokeLine(CFX_PointF(), end, matrix, stream_index);
++    break;
++  }
++  if (processed_count != 0u) {
++    object_holder_->RecordVeloceParsedLineRun(processed_count);
++    can_try_balanced_line_unit_ = true;
++  }
++  return processed_count;
++}
++
++bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine(
++    uint32_t max_units) {
+   if (!can_try_balanced_line_unit_) {
+     return false;
+   }
+@@ -1772,6 +1848,9 @@ bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine() {
+       !object_holder_->HasVeloceParsedLineContext()) {
+     return false;
+   }
++  if (TryParseVeloceTranslationOriginStrokeLineRun(max_units) != 0u) {
++    return true;
++  }
+ 
+   std::array<float, 10> operands = {};
+   bool translation_origin = false;
+@@ -1820,6 +1899,16 @@ bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine() {
+     return true;
+   }
+ 
++  AppendVeloceCanonicalStrokeLine(start, end, matrix, stream_index);
++  can_try_balanced_line_unit_ = true;
++  return true;
++}
++
++void CPDF_StreamContentParser::AppendVeloceCanonicalStrokeLine(
++    const CFX_PointF& start,
++    const CFX_PointF& end,
++    const CFX_Matrix& matrix,
++    int32_t stream_index) {
+   std::vector<CFX_Path::Point> points;
+   points.reserve(2u);
+   points.emplace_back(start, CFX_Path::Point::Type::kMove, /*close=*/false);
+@@ -1835,8 +1924,6 @@ bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine() {
+   SetGraphicStates(path_object.get(), true, false, true);
+   path_object->SetPathMatrix(matrix);
+   object_holder_->AppendRecordedPageObject(std::move(path_object));
+-  can_try_balanced_line_unit_ = true;
+-  return true;
+ }
+ 
+ void CPDF_StreamContentParser::ParsePathObject() {
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.h b/core/fpdfapi/page/cpdf_streamcontentparser.h
+index 023125f0f..73816e036 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.h
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.h
+@@ -105,7 +105,12 @@ class CPDF_StreamContentParser {
+   float GetVerticalTextSize(float fKerning) const;
+ 
+   void OnChangeTextMatrix();
+-  bool TryParseVeloceTransformedSimpleStrokeLine();
++  size_t TryParseVeloceTranslationOriginStrokeLineRun(uint32_t max_units);
++  bool TryParseVeloceTransformedSimpleStrokeLine(uint32_t max_units);
++  void AppendVeloceCanonicalStrokeLine(const CFX_PointF& start,
++                                       const CFX_PointF& end,
++                                       const CFX_Matrix& matrix,
++                                       int32_t stream_index);
+   void ParsePathObject();
+   void AddPathPoint(const CFX_PointF& point, CFX_Path::Point::Type type);
+   void AddPathPointAndClose(const CFX_PointF& point,
+@@ -137,6 +142,7 @@ class CPDF_StreamContentParser {
+   std::vector<float> GetColors() const;
+   std::vector<float> GetNamedColors() const;
+   int32_t GetCurrentStreamIndex();
++  uint32_t GetCurrentStreamEndPosition();
+ 
+   void Handle_CloseFillStrokePath();
+   void Handle_FillStrokePath();
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 048f5a518..12a845b6b 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -115,6 +115,30 @@ bool IsFiniteRect(const CFX_FloatRect& rect) {
+          std::isfinite(rect.right) && std::isfinite(rect.top);
+ }
+ 
++CFX_FloatRect BuildConservativeTranslationLineBounds(
++    const CFX_PointF& end,
++    const CFX_Matrix& matrix,
++    float line_width) {
++  const CFX_PointF start_device(matrix.e, matrix.f);
++  const CFX_PointF end_device = matrix.Transform(end);
++  CFX_FloatRect bounds(std::min(start_device.x, end_device.x),
++                       std::min(start_device.y, end_device.y),
++                       std::max(start_device.x, end_device.x),
++                       std::max(start_device.y, end_device.y));
++  // The prior local tight box extends each axis by at most sqrt(2) widths.
++  // Transform a two-width square through the full affine matrix so this box
++  // remains conservative under scale, rotation, and shear without a hypot.
++  const float local_margin = std::fabs(line_width) * 2.0f;
++  const float margin_x =
++      std::max(0.5f, local_margin * (std::fabs(matrix.a) +
++                                     std::fabs(matrix.c)));
++  const float margin_y =
++      std::max(0.5f, local_margin * (std::fabs(matrix.b) +
++                                     std::fabs(matrix.d)));
++  bounds.Inflate(margin_x, margin_y);
++  return bounds;
++}
++
+ bool RectsIntersect(const CFX_FloatRect& lhs, const CFX_FloatRect& rhs) {
+   return lhs.left <= rhs.right && lhs.right >= rhs.left &&
+          lhs.bottom <= rhs.top && lhs.top >= rhs.bottom;
+@@ -2403,11 +2427,16 @@ VeloceRenderProgramBuilder::TryAppendCachedParsedLine(
+   }
+   ++parser_line_context_hit_count_;
+ 
+-  *bounds = CFX_Path::GetBoundingBoxForStrokeLine(
+-      start, end, parsed_line_context_->line_width);
+-  *bounds = matrix.TransformRect(*bounds);
+-  if (parsed_line_context_->line_width == 0.0f) {
+-    bounds->Inflate(0.5f, 0.5f);
++  if (translation_origin) {
++    *bounds = BuildConservativeTranslationLineBounds(
++        end, matrix, parsed_line_context_->line_width);
++  } else {
++    *bounds = CFX_Path::GetBoundingBoxForStrokeLine(
++        start, end, parsed_line_context_->line_width);
++    *bounds = matrix.TransformRect(*bounds);
++    if (parsed_line_context_->line_width == 0.0f) {
++      bounds->Inflate(0.5f, 0.5f);
++    }
+   }
+   bounds->Normalize();
+   *bounds_known = IsFiniteRect(*bounds) && !bounds->IsEmpty();
+@@ -2879,7 +2908,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0129 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-6-0133 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2889,8 +2918,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0129 event=compile "
+-        "mode=success_lazy_sidecar "
++        "revision=r25-6-0133 event=compile "
++        "mode=single_pass_exact_line_run "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index c289f247a..f28e3191b 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -352,6 +352,36 @@ TEST(VeloceRenderProgramTest,
+   EXPECT_EQ(2u, program->native_runs()[1].command_count);
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     TranslationLineConservativeBoundsContainPriorTightBounds) {
++  auto object = MakeOpaqueLine(1.0f, 3.0f);
++  const CFX_PointF end(7.0f, -9.0f);
++  const CFX_Matrix matrix(2.5f, -1.25f, 0.75f, 3.0f, 100.0f, -50.0f);
++  VeloceRenderProgramBuilder builder(
++      0u, CFX_FloatRect(-1000.0f, -1000.0f, 1000.0f, 1000.0f));
++
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      CFX_PointF(), end, matrix, object->graphic_states(),
++      *object->GetContentMarks(), /*stream_fused=*/true,
++      /*translation_origin=*/true));
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  ASSERT_TRUE(program->native_line_bounds().has_value());
++  CFX_FloatRect tight_bounds = CFX_Path::GetBoundingBoxForStrokeLine(
++      CFX_PointF(), end, object->graph_state().line_width());
++  tight_bounds = matrix.TransformRect(tight_bounds);
++  if (object->graph_state().line_width() == 0.0f) {
++    tight_bounds.Inflate(0.5f, 0.5f);
++  }
++  const CFX_FloatRect& conservative_bounds =
++      program->native_line_bounds().value();
++  EXPECT_LE(conservative_bounds.left, tight_bounds.left);
++  EXPECT_LE(conservative_bounds.bottom, tight_bounds.bottom);
++  EXPECT_GE(conservative_bounds.right, tight_bounds.right);
++  EXPECT_GE(conservative_bounds.top, tight_bounds.top);
++}
++
+ TEST(VeloceRenderProgramTest,
+      TranslationOriginNoOpPreservesExactCompactOrdinal) {
+   auto object = MakeOpaqueLine(1.0f, 3.0f);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 0f6830483..4742aa164 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -582,8 +582,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-4-0129 event=replay "
+-        "mode=success_lazy_sidecar "
++        "revision=r25-6-0133 event=replay "
++        "mode=single_pass_exact_line_run "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
