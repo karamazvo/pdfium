@@ -1,7 +1,7 @@
 # r25-4 Exact Streaming Acquisition
 
 **Locked:** 2026-07-27 (Asia/Taipei)
-**Updated through:** r25-4-0129 on 2026-07-29 (Asia/Taipei)
+**Updated through:** r25-4-0130 on 2026-07-29 (Asia/Taipei)
 **Extends:** r25-3-0123
 **First revision:** r25-4-0124
 
@@ -403,7 +403,75 @@ unchanged replay counters. Use process-restart A/B runs to evaluate 0129
 latency; its deterministic acceptance target is retained bytes for small exact
 programs.
 
-### r25-4-0130: Bounded Immutable Program Cache
+### r25-4-0130: Chunk-Native Homogeneous Stream Compiler
+
+0129 leaves Q16 acquisition dominated by 2,940,112 exact compact line units.
+Each unit still crosses the stream parser, content parser, holder, and builder
+separately, and repeats immutable graphics-state, clip, and visibility checks.
+Those checks are semantically necessary at a boundary, but redundant inside a
+contiguous sequence of self-contained `q ... Q` units with unchanged outer
+state.
+
+0130 compiles that sequence through one bounded exact mechanism:
+
+- the stream parser scans at most 256 complete
+  `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q` units into about 5 KiB of
+  stack-owned scratch;
+- a chunk cannot cross a content-stream boundary or the parser's existing
+  `max_cost` budget;
+- no parser position is committed unless a complete unit matched exactly;
+- the builder validates immutable general/color/graph state, clip, visibility,
+  and transform class once for the chunk;
+- accepted commands are emitted directly into the existing compact line tape,
+  exact no-op mask, native runs, and bounded 32-command spatial blocks;
+- matrix composition retains canonical PDFium operation order:
+  `(local * current) * contentToUser`;
+- if lowering stops, only the accepted prefix remains omitted. The first
+  rejected unit is materialized as an ordinary PDFium path object, and the
+  parser resumes at the first unprocessed unit.
+
+This is a grammar and state invariant, not a document classifier or object
+count threshold. It applies to any page containing the exact homogeneous
+stream sequence. Normal pages do not allocate the chunk scratch unless the
+existing exact line context is already active, and the scratch is fixed-size
+and worker-stack-local. No cache, global state, lock, JNI/Kotlin path, or
+UI-thread work is added.
+
+For Q16, the expected cross-layer handoff count falls from roughly 2.94 million
+to roughly 11.5 thousand full 256-command chunks, plus bounded boundary units.
+The essential per-command work remains: four non-constant number conversions,
+exact transformed bounds, source ordinal, compact payload/no-op bit, and
+spatial block membership. Therefore 0130 should reduce cold acquisition but
+is not presented as a 10x replay or warm-open change.
+
+The compile log adds:
+
+```text
+revision=r25-4-0130 event=compile
+mode=chunk_native_homogeneous_stream
+streamCompiler=chunk_native_256
+parserLineChunks=...
+parserChunkCommands=...
+parserChunkFallbacks=...
+parserChunkMax=...
+```
+
+Acceptance:
+
+- Q16 reports `parserChunkCommands` near its compact translation-line count,
+  `parserChunkMax=256`, and a low chunk fallback count;
+- command, opcode, compact payload, exact no-op, native-run, spatial-block,
+  retained-object, replay-draw, and pixel results match 0129;
+- a token mismatch, state/clip/visibility mismatch, stream boundary, cost
+  boundary, non-finite operand, or storage limit returns to canonical PDFium at
+  the exact source ordinal;
+- ordinary pages remain on success-lazy canonical PDFium and stay within
+  controlled preview timing noise;
+- Q16 cold `parseUs`, `compileWindowMs`, and `acquireMs` improve materially;
+- no per-page heuristic, persistent allocation, mutable cache, global lock,
+  UI-thread work, or unbounded scan is introduced.
+
+### r25-4-0131: Bounded Immutable Program Cache
 
 Cache only sealed, resource-independent immutable programs. Cache identity must
 include document/content identity, stream generation, resource dependencies,
