@@ -209,6 +209,7 @@ jobs:
       - name: Verify r25-4-0130 chunk-native homogeneous stream compiler contract
         run: |
           cd "$WORK_ROOT/pdfium_build/pdfium"
+          trap 'echo "ERROR: r25-4-0130 contract failed at shell line $LINENO: $BASH_COMMAND" >&2' ERR
 
           LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
           PDFIUM_A="$OUT_DIR/obj/libpdfium.a"
@@ -340,7 +341,8 @@ jobs:
           grep -q 'kCommandsPerBlock = 32u' core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'NativeRunsCoverSpatialRange' core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'revision=r25-4-0130 event=compile' core/fpdfapi/page/veloce_render_program.cpp
-          grep -q 'mode=success_lazy_sidecar' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'mode=chunk_native_homogeneous_stream' \
+              core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'CanStartWithPageObject' core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'CanStartWithParsedOpaqueLine' core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'revision=r25-4-0130 event=acquire_policy' \
@@ -462,7 +464,8 @@ jobs:
           grep -q 'RenderSingleObject(fallback_object, holder_to_device)' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q '(replay_work_units++ & 63u) == 0u' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'revision=r25-4-0130 event=replay' core/fpdfapi/render/cpdf_renderstatus.cpp
-          grep -q 'mode=success_lazy_sidecar' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'mode=chunk_native_homogeneous_stream' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'ComposeVeloceInlineTranslation' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'lineRasterPasses=%zu exactNoOpLinesSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'exactNoOpWords=%zu exactNoOpRankBlocks=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
