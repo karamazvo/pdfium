@@ -472,7 +472,8 @@ jobs:
           grep -q 'revision=r25-8-0138 event=replay' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'mode=ordered_stroke_renderer_tape' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'ComposeVeloceInlineTranslation' core/fpdfapi/render/cpdf_renderstatus.cpp
-          grep -q 'lineRasterPasses=%zu exactNoOpLinesSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'lineRasterPasses=%zu strokeRendererBuilds=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'exactNoOpLinesSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'exactNoOpWords=%zu exactNoOpRankBlocks=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'command_count += skipped_count' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'strokeTransformBuilds=%zu strokeTransformHits=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
