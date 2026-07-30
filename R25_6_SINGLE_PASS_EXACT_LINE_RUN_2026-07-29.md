@@ -1,7 +1,7 @@
 # r25-6 Single-Pass Exact Line Run
 
 **Date:** 2026-07-29 (Asia/Taipei)
-**Revision:** r25-6-0133
+**Revisions:** r25-6-0133 through r25-6-0135
 **Base:** r25-4-0129
 **Excluded:** r25-4-0130 and r25-5-0131
 
@@ -88,3 +88,59 @@ exact grammar, not a guaranteed x10 result.
    count threshold.
 6. `TranslationLineConservativeBoundsContainPriorTightBounds` proves that the
    fast conservative bounds contain PDFium's previous tight line bounds.
+
+## 0134 Result
+
+0134 fused fixed-token recognition and exact numeric decoding into the
+transactional scanner. Q16 preserved all representation and replay counts, but
+the measured improvement was small:
+
+- `parseUs`: 4,980,142 to 4,821,771, 3.18% faster.
+- `acquireMs`: 4,980 to 4,823, 3.15% faster.
+- Total preview: 6,958 to 6,854 ms, 1.5% faster.
+- First visible: 7,327 to 7,269 ms, 0.8% faster.
+- Replay: 1,977 to 2,031 ms, within adverse run variance.
+
+This fails the documented 10% acquisition criterion. Numeric decoding is not
+the dominant Q16 acquisition cost.
+
+## 0135 Final Acquisition Experiment
+
+0135 replaces per-command parser-to-holder-to-builder submission for the exact
+translation-origin grammar with one bounded authoritative bulk lowerer:
+
+1. The parser stores at most 256 decoded commands in worker-stack arrays.
+2. Matrix linear terms are composed once. Per-command translation arithmetic
+   uses the same operation order as PDFium's prior matrix multiplication.
+3. The builder validates immutable general/color/graph state identity, clip,
+   visibility, and transform class once for the batch.
+4. It pre-reserves one exact payload prefix under the existing 3M-line and
+   96 MiB caps before changing source ordinals.
+5. The prefix is committed directly to the existing compact line payload,
+   native run, line run, bounds, and bounded spatial structures.
+6. A non-finite command, exact butt-cap no-op, state mismatch, transform
+   mismatch, or exhausted budget stops before that command. The parser rewinds
+   to its source byte and canonical PDFium resumes there.
+7. Scalar translation-origin lowering delegates to the same bulk primitive
+   with a one-command span whenever its exact preconditions hold.
+
+There is no document classifier, threshold, second retained representation,
+heap batch, cache, lock, JNI/Kotlin change, UI-thread work, painter-order
+change, or raster change.
+
+### Hard Decision Gate
+
+Accept 0135 only if repeated same-device measurements show:
+
+1. More than 20% lower Q16 `parseUs` and `acquireMs` versus 0134.
+2. Identical source command, omitted/retained object, native opcode, compact
+   payload, native-run, spatial, program-byte, and replay-work counts.
+3. Pixel-identical Q16 preview and zoom tiles, including table lines.
+4. No material 11.pdf, EP23, Study Notes, or 6Steps regression.
+
+If criterion 1 fails, stop this acquisition micro-optimization direction.
+Do not create 0136 to tune parsing, numeric decoding, state checks, or payload
+append bookkeeping. The remaining costs are structural: per-command bounds and
+spatial construction during acquisition, and independent line raster passes
+during replay. Any further performance work must start as a separately reviewed
+architecture with its own correctness proof and baseline.
