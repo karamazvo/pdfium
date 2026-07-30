@@ -1,0 +1,228 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index 5b416dc3..d06f6990 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-7-0137 event=form_cache result=hit "
++            "revision=r25-8-0138 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-7-0137 event=form_cache result=store "
++          "revision=r25-8-0138 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index e9f6b16e..2e83b268 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-7-0137 event=acquire_policy "
+-        "mode=single_pass_spatial_line_run result=%s parseUs=%llu "
++        "revision=r25-8-0138 event=acquire_policy "
++        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index f9cf371b..d3b31957 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3122,7 +3122,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-7-0137 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3132,8 +3132,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-7-0137 event=compile "
+-        "mode=single_pass_spatial_line_run "
++        "revision=r25-8-0138 event=compile "
++        "mode=ordered_stroke_renderer_tape "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index f281986f..7877d731 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -409,6 +409,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t max_line_batch = 0;
+   size_t native_fill_draws = 0;
+   size_t replay_work_units = 0;
++  size_t stroke_renderer_builds = 0;
+   size_t native_line_run_index = 0;
+   size_t native_translation_line_run_index = 0;
+   size_t block_index = 0;
+@@ -535,6 +536,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             current_fill_options, &batch_stats)) {
+       CHECK_EQ(batch_stats.source_draws, flushed_count);
+       CHECK_EQ(batch_stats.raster_passes, batch_stats.source_draws);
++      CHECK_LE(batch_stats.stroke_renderer_builds, 1u);
+       CHECK_LE(batch_stats.stroke_transform_builds +
+                    batch_stats.stroke_transform_hits,
+                batch_stats.source_draws);
+@@ -544,6 +546,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       native_draws += flushed_count;
+       line_batch_commands += flushed_count;
+       dense_raster_passes += batch_stats.raster_passes;
++      stroke_renderer_builds += batch_stats.stroke_renderer_builds;
+       stroke_transform_builds += batch_stats.stroke_transform_builds;
+       stroke_transform_hits += batch_stats.stroke_transform_hits;
+       direct_butt_line_draws += batch_stats.direct_butt_line_draws;
+@@ -582,8 +585,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-7-0137 event=replay "
+-        "mode=single_pass_spatial_line_run "
++        "revision=r25-8-0138 event=replay "
++        "mode=ordered_stroke_renderer_tape "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
+@@ -593,7 +596,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "blocksSkipped=%zu sourceEpochCurrent=1 "
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
+-        "lineRasterPasses=%zu exactNoOpLinesSkipped=%zu "
++        "lineRasterPasses=%zu strokeRendererBuilds=%zu "
++        "exactNoOpLinesSkipped=%zu "
+         "exactNoOpWords=%zu exactNoOpRankBlocks=%zu "
+         "strokeTransformBuilds=%zu strokeTransformHits=%zu "
+         "directButtLineDraws=%zu genericStrokeDraws=%zu "
+@@ -616,7 +620,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+         max_line_batch, native_fill_draws, dense_raster_passes,
+-        exact_noop_lines_skipped, program->exact_noop_word_count(),
++        stroke_renderer_builds, exact_noop_lines_skipped,
++        program->exact_noop_word_count(),
+         program->exact_noop_rank_block_count(),
+         stroke_transform_builds,
+         stroke_transform_hits, direct_butt_line_draws,
+@@ -658,6 +663,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(max_line_batch);
+     static_cast<void>(native_fill_draws);
+     static_cast<void>(dense_raster_passes);
++    static_cast<void>(stroke_renderer_builds);
+     static_cast<void>(stroke_transform_builds);
+     static_cast<void>(stroke_transform_hits);
+     static_cast<void>(direct_butt_line_draws);
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index ddd5a438..fc945f93 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -1502,7 +1502,8 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+       has_line = true;
+       if (draw.fill_options.fill_type !=
+               CFX_FillRenderOptions::FillType::kNoFill ||
+-          !draw.fill_options.stroke) {
++          !draw.fill_options.stroke ||
++          draw.fill_options != stroke_options) {
+         return false;
+       }
+       if (!draw.fill_options.zero_area) {
+@@ -1525,6 +1526,15 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+   auto* agg_context = static_cast<AggOrderedPathBatchContext*>(context);
+   CFX_OrderedPathBatchStats packet_stats;
+   packet_stats.source_draws = draws.size();
++  // Stroke state, color, options, destination, and clip are immutable for the
++  // packet. Geometry still rasterizes and composites independently below.
++  std::optional<CFX_AggRenderer> stroke_renderer;
++  if (has_line) {
++    fill_options_ = stroke_options;
++    stroke_renderer.emplace(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                            stroke_options.full_cover, rgb_byte_order_);
++    packet_stats.stroke_renderer_builds = 1u;
++  }
+ 
+   const auto reset_stroke_rasterizer = [&]() {
+     agg_context->path_data.remove_all();
+@@ -1597,13 +1607,11 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+     ++packet_stats.generic_stroke_draws;
+   };
+   const auto render_independent_stroke = [&](const CFX_OrderedPathDraw& draw) {
++    CHECK(stroke_renderer.has_value());
+     reset_stroke_rasterizer();
+     append_stroke(draw);
+-    fill_options_ = draw.fill_options;
+-    CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+-                             draw.fill_options.full_cover, rgb_byte_order_);
+     agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
+-                          renderer, draw.fill_options.aliased_path);
++                          *stroke_renderer, stroke_options.aliased_path);
+     ++packet_stats.raster_passes;
+   };
+ 
+@@ -1631,6 +1639,7 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+   if (stats) {
+     stats->source_draws += packet_stats.source_draws;
+     stats->raster_passes += packet_stats.raster_passes;
++    stats->stroke_renderer_builds += packet_stats.stroke_renderer_builds;
+     stats->stroke_transform_builds += packet_stats.stroke_transform_builds;
+     stats->stroke_transform_hits += packet_stats.stroke_transform_hits;
+     stats->direct_butt_line_draws += packet_stats.direct_butt_line_draws;
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index ab0a38d8..5d49558e 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -164,6 +164,13 @@ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+       /*stats=*/nullptr));
+   EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
++  std::array<CFX_OrderedPathDraw, 4> mismatched_draws = draws;
++  mismatched_draws[0].fill_options.aliased_path = true;
++  EXPECT_FALSE(batched.DrawOrderedPathBatch(
++      context.get(), mismatched_draws, &graphics_state, kStrokeColor,
++      stroke_options, /*stats=*/nullptr));
++  EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
+ 
+   for (const CFX_OrderedPathDraw& draw : draws) {
+     if (draw.path && draw.fill_options.fill_type !=
+@@ -242,6 +249,7 @@ TEST(CFXDefaultRenderDeviceTest,
+       &stats));
+   EXPECT_EQ(draws.size(), stats.source_draws);
+   EXPECT_EQ(draws.size(), stats.raster_passes);
++  EXPECT_EQ(1u, stats.stroke_renderer_builds);
+   EXPECT_EQ(1u, stats.stroke_transform_builds);
+   EXPECT_EQ(draws.size() - 1u, stats.stroke_transform_hits);
+   EXPECT_EQ(draws.size(), stats.direct_butt_line_draws);
+@@ -287,6 +295,7 @@ TEST(CFXDefaultRenderDeviceTest,
+       stroke_options, &stats));
+   EXPECT_EQ(0u, stats.direct_butt_line_draws);
+   EXPECT_EQ(1u, stats.generic_stroke_draws);
++  EXPECT_EQ(1u, stats.stroke_renderer_builds);
+   EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 6ecd7152..769220cf 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -55,6 +55,7 @@ struct CFX_OrderedPathDraw {
+ struct CFX_OrderedPathBatchStats {
+   size_t source_draws = 0;
+   size_t raster_passes = 0;
++  size_t stroke_renderer_builds = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
+   size_t direct_butt_line_draws = 0;
