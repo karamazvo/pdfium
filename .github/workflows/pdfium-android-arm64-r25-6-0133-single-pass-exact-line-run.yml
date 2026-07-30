@@ -744,6 +744,8 @@ jobs:
               core/fpdfapi/page/veloce_render_program.cpp
           grep -q 'TranslationLineConservativeBoundsContainPriorTightBounds' \
               core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'object->graph_state().GetLineWidth()' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
           grep -q 'directLineRuns=%u directLineRunCommands=%zu' \
               core/fpdfapi/page/cpdf_pageobjectholder.cpp
           grep -q 'mode=single_pass_exact_line_run' \

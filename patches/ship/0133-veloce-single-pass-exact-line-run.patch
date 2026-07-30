@@ -345,7 +345,7 @@ index 048f5a518..12a845b6b 100644
          "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
          "commands=%zu "
 diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
-index c289f247a..f28e3191b 100644
+index c289f247a..e011b2fba 100644
 --- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
 +++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
 @@ -352,6 +352,36 @@ TEST(VeloceRenderProgramTest,
@@ -369,9 +369,9 @@ index c289f247a..f28e3191b 100644
 +  ASSERT_TRUE(program);
 +  ASSERT_TRUE(program->native_line_bounds().has_value());
 +  CFX_FloatRect tight_bounds = CFX_Path::GetBoundingBoxForStrokeLine(
-+      CFX_PointF(), end, object->graph_state().line_width());
++      CFX_PointF(), end, object->graph_state().GetLineWidth());
 +  tight_bounds = matrix.TransformRect(tight_bounds);
-+  if (object->graph_state().line_width() == 0.0f) {
++  if (object->graph_state().GetLineWidth() == 0.0f) {
 +    tight_bounds.Inflate(0.5f, 0.5f);
 +  }
 +  const CFX_FloatRect& conservative_bounds =
