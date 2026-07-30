@@ -1,0 +1,357 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index f00be6540..45275c921 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-6-0133 event=form_cache result=hit "
++            "revision=r25-6-0134 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-6-0133 event=form_cache result=store "
++          "revision=r25-6-0134 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index c0e7d95b7..0b80cac2b 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0133 event=acquire_policy "
+-        "mode=single_pass_exact_line_run result=%s parseUs=%llu finishUs=%llu "
++        "revision=r25-6-0134 event=acquire_policy "
++        "mode=exact_numeric_line_run result=%s parseUs=%llu finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+         "preactivationRejects=%u builderActivated=%d activationSource=%s "
+diff --git a/core/fpdfapi/page/cpdf_streamparser.cpp b/core/fpdfapi/page/cpdf_streamparser.cpp
+index 8500bcbd1..b51d62611 100644
+--- a/core/fpdfapi/page/cpdf_streamparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamparser.cpp
+@@ -7,7 +7,9 @@
+ #include "core/fpdfapi/page/cpdf_streamparser.h"
+ 
+ #include <algorithm>
++#include <limits>
+ #include <memory>
++#include <system_error>
+ #include <utility>
+ 
+ #include "constants/stream_dict_common.h"
+@@ -33,6 +35,7 @@
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/span_util.h"
+ #include "core/fxge/calculate_pitch.h"
++#include "third_party/fast_float/src/include/fast_float/fast_float.h"
+ 
+ namespace {
+ 
+@@ -44,11 +47,8 @@ const char kFalse[] = "false";
+ const char kNull[] = "null";
+ constexpr uint32_t kMaxVelocePathWordLength = 255u;
+ 
+-bool ReadVelocePathWord(pdfium::raw_span<const uint8_t> buffer,
+-                        uint32_t* position,
+-                        uint32_t* word_start,
+-                        uint32_t* word_size,
+-                        bool* is_number) {
++void SkipVelocePathTrivia(pdfium::raw_span<const uint8_t> buffer,
++                          uint32_t* position) {
+   while (*position < buffer.size()) {
+     const uint8_t ch = buffer[*position];
+     if (PDFCharIsWhitespace(ch)) {
+@@ -63,6 +63,14 @@ bool ReadVelocePathWord(pdfium::raw_span<const uint8_t> buffer,
+     } while (*position < buffer.size() &&
+              !PDFCharIsLineEnding(buffer[*position]));
+   }
++}
++
++bool ReadVelocePathWord(pdfium::raw_span<const uint8_t> buffer,
++                        uint32_t* position,
++                        uint32_t* word_start,
++                        uint32_t* word_size,
++                        bool* is_number) {
++  SkipVelocePathTrivia(buffer, position);
+   if (*position >= buffer.size() ||
+       PDFCharIsDelimiter(buffer[*position])) {
+     return false;
+@@ -82,6 +90,120 @@ bool ReadVelocePathWord(pdfium::raw_span<const uint8_t> buffer,
+   return *word_size > 0u && *word_size <= kMaxVelocePathWordLength;
+ }
+ 
++bool ReadVeloceExactPathToken(pdfium::raw_span<const uint8_t> buffer,
++                              uint32_t* position,
++                              uint8_t expected_first,
++                              uint8_t expected_second = 0u) {
++  SkipVelocePathTrivia(buffer, position);
++  const uint32_t token_size = expected_second == 0u ? 1u : 2u;
++  if (*position > buffer.size() ||
++      buffer.size() - *position < token_size ||
++      buffer[*position] != expected_first ||
++      (token_size == 2u && buffer[*position + 1u] != expected_second)) {
++    return false;
++  }
++  const uint32_t token_end = *position + token_size;
++  if (token_end < buffer.size() &&
++      !PDFCharIsDelimiter(buffer[token_end]) &&
++      !PDFCharIsWhitespace(buffer[token_end])) {
++    return false;
++  }
++  *position = token_end;
++  return true;
++}
++
++float DecodeVeloceIntegerNumber(ByteStringView word, bool negative) {
++  FX_SAFE_UINT32 unsigned_value = 0;
++  const size_t first_digit =
++      !word.IsEmpty() && (word[0] == '+' || word[0] == '-') ? 1u : 0u;
++  for (size_t i = first_digit; i < word.GetLength(); ++i) {
++    unsigned_value = unsigned_value * 10u +
++                     static_cast<uint32_t>(word[i] - '0');
++  }
++
++  uint32_t value = unsigned_value.ValueOrDefault(0u);
++  if (first_digit == 0u) {
++    return static_cast<float>(value);
++  }
++
++  static constexpr uint32_t kSignedLimit =
++      static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
++  if (value > (negative ? kSignedLimit + 1u : kSignedLimit)) {
++    value = 0u;
++  }
++  const int32_t signed_value = static_cast<int32_t>(value);
++  if (!negative) {
++    return static_cast<float>(signed_value);
++  }
++  if (signed_value == std::numeric_limits<int32_t>::min()) {
++    return static_cast<float>(signed_value);
++  }
++  return static_cast<float>(-signed_value);
++}
++
++bool ReadVeloceExactPathNumber(pdfium::raw_span<const uint8_t> buffer,
++                               uint32_t* position,
++                               float* value) {
++  SkipVelocePathTrivia(buffer, position);
++  if (*position >= buffer.size() ||
++      PDFCharIsDelimiter(buffer[*position])) {
++    return false;
++  }
++
++  const uint32_t word_start = *position;
++  bool has_decimal_point = false;
++  bool canonical_number = true;
++  bool has_digit = false;
++  while (*position < buffer.size()) {
++    const uint8_t ch = buffer[*position];
++    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
++      break;
++    }
++    if (!PDFCharIsNumeric(ch)) {
++      return false;
++    }
++    if (ch == '.') {
++      canonical_number &= !has_decimal_point;
++      has_decimal_point = true;
++    } else if (ch == '+' || ch == '-') {
++      canonical_number &= *position == word_start;
++    } else {
++      has_digit = true;
++    }
++    ++*position;
++  }
++
++  const uint32_t word_size = *position - word_start;
++  if (word_size == 0u || word_size > kMaxVelocePathWordLength) {
++    return false;
++  }
++  const ByteStringView word(buffer.subspan(word_start, word_size));
++  if (!canonical_number || !has_digit) {
++    *value = FX_Number(word).GetFloat();
++    return true;
++  }
++
++  const bool negative = word[0] == '-';
++  if (!has_decimal_point) {
++    *value = DecodeVeloceIntegerNumber(word, negative);
++    return true;
++  }
++
++  const ByteStringView parse_word =
++      word[0] == '+' ? word.Substr(1u) : word;
++  float parsed_value = 0.0f;
++  const auto result = fast_float::from_chars(
++      parse_word.begin(), parse_word.end(), parsed_value,
++      static_cast<fast_float::chars_format>(
++          fast_float::chars_format::general));
++  *value =
++      result.ec == std::errc() ||
++              result.ec == std::errc::result_out_of_range
++          ? parsed_value
++          : 0.0f;
++  return true;
++}
++
+ bool ReadVelocePathNumber(pdfium::raw_span<const uint8_t> buffer,
+                           uint32_t* position,
+                           float* value) {
+@@ -124,17 +246,6 @@ bool ReadVelocePathOperator(pdfium::raw_span<const uint8_t> buffer,
+          buffer[word_start + 1u] == expected_second;
+ }
+ 
+-bool ReadVeloceExactNumberToken(pdfium::raw_span<const uint8_t> buffer,
+-                                uint32_t* position,
+-                                uint8_t expected) {
+-  uint32_t word_start = 0u;
+-  uint32_t word_size = 0u;
+-  bool is_number = false;
+-  return ReadVelocePathWord(buffer, position, &word_start, &word_size,
+-                            &is_number) &&
+-         is_number && word_size == 1u && buffer[word_start] == expected;
+-}
+-
+ uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
+   if (!pDecoder) {
+     return FX_INVALID_OFFSET;
+@@ -265,22 +376,22 @@ bool CPDF_StreamParser::TryParseTranslationOriginStrokeLine(
+     std::array<float, 4>* operands) {
+   uint32_t candidate_position = pos_;
+   std::array<float, 4> candidate = {};
+-  if (!ReadVelocePathOperator(buf_, &candidate_position, 'q') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '1') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '0') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '0') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '1') ||
+-      !ReadVelocePathNumber(buf_, &candidate_position, &candidate[0]) ||
+-      !ReadVelocePathNumber(buf_, &candidate_position, &candidate[1]) ||
+-      !ReadVelocePathOperator(buf_, &candidate_position, 'c', 'm') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '0') ||
+-      !ReadVeloceExactNumberToken(buf_, &candidate_position, '0') ||
+-      !ReadVelocePathOperator(buf_, &candidate_position, 'm') ||
+-      !ReadVelocePathNumber(buf_, &candidate_position, &candidate[2]) ||
+-      !ReadVelocePathNumber(buf_, &candidate_position, &candidate[3]) ||
+-      !ReadVelocePathOperator(buf_, &candidate_position, 'l') ||
+-      !ReadVelocePathOperator(buf_, &candidate_position, 'S') ||
+-      !ReadVelocePathOperator(buf_, &candidate_position, 'Q')) {
++  if (!ReadVeloceExactPathToken(buf_, &candidate_position, 'q') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '1') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '0') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '0') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '1') ||
++      !ReadVeloceExactPathNumber(buf_, &candidate_position, &candidate[0]) ||
++      !ReadVeloceExactPathNumber(buf_, &candidate_position, &candidate[1]) ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, 'c', 'm') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '0') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, '0') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, 'm') ||
++      !ReadVeloceExactPathNumber(buf_, &candidate_position, &candidate[2]) ||
++      !ReadVeloceExactPathNumber(buf_, &candidate_position, &candidate[3]) ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, 'l') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, 'S') ||
++      !ReadVeloceExactPathToken(buf_, &candidate_position, 'Q')) {
+     return false;
+   }
+ 
+diff --git a/core/fpdfapi/page/cpdf_streamparser_unittest.cpp b/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+index a4c3ec4ad..ddee4be64 100644
+--- a/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+@@ -3,6 +3,11 @@
+ // found in the LICENSE file.
+ 
+ #include "core/fpdfapi/page/cpdf_streamparser.h"
++
++#include <bit>
++
++#include "core/fxcrt/bytestring.h"
++#include "core/fxcrt/fx_number.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
+@@ -113,3 +118,35 @@ TEST(CPDFStreamParserTest, CompactTranslationGrammarFailsClosed) {
+   EXPECT_FALSE(parser.TryParseTranslationOriginStrokeLine(&operands));
+   EXPECT_EQ(0u, parser.GetPos());
+ }
++
++TEST(CPDFStreamParserTest,
++     ExactTranslationNumbersMatchCanonicalNumberConversion) {
++  uint8_t data[] =
++      "q 1 0 0 1 +38.895285 -0.25 cm "
++      "0 0 m 2147483647 -2147483648 l S Q";
++  CPDF_StreamParser parser(data);
++  std::array<float, 4> operands = {};
++
++  ASSERT_TRUE(parser.TryParseTranslationOriginStrokeLine(&operands));
++  const std::array<ByteStringView, 4> expected_words = {
++      "+38.895285", "-0.25", "2147483647", "-2147483648"};
++  for (size_t i = 0; i < operands.size(); ++i) {
++    EXPECT_EQ(std::bit_cast<uint32_t>(FX_Number(expected_words[i]).GetFloat()),
++              std::bit_cast<uint32_t>(operands[i]));
++  }
++}
++
++TEST(CPDFStreamParserTest,
++     ExactTranslationNumbersPreserveCompatibilityFallback) {
++  uint8_t data[] = "q 1 0 0 1 --100.0 +-2.5 cm 0 0 m . +. l S Q";
++  CPDF_StreamParser parser(data);
++  std::array<float, 4> operands = {};
++
++  ASSERT_TRUE(parser.TryParseTranslationOriginStrokeLine(&operands));
++  const std::array<ByteStringView, 4> expected_words = {
++      "--100.0", "+-2.5", ".", "+."};
++  for (size_t i = 0; i < operands.size(); ++i) {
++    EXPECT_EQ(std::bit_cast<uint32_t>(FX_Number(expected_words[i]).GetFloat()),
++              std::bit_cast<uint32_t>(operands[i]));
++  }
++}
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 12a845b6b..fecd6df87 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -2908,7 +2908,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0133 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-6-0134 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -2918,8 +2918,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0133 event=compile "
+-        "mode=single_pass_exact_line_run "
++        "revision=r25-6-0134 event=compile "
++        "mode=exact_numeric_line_run "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 4742aa164..7288b6ce4 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -582,8 +582,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0133 event=replay "
+-        "mode=single_pass_exact_line_run "
++        "revision=r25-6-0134 event=replay "
++        "mode=exact_numeric_line_run "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
