@@ -1,7 +1,8 @@
 # r25-8 Ordered Stroke Renderer Tape
 
 **Locked:** 2026-07-30 (Asia/Taipei)
-**Status:** implemented, pending Android build and device acceptance
+**Status:** built; first Q16 run passed replay threshold, repeated median and
+pixel acceptance still pending
 **Extends:** r25-7-0137 representation, whose acquisition optimization was not
 accepted for performance
 **First revision:** r25-8-0138
@@ -114,6 +115,25 @@ For Q16, the intended setup reduction is from approximately 2.4 million
 renderer constructions toward approximately one construction per 256-entry
 packet. This does not claim to remove the unavoidable independent AGG raster
 passes.
+
+## First Device Result
+
+The 2026-07-30 Q16 run reported:
+
+```text
+0137 bitmapRenderMs=1872 totalMs=6387 firstVisibleMs=6725
+0138 bitmapRenderMs=1465 totalMs=4651 firstVisibleMs=4899
+lineBatchCommands=2590767
+lineRasterPasses=2590767
+strokeRendererBuilds=10221
+lineBatchFallbacks=0
+```
+
+The one-run bitmap phase improved by 21.7 percent and renderer construction
+fell by 253.5x while command and raster-pass counts remained identical. This
+passes the performance threshold provisionally. Acquisition also varied from
+4512 ms to 3185 ms, but 0138 cannot claim that change because it does not
+modify parsing or construction.
 
 ## Acceptance
 
