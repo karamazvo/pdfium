@@ -1,7 +1,7 @@
 # r25-6 Single-Pass Exact Line Run
 
-**Date:** 2026-07-29 (Asia/Taipei)
-**Revisions:** r25-6-0133 through r25-6-0135
+**Date:** 2026-07-30 (Asia/Taipei)
+**Revisions:** r25-6-0133 through r25-6-0136
 **Base:** r25-4-0129
 **Excluded:** r25-4-0130 and r25-5-0131
 
@@ -138,9 +138,67 @@ Accept 0135 only if repeated same-device measurements show:
 3. Pixel-identical Q16 preview and zoom tiles, including table lines.
 4. No material 11.pdf, EP23, Study Notes, or 6Steps regression.
 
-If criterion 1 fails, stop this acquisition micro-optimization direction.
-Do not create 0136 to tune parsing, numeric decoding, state checks, or payload
-append bookkeeping. The remaining costs are structural: per-command bounds and
-spatial construction during acquisition, and independent line raster passes
-during replay. Any further performance work must start as a separately reviewed
-architecture with its own correctness proof and baseline.
+If criterion 1 fails without an implementation defect, stop this acquisition
+micro-optimization direction. The remaining costs are structural: per-command
+bounds and spatial construction during acquisition, and independent line
+raster passes during replay. Any further performance work must start as a
+separately reviewed architecture with its own correctness proof and baseline.
+
+## 0135 Device Result And Root Cause
+
+0135 failed because its implementation violated the single-pass invariant, not
+because the bulk-line model was disproved:
+
+- Q16 `parseUs` regressed from 4,821,771 to 15,818,458.
+- Total preview regressed from 6,854 ms to 17,640 ms.
+- Replay improved slightly from 2,031 ms to 1,821 ms.
+- Final commands, compact payloads, exact no-ops, program bytes, and replay
+  shape remained identical.
+- `directLineRuns` grew from 187,860 to 507,173.
+
+The bulk builder treated every exact zero-coverage butt-cap line as a packet
+terminator. Q16 contains 574,229 such commands. The parser therefore rewound at
+each no-op, parsed it through the scalar path, and then restarted the following
+suffix. This repeated parser/operator work while producing the same final
+RenderProgram.
+
+## 0136 Single-Pass Correction
+
+0136 restores the actual invariant:
+
+> Every accepted command in a bounded homogeneous packet is interpreted once,
+> in source order. An exact no-op remains an ordered command in that packet,
+> but consumes only its existing rank bit and no geometry payload.
+
+The correction:
+
+1. Keeps finite exact no-ops inside the current 256-command worker-stack
+   packet.
+2. Calls the existing `AppendExactNoOp()` representation at the original
+   command ordinal.
+3. Continues lowering later drawable lines without rewinding or reparsing the
+   packet suffix.
+4. Preserves the existing compact payload, native-run, line-run, spatial,
+   painter-order, cancellation, and canonical fallback contracts.
+5. Uses the existing cached byte reservations, 3M-line ceiling, and 96 MiB
+   retained-program ceiling. It adds no allocation, cache, classifier, thread,
+   lock, JNI/Kotlin path, or UI-thread work.
+6. Fails closed at the first invalid or over-budget command and returns only
+   the committed prefix, so canonical PDFium resumes at exactly the first
+   uncommitted source byte.
+
+The unit test proves a drawable/no-op/drawable packet is consumed in one call,
+the no-op ordinal remains set, and the two drawable commands map to adjacent
+payload ranks across that no-op.
+
+### 0136 Acceptance
+
+1. Q16 `directLineRunCommands`, commands, compact payloads, exact no-ops,
+   native runs, program bytes, replay work, and pixels match 0134/0135.
+2. Q16 `directLineRuns` falls materially below 0135; packet count is governed
+   by the 256-command bound plus real stream/state boundaries, not no-op count.
+3. Repeated-median Q16 `parseUs` and total preview recover to at least the 0134
+   range and improve by more than 20% versus 0135.
+4. 11.pdf, EP23, Study Notes, and 6Steps remain within normal run variance.
+5. Any later x10 work starts a new structural series; 0136 closes this
+   acquisition regression and does not claim to remove raster cost.

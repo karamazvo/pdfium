@@ -1,0 +1,333 @@
+From c6c93cf27f185be4a38aff484fdf55fa6fdd85a5 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Thu, 30 Jul 2026 13:40:27 +0800
+Subject: [PATCH] pdfium: add r25-6-0136 single-pass bulk line-run correction
+
+---
+ core/fpdfapi/page/cpdf_form.cpp               |   4 +-
+ core/fpdfapi/page/cpdf_pageobjectholder.cpp   |   4 +-
+ core/fpdfapi/page/veloce_render_program.cpp   | 175 ++++++++----------
+ .../page/veloce_render_program_unittest.cpp   |  21 +--
+ core/fpdfapi/render/cpdf_renderstatus.cpp     |   4 +-
+ 5 files changed, 91 insertions(+), 117 deletions(-)
+
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index 507422f46..36cfbee83 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-6-0135 event=form_cache result=hit "
++            "revision=r25-6-0136 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-6-0135 event=form_cache result=store "
++          "revision=r25-6-0136 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index ee8d0300f..c4cc18c91 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0135 event=acquire_policy "
+-        "mode=authoritative_bulk_line_run result=%s parseUs=%llu "
++        "revision=r25-6-0136 event=acquire_policy "
++        "mode=single_pass_bulk_line_run result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 70d37c3f2..b9bc7f995 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -2746,10 +2746,7 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+   size_t candidate_count = 0u;
+   for (const VeloceParsedTranslationOriginLine& line : lines) {
+     if (!IsFinitePoint(line.end) || !std::isfinite(line.translation_x) ||
+-        !std::isfinite(line.translation_y) ||
+-        (line.end == CFX_PointF() &&
+-         parsed_line_context_->line_cap ==
+-             CFX_GraphStateData::LineCap::kButt)) {
++        !std::isfinite(line.translation_y)) {
+       break;
+     }
+     ++candidate_count;
+@@ -2757,110 +2754,90 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+   candidate_count =
+       std::min(candidate_count,
+                static_cast<size_t>(kMaxHolderCommands - object_count_));
+-  candidate_count =
+-      std::min(candidate_count,
+-               kMaxNativeLines -
+-                   native_lines_.size() - native_translation_lines_.size());
+   if (candidate_count == 0u) {
+     return 0u;
+   }
+ 
+-  const uint32_t first_command = object_count_;
+   const VeloceRenderOpcode opcode =
+       VeloceRenderOpcode::kNativeTranslationOriginLine;
+-  const bool needs_native_run =
+-      native_runs_.empty() || native_runs_.back().opcode != opcode ||
+-      native_runs_.back().first_command + native_runs_.back().command_count !=
+-          first_command;
+-  const bool needs_line_run =
+-      native_translation_line_runs_.empty() ||
+-      native_translation_line_runs_.back().state_index !=
+-          parsed_line_context_->state_index ||
+-      native_translation_line_runs_.back().matrix_index !=
+-          parsed_line_context_->matrix_index;
+-  if (!TryReserveCachedParsedLineBudget(
+-          /*translation_origin=*/true, needs_line_run, needs_native_run)) {
+-    return 0u;
+-  }
+-
+-  // The scalar reservation consumed one payload slot. Consume the rest of the
+-  // already-accounted packet here, then commit exactly that bounded prefix.
+-  const size_t reserved_count =
+-      1u + cached_translation_line_payload_budget_slots_;
+-  const size_t append_count = std::min(candidate_count, reserved_count);
+-  cached_translation_line_payload_budget_slots_ -= append_count - 1u;
+-
+-  object_count_ += static_cast<uint32_t>(append_count);
+-  if (build_start_millis_ == 0u) {
+-    build_start_millis_ = NowMillis();
+-  }
+-  path_object_count_ += static_cast<uint32_t>(append_count);
+-  parser_direct_line_attempt_count_ += static_cast<uint32_t>(append_count);
+-  parser_line_context_hit_count_ += static_cast<uint32_t>(append_count);
+-  parser_fused_line_count_ += static_cast<uint32_t>(append_count);
+-  parser_constant_folded_line_count_ += static_cast<uint32_t>(append_count);
+-  inline_translation_line_count_ += static_cast<uint32_t>(append_count);
+-  if (content_marks.CountItems() != 0u) {
+-    visibility_scoped_line_count_ += static_cast<uint32_t>(append_count);
+-  }
+-  last_native_was_exact_noop_ = false;
+-  last_native_was_darken_ = false;
+-  last_native_was_fill_ = false;
+-
+-  std::optional<CFX_FloatRect> batch_bounds;
+-  const uint32_t first_payload =
+-      static_cast<uint32_t>(native_translation_lines_.size());
+-  for (size_t i = 0u; i < append_count; ++i) {
+-    const VeloceParsedTranslationOriginLine& parsed_line = lines[i];
+-    VeloceNativeTranslationOriginLine line;
+-    line.end = parsed_line.end;
+-    line.translation_x = parsed_line.translation_x;
+-    line.translation_y = parsed_line.translation_y;
+-    CHECK(native_translation_lines_.Append(line, kMaxNativeLines));
++  size_t append_count = 0u;
++  for (; append_count < candidate_count; ++append_count) {
++    const VeloceParsedTranslationOriginLine& parsed_line = lines[append_count];
++    const uint32_t command_index = object_count_;
++    const uint32_t payload_index =
++        static_cast<uint32_t>(native_translation_lines_.size());
++    const bool exact_noop =
++        parsed_line.end == CFX_PointF() &&
++        parsed_line_context_->line_cap ==
++            CFX_GraphStateData::LineCap::kButt;
++
++    last_native_was_exact_noop_ = false;
++    last_native_was_darken_ = false;
++    last_native_was_fill_ = false;
++    if (exact_noop) {
++      if (!AppendExactNoOp(command_index, opcode, payload_index)) {
++        break;
++      }
++    } else {
++      const bool needs_native_run =
++          native_runs_.empty() || native_runs_.back().opcode != opcode ||
++          native_runs_.back().first_command +
++                  native_runs_.back().command_count !=
++              command_index;
++      const bool needs_line_run =
++          native_translation_line_runs_.empty() ||
++          native_translation_line_runs_.back().state_index !=
++              parsed_line_context_->state_index ||
++          native_translation_line_runs_.back().matrix_index !=
++              parsed_line_context_->matrix_index;
++      if (!TryReserveCachedParsedLineBudget(
++              /*translation_origin=*/true, needs_line_run,
++              needs_native_run)) {
++        break;
++      }
+ 
+-    const CFX_Matrix matrix(1.0f, 0.0f, 0.0f, 1.0f,
+-                            parsed_line.translation_x,
+-                            parsed_line.translation_y);
+-    CFX_FloatRect bounds = BuildConservativeTranslationLineBounds(
+-        parsed_line.end, matrix, parsed_line_context_->line_width);
+-    bounds.Normalize();
+-    const bool bounds_known = IsFiniteRect(bounds) && !bounds.IsEmpty();
+-    if (bounds_known) {
+-      if (batch_bounds) {
+-        batch_bounds->Union(bounds);
+-      } else {
+-        batch_bounds = bounds;
++      VeloceNativeTranslationOriginLine line;
++      line.end = parsed_line.end;
++      line.translation_x = parsed_line.translation_x;
++      line.translation_y = parsed_line.translation_y;
++      CHECK(native_translation_lines_.Append(line, kMaxNativeLines));
++
++      const CFX_Matrix matrix(1.0f, 0.0f, 0.0f, 1.0f,
++                              parsed_line.translation_x,
++                              parsed_line.translation_y);
++      CFX_FloatRect bounds = BuildConservativeTranslationLineBounds(
++          parsed_line.end, matrix, parsed_line_context_->line_width);
++      bounds.Normalize();
++      const bool bounds_known = IsFiniteRect(bounds) && !bounds.IsEmpty();
++      if (bounds_known) {
++        if (native_line_bounds_) {
++          native_line_bounds_->Union(bounds);
++        } else {
++          native_line_bounds_ = bounds;
++        }
++      }
++      AppendNativeLineRun(/*translation_origin=*/true,
++                          parsed_line_context_->state_index,
++                          parsed_line_context_->matrix_index);
++      AppendNativeRun(command_index, payload_index, opcode);
++      AppendSpatialOrdinal(command_index, bounds, bounds_known);
++      ++opcode_counts_[static_cast<size_t>(opcode)];
++      ++inline_translation_line_count_;
++      if (content_marks.CountItems() != 0u) {
++        ++visibility_scoped_line_count_;
+       }
+     }
+-    AppendSpatialOrdinal(first_command + static_cast<uint32_t>(i), bounds,
+-                         bounds_known);
+-  }
+ 
+-  if (batch_bounds) {
+-    if (native_line_bounds_) {
+-      native_line_bounds_->Union(*batch_bounds);
+-    } else {
+-      native_line_bounds_ = *batch_bounds;
++    ++object_count_;
++    ++path_object_count_;
++    ++parser_direct_line_attempt_count_;
++    ++parser_line_context_hit_count_;
++    ++parser_fused_line_count_;
++    ++parser_constant_folded_line_count_;
++    if (build_start_millis_ == 0u) {
++      build_start_millis_ = NowMillis();
+     }
+   }
+-  if (needs_line_run) {
+-    native_translation_line_runs_.push_back(
+-        {first_payload, static_cast<uint32_t>(append_count),
+-         parsed_line_context_->state_index,
+-         parsed_line_context_->matrix_index});
+-  } else {
+-    native_translation_line_runs_.back().line_count +=
+-        static_cast<uint32_t>(append_count);
+-  }
+-  if (needs_native_run) {
+-    native_runs_.push_back(
+-        {first_command, static_cast<uint32_t>(append_count), first_payload,
+-         opcode});
+-  } else {
+-    native_runs_.back().command_count += static_cast<uint32_t>(append_count);
+-  }
+-  opcode_counts_[static_cast<size_t>(opcode)] +=
+-      static_cast<uint32_t>(append_count);
+   return append_count;
+ }
+ 
+@@ -3060,7 +3037,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0135 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-6-0136 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3070,8 +3047,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0135 event=compile "
+-        "mode=authoritative_bulk_line_run "
++        "revision=r25-6-0136 event=compile "
++        "mode=single_pass_bulk_line_run "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index ca1b66e52..41926bcb3 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -394,7 +394,7 @@ TEST(VeloceRenderProgramTest,
+ }
+ 
+ TEST(VeloceRenderProgramTest,
+-     TranslationOriginBatchStopsBeforeExactNoOpWithoutReordering) {
++     TranslationOriginBatchConsumesExactNoOpWithoutReparseOrReordering) {
+   auto object = MakeOpaqueLine(1.0f, 3.0f);
+   VeloceRenderProgramBuilder builder;
+   ASSERT_TRUE(builder.AppendParsedOpaqueLine(
+@@ -407,17 +407,10 @@ TEST(VeloceRenderProgramTest,
+       {{13.0f, 14.0f}, 15.0f, 16.0f},
+   }};
+ 
+-  EXPECT_EQ(1u, builder.AppendParsedTranslationOriginLineRun(
+-                    lines, CFX_Matrix(), object->graphic_states(),
+-                    *object->GetContentMarks()));
+-  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
+-      CFX_PointF(), CFX_PointF(),
+-      CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, 11.0f, 12.0f),
+-      object->graphic_states(), *object->GetContentMarks(),
+-      /*stream_fused=*/true, /*translation_origin=*/true));
+-  EXPECT_EQ(1u, builder.AppendParsedTranslationOriginLineRun(
+-                    pdfium::span(lines).subspan(2u), CFX_Matrix(),
+-                    object->graphic_states(), *object->GetContentMarks()));
++  EXPECT_EQ(lines.size(), builder.AppendParsedTranslationOriginLineRun(
++                              lines, CFX_Matrix(),
++                              object->graphic_states(),
++                              *object->GetContentMarks()));
+ 
+   std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
+ 
+@@ -430,6 +423,10 @@ TEST(VeloceRenderProgramTest,
+             program->native_translation_line_runs()[0].line_count);
+   ASSERT_EQ(2u, program->native_runs().size());
+   EXPECT_EQ(3u, program->native_runs()[1].command_count);
++  EXPECT_EQ(
++      0u, program->NativeLinePayloadIndex(program->native_runs()[1], 1u));
++  EXPECT_EQ(
++      1u, program->NativeLinePayloadIndex(program->native_runs()[1], 3u));
+ }
+ 
+ TEST(VeloceRenderProgramTest,
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index bc9f412dc..0017646f9 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -582,8 +582,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-6-0135 event=replay "
+-        "mode=authoritative_bulk_line_run "
++        "revision=r25-6-0136 event=replay "
++        "mode=single_pass_bulk_line_run "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
+-- 
+2.39.5 (Apple Git-154)
+
