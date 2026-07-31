@@ -1,0 +1,587 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d06f6990a..9dd4c3e55 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-8-0138 event=form_cache result=hit "
++            "revision=r25-10-0140 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-8-0138 event=form_cache result=store "
++          "revision=r25-10-0140 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 2e83b268c..6f89162f3 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=acquire_policy "
+-        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
++        "revision=r25-10-0140 event=acquire_policy "
++        "mode=direct_stream_acquisition_sink result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+@@ -431,6 +431,29 @@ size_t CPDF_PageObjectHolder::RecordVeloceParsedTranslationOriginLineRun(
+   return omitted_count;
+ }
+ 
++size_t CPDF_PageObjectHolder::RecordVeloceParsedTranslationOriginLineStream(
++    size_t line_limit,
++    const CFX_Matrix& common_matrix,
++    const CPDF_GraphicStates& states,
++    const CPDF_ContentMarks& content_marks,
++    void* reader_context,
++    VeloceParsedTranslationOriginLineReader reader,
++    VeloceParsedTranslationOriginLine* last_appended_line) {
++  if (line_limit == 0u || !reader || !record_veloce_render_program_ ||
++      !IsPage() || !veloce_render_program_builder_ ||
++      veloce_omitted_page_object_count_ == 0u) {
++    return 0u;
++  }
++  const size_t omitted_count =
++      veloce_render_program_builder_
++          ->AppendParsedTranslationOriginLineStream(
++              line_limit, common_matrix, states, content_marks, reader_context,
++              reader, last_appended_line);
++  veloce_source_object_count_ += omitted_count;
++  veloce_omitted_page_object_count_ += omitted_count;
++  return omitted_count;
++}
++
+ void CPDF_PageObjectHolder::RecordVeloceParsedLineRun(size_t command_count) {
+   if (command_count == 0u) {
+     return;
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 9429576c7..bc49d3ad8 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -45,6 +45,9 @@ struct VeloceParsedTranslationOriginLine {
+   float translation_y = 0.0f;
+ };
+ static_assert(sizeof(VeloceParsedTranslationOriginLine) == 16u);
++using VeloceParsedTranslationOriginLineReader = bool (*)(
++    void* context,
++    VeloceParsedTranslationOriginLine* line);
+ 
+ // These structs are used to keep track of resources that have already been
+ // generated in the page object holder.
+@@ -132,6 +135,14 @@ class CPDF_PageObjectHolder {
+       const CFX_Matrix& common_matrix,
+       const CPDF_GraphicStates& states,
+       const CPDF_ContentMarks& content_marks);
++  size_t RecordVeloceParsedTranslationOriginLineStream(
++      size_t line_limit,
++      const CFX_Matrix& common_matrix,
++      const CPDF_GraphicStates& states,
++      const CPDF_ContentMarks& content_marks,
++      void* reader_context,
++      VeloceParsedTranslationOriginLineReader reader,
++      VeloceParsedTranslationOriginLine* last_appended_line);
+   void RecordVeloceParsedLineRun(size_t command_count);
+   bool HasVeloceParsedLineContext() const;
+   void AppendRecordedPageObject(std::unique_ptr<CPDF_PageObject> page_obj);
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index ecdd39642..05e97c039 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1791,53 +1791,63 @@ size_t CPDF_StreamContentParser::TryParseVeloceTranslationOriginStrokeLineRun(
+   const CFX_Matrix& current_matrix =
+       cur_states_->current_transformation_matrix();
+   const CFX_Matrix common_matrix = current_matrix * mt_content_to_user_;
+-  std::array<VeloceParsedTranslationOriginLine, kMaxRunCommands> lines;
+-  std::array<uint32_t, kMaxRunCommands> unit_starts = {};
+-  size_t parsed_count = 0u;
+-  while (parsed_count < command_limit) {
+-    const uint32_t unit_start = syntax_->GetPos();
++  struct LineReaderContext {
++    CPDF_StreamParser* syntax = nullptr;
++    uint32_t stream_end = 0u;
++    const CFX_Matrix* current_matrix = nullptr;
++    const CFX_Matrix* content_to_user = nullptr;
++    uint32_t last_unit_start = 0u;
++    size_t parsed_count = 0u;
++  };
++  LineReaderContext reader_context{
++      syntax_.get(), stream_end, &current_matrix, &mt_content_to_user_};
++  const auto reader = [](void* opaque,
++                         VeloceParsedTranslationOriginLine* line) {
++    auto* context = static_cast<LineReaderContext*>(opaque);
++    context->last_unit_start = context->syntax->GetPos();
+     std::array<float, 4> operands = {};
+-    if (!syntax_->TryParseTranslationOriginStrokeLine(&operands)) {
+-      break;
++    if (!context->syntax->TryParseTranslationOriginStrokeLine(&operands)) {
++      return false;
+     }
+-    const uint32_t unit_end = syntax_->GetPos();
+-    if (unit_end > stream_end) {
+-      syntax_->SetPos(unit_start);
+-      break;
++    if (context->syntax->GetPos() > context->stream_end) {
++      context->syntax->SetPos(context->last_unit_start);
++      return false;
+     }
+ 
++    const CFX_Matrix& current_matrix = *context->current_matrix;
++    const CFX_Matrix& content_to_user = *context->content_to_user;
+     const float translated_x =
+         operands[0] * current_matrix.a + operands[1] * current_matrix.c +
+         current_matrix.e;
+     const float translated_y =
+         operands[0] * current_matrix.b + operands[1] * current_matrix.d +
+         current_matrix.f;
+-    unit_starts[parsed_count] = unit_start;
+-    lines[parsed_count] = {
++    *line = {
+         CFX_PointF(operands[2], operands[3]),
+-        translated_x * mt_content_to_user_.a +
+-            translated_y * mt_content_to_user_.c + mt_content_to_user_.e,
+-        translated_x * mt_content_to_user_.b +
+-            translated_y * mt_content_to_user_.d + mt_content_to_user_.f};
+-    ++parsed_count;
+-  }
+-  if (parsed_count == 0u) {
+-    return 0u;
+-  }
+-
++        translated_x * content_to_user.a + translated_y * content_to_user.c +
++            content_to_user.e,
++        translated_x * content_to_user.b + translated_y * content_to_user.d +
++            content_to_user.f};
++    ++context->parsed_count;
++    return true;
++  };
++  VeloceParsedTranslationOriginLine last_appended_line;
+   const size_t processed_count =
+-      object_holder_->RecordVeloceParsedTranslationOriginLineRun(
+-          pdfium::span(lines).first(parsed_count), common_matrix,
+-          cur_states_->graphic_states(), *content_marks_stack_.top());
++      object_holder_->RecordVeloceParsedTranslationOriginLineStream(
++          command_limit, common_matrix, cur_states_->graphic_states(),
++          *content_marks_stack_.top(), &reader_context, reader,
++          &last_appended_line);
+   if (processed_count == 0u) {
+-    syntax_->SetPos(unit_starts[0]);
++    if (reader_context.parsed_count != 0u) {
++      syntax_->SetPos(reader_context.last_unit_start);
++    }
+     return 0u;
+   }
+-  if (processed_count < parsed_count) {
+-    syntax_->SetPos(unit_starts[processed_count]);
++  if (processed_count < reader_context.parsed_count) {
++    syntax_->SetPos(reader_context.last_unit_start);
+   }
+   path_start_ = CFX_PointF();
+-  path_current_ = lines[processed_count - 1u].end;
++  path_current_ = last_appended_line.end;
+   all_ctms_[stream_index] = current_matrix;
+   object_holder_->RecordVeloceParsedLineRun(processed_count);
+   can_try_balanced_line_unit_ = true;
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9414a3a43..92a95ddb6 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -437,58 +437,42 @@ class VeloceSpatialOrdinalIndexBuilder final {
+   VeloceSpatialCommandBlock pending_block_;
+ };
+ 
+-bool AppendTranslationOriginRunBoundsAndSpatial(
+-    uint32_t first_command,
+-    pdfium::span<const VeloceParsedTranslationOriginLine> lines,
+-    float line_width,
++bool AppendTranslationOriginLineBoundsAndSpatial(
++    uint32_t command_index,
++    const VeloceParsedTranslationOriginLine& line,
++    float margin,
+     CFX_GraphStateData::LineCap line_cap,
+     VeloceSpatialOrdinalIndexBuilder* spatial_builder,
+     std::optional<CFX_FloatRect>* native_line_bounds) {
+-  const float margin = std::max(0.5f, std::fabs(line_width) * 2.0f);
+-  bool spatial_ok = true;
+-  for (size_t i = 0u; i < lines.size(); ++i) {
+-    const VeloceParsedTranslationOriginLine& line = lines[i];
+-    const uint32_t command_index =
+-        first_command + static_cast<uint32_t>(i);
+-    if (line.end == CFX_PointF() &&
+-        line_cap == CFX_GraphStateData::LineCap::kButt) {
+-      if (spatial_builder &&
+-          !spatial_builder->AppendNoOp(command_index)) {
+-        spatial_builder = nullptr;
+-        spatial_ok = false;
+-      }
+-      continue;
+-    }
+-
+-    const float end_x = line.translation_x + line.end.x;
+-    const float end_y = line.translation_y + line.end.y;
+-    const float left = std::min(line.translation_x, end_x) - margin;
+-    const float bottom = std::min(line.translation_y, end_y) - margin;
+-    const float right = std::max(line.translation_x, end_x) + margin;
+-    const float top = std::max(line.translation_y, end_y) + margin;
+-    const bool bounds_known =
+-        std::isfinite(left) && std::isfinite(bottom) &&
+-        std::isfinite(right) && std::isfinite(top) && left < right &&
+-        bottom < top;
+-    if (bounds_known && native_line_bounds) {
+-      if (!native_line_bounds->has_value()) {
+-        *native_line_bounds = CFX_FloatRect(left, bottom, right, top);
+-      } else {
+-        CFX_FloatRect& aggregate = native_line_bounds->value();
+-        aggregate.left = std::min(aggregate.left, left);
+-        aggregate.bottom = std::min(aggregate.bottom, bottom);
+-        aggregate.right = std::max(aggregate.right, right);
+-        aggregate.top = std::max(aggregate.top, top);
+-      }
+-    }
+-    if (spatial_builder &&
+-        !spatial_builder->AppendAxisAligned(
+-            command_index, left, bottom, right, top, bounds_known)) {
+-      spatial_builder = nullptr;
+-      spatial_ok = false;
++  if (line.end == CFX_PointF() &&
++      line_cap == CFX_GraphStateData::LineCap::kButt) {
++    return !spatial_builder || spatial_builder->AppendNoOp(command_index);
++  }
++
++  const float end_x = line.translation_x + line.end.x;
++  const float end_y = line.translation_y + line.end.y;
++  const float left = std::min(line.translation_x, end_x) - margin;
++  const float bottom = std::min(line.translation_y, end_y) - margin;
++  const float right = std::max(line.translation_x, end_x) + margin;
++  const float top = std::max(line.translation_y, end_y) + margin;
++  const bool bounds_known =
++      std::isfinite(left) && std::isfinite(bottom) &&
++      std::isfinite(right) && std::isfinite(top) && left < right &&
++      bottom < top;
++  if (bounds_known && native_line_bounds) {
++    if (!native_line_bounds->has_value()) {
++      *native_line_bounds = CFX_FloatRect(left, bottom, right, top);
++    } else {
++      CFX_FloatRect& aggregate = native_line_bounds->value();
++      aggregate.left = std::min(aggregate.left, left);
++      aggregate.bottom = std::min(aggregate.bottom, bottom);
++      aggregate.right = std::max(aggregate.right, right);
++      aggregate.top = std::max(aggregate.top, top);
+     }
+   }
+-  return spatial_ok;
++  return !spatial_builder ||
++         spatial_builder->AppendAxisAligned(command_index, left, bottom, right,
++                                            top, bounds_known);
+ }
+ 
+ VeloceSpatialOrdinalIndex::VeloceSpatialOrdinalIndex(
+@@ -1696,28 +1680,6 @@ void VeloceRenderProgramBuilder::AppendSpatialOrdinal(
+   }
+ }
+ 
+-void VeloceRenderProgramBuilder::AppendSpatialTranslationOriginLineRun(
+-    uint32_t first_command,
+-    pdfium::span<const VeloceParsedTranslationOriginLine> lines,
+-    float line_width,
+-    CFX_GraphStateData::LineCap line_cap) {
+-  VeloceSpatialOrdinalIndexBuilder* spatial_builder = nullptr;
+-  if (!spatial_index_abandoned_ && spatial_holder_bounds_.has_value()) {
+-    if (!spatial_index_builder_) {
+-      spatial_index_builder_ =
+-          std::make_unique<VeloceSpatialOrdinalIndexBuilder>(
+-              *spatial_holder_bounds_);
+-    }
+-    spatial_builder = spatial_index_builder_.get();
+-  }
+-  if (!AppendTranslationOriginRunBoundsAndSpatial(
+-          first_command, lines, line_width, line_cap, spatial_builder,
+-          &native_line_bounds_)) {
+-    spatial_index_builder_.reset();
+-    spatial_index_abandoned_ = true;
+-  }
+-}
+-
+ void VeloceRenderProgramBuilder::AppendNativeRun(
+     uint32_t command_index,
+     uint32_t payload_index,
+@@ -2846,7 +2808,35 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+     const CFX_Matrix& common_matrix,
+     const CPDF_GraphicStates& states,
+     const CPDF_ContentMarks& content_marks) {
+-  if (lines.empty() || exceeded_budget_ || !parsed_line_context_ ||
++  struct SpanReaderContext {
++    pdfium::span<const VeloceParsedTranslationOriginLine> lines;
++    size_t index = 0u;
++  };
++  SpanReaderContext context{lines};
++  const auto reader = [](void* opaque,
++                         VeloceParsedTranslationOriginLine* line) {
++    auto* context = static_cast<SpanReaderContext*>(opaque);
++    if (context->index >= context->lines.size()) {
++      return false;
++    }
++    *line = context->lines[context->index++];
++    return true;
++  };
++  return AppendParsedTranslationOriginLineStream(
++      lines.size(), common_matrix, states, content_marks, &context, reader,
++      /*last_appended_line=*/nullptr);
++}
++
++size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineStream(
++    size_t line_limit,
++    const CFX_Matrix& common_matrix,
++    const CPDF_GraphicStates& states,
++    const CPDF_ContentMarks& content_marks,
++    void* reader_context,
++    bool (*reader)(void* context, VeloceParsedTranslationOriginLine* line),
++    VeloceParsedTranslationOriginLine* last_appended_line) {
++  if (line_limit == 0u || !reader || exceeded_budget_ ||
++      !parsed_line_context_ ||
+       !parsed_line_context_->uses_inline_translation ||
+       !HasIdentityLinearPart(common_matrix) ||
+       !IsFiniteMatrix(common_matrix) ||
+@@ -2862,16 +2852,8 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+     return 0u;
+   }
+ 
+-  size_t candidate_count = 0u;
+-  for (const VeloceParsedTranslationOriginLine& line : lines) {
+-    if (!IsFinitePoint(line.end) || !std::isfinite(line.translation_x) ||
+-        !std::isfinite(line.translation_y)) {
+-      break;
+-    }
+-    ++candidate_count;
+-  }
+-  candidate_count =
+-      std::min(candidate_count,
++  const size_t candidate_count =
++      std::min(line_limit,
+                static_cast<size_t>(kMaxHolderCommands - object_count_));
+   if (candidate_count == 0u) {
+     return 0u;
+@@ -2879,10 +2861,27 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+ 
+   const VeloceRenderOpcode opcode =
+       VeloceRenderOpcode::kNativeTranslationOriginLine;
+-  const uint32_t first_command = object_count_;
++  const float margin =
++      std::max(0.5f, std::fabs(parsed_line_context_->line_width) * 2.0f);
++  VeloceSpatialOrdinalIndexBuilder* spatial_builder = nullptr;
++  if (!spatial_index_abandoned_ && spatial_holder_bounds_.has_value()) {
++    if (!spatial_index_builder_) {
++      spatial_index_builder_ =
++          std::make_unique<VeloceSpatialOrdinalIndexBuilder>(
++              *spatial_holder_bounds_);
++    }
++    spatial_builder = spatial_index_builder_.get();
++  }
++  bool spatial_ok = true;
+   size_t append_count = 0u;
+   for (; append_count < candidate_count; ++append_count) {
+-    const VeloceParsedTranslationOriginLine& parsed_line = lines[append_count];
++    VeloceParsedTranslationOriginLine parsed_line;
++    if (!reader(reader_context, &parsed_line) ||
++        !IsFinitePoint(parsed_line.end) ||
++        !std::isfinite(parsed_line.translation_x) ||
++        !std::isfinite(parsed_line.translation_y)) {
++      break;
++    }
+     const uint32_t command_index = object_count_;
+     const uint32_t payload_index =
+         static_cast<uint32_t>(native_translation_lines_.size());
+@@ -2934,6 +2933,14 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+       }
+     }
+ 
++    if (spatial_ok &&
++        !AppendTranslationOriginLineBoundsAndSpatial(
++            command_index, parsed_line, margin,
++            parsed_line_context_->line_cap, spatial_builder,
++            &native_line_bounds_)) {
++      spatial_builder = nullptr;
++      spatial_ok = false;
++    }
+     ++object_count_;
+     ++path_object_count_;
+     ++parser_direct_line_attempt_count_;
+@@ -2943,11 +2950,16 @@ size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(
+     if (build_start_millis_ == 0u) {
+       build_start_millis_ = NowMillis();
+     }
++    if (last_appended_line) {
++      *last_appended_line = parsed_line;
++    }
++  }
++  if (!spatial_ok) {
++    spatial_index_builder_.reset();
++    spatial_index_abandoned_ = true;
+   }
+-  AppendSpatialTranslationOriginLineRun(
+-      first_command, lines.first(append_count),
+-      parsed_line_context_->line_width, parsed_line_context_->line_cap);
+   if (append_count != 0u) {
++    parser_stream_sink_line_count_ += static_cast<uint32_t>(append_count);
+     ++spatial_line_run_count_;
+     spatial_line_run_command_count_ +=
+         static_cast<uint32_t>(append_count);
+@@ -3151,7 +3163,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-10-0140 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3161,14 +3173,15 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=compile "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-10-0140 event=compile "
++        "mode=direct_stream_acquisition_sink "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+         "parserDirectLineAttempts=%u parserLineContextHits=%u "
+         "parserLineContextBuilds=%u parserLineBudgetRefills=%u "
+         "parserFusedLines=%u parserConstantFoldedLines=%u "
++        "parserStreamSinkLines=%u "
+         "spatialLineRuns=%u spatialLineRunCommands=%u "
+         "nativeOpaqueLines=%zu compactTranslationLines=%zu "
+         "nativeLineStorageBytes=%zu nativeLineCapacity=%zu "
+@@ -3202,6 +3215,7 @@ VeloceRenderProgramBuilder::Finish() {
+         parser_direct_line_attempt_count_, parser_line_context_hit_count_,
+         parser_line_context_build_count_, parser_line_budget_refill_count_,
+         parser_fused_line_count_, parser_constant_folded_line_count_,
++        parser_stream_sink_line_count_,
+         spatial_line_run_count_, spatial_line_run_command_count_,
+         program->native_line_count(),
+         program->native_translation_line_count(),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 5d30d234a..0ea7ef09e 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -720,6 +720,15 @@ class VeloceRenderProgramBuilder final {
+       const CFX_Matrix& common_matrix,
+       const CPDF_GraphicStates& states,
+       const CPDF_ContentMarks& content_marks);
++  size_t AppendParsedTranslationOriginLineStream(
++      size_t line_limit,
++      const CFX_Matrix& common_matrix,
++      const CPDF_GraphicStates& states,
++      const CPDF_ContentMarks& content_marks,
++      void* reader_context,
++      bool (*reader)(void* context,
++                     VeloceParsedTranslationOriginLine* line),
++      VeloceParsedTranslationOriginLine* last_appended_line);
+   bool HasParsedLineContext() const {
+     return parsed_line_context_.has_value();
+   }
+@@ -834,11 +843,6 @@ class VeloceRenderProgramBuilder final {
+   void AppendSpatialOrdinal(uint32_t command_index,
+                             const CFX_FloatRect& bounds,
+                             bool bounds_known);
+-  void AppendSpatialTranslationOriginLineRun(
+-      uint32_t first_command,
+-      pdfium::span<const VeloceParsedTranslationOriginLine> lines,
+-      float line_width,
+-      CFX_GraphStateData::LineCap line_cap);
+   void AppendNativeRun(uint32_t command_index,
+                        uint32_t payload_index,
+                        VeloceRenderOpcode opcode);
+@@ -912,6 +916,7 @@ class VeloceRenderProgramBuilder final {
+   uint32_t parser_line_budget_refill_count_ = 0;
+   uint32_t parser_fused_line_count_ = 0;
+   uint32_t parser_constant_folded_line_count_ = 0;
++  uint32_t parser_stream_sink_line_count_ = 0;
+   uint32_t spatial_line_run_count_ = 0;
+   uint32_t spatial_line_run_command_count_ = 0;
+   size_t cached_line_payload_budget_slots_ = 0;
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 4a21f8443..67ab21caf 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -464,6 +464,54 @@ TEST(VeloceRenderProgramTest,
+   EXPECT_EQ(program->native_line_bounds().value(), block.bounds);
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     TranslationOriginStreamStopsAtBoundWithoutReadingNextCommand) {
++  auto object = MakeOpaqueLine(1.0f, 3.0f);
++  VeloceRenderProgramBuilder builder(
++      0u, CFX_FloatRect(-100.0f, -100.0f, 100.0f, 100.0f));
++  ASSERT_TRUE(builder.AppendParsedOpaqueLine(
++      CFX_PointF(), {3.0f, 4.0f}, CFX_Matrix(),
++      object->graphic_states(), *object->GetContentMarks(),
++      /*stream_fused=*/true, /*translation_origin=*/true));
++  const std::array<VeloceParsedTranslationOriginLine, 3> lines = {{
++      {{7.0f, 8.0f}, 9.0f, 10.0f},
++      {CFX_PointF(), 11.0f, 12.0f},
++      {{13.0f, 14.0f}, 15.0f, 16.0f},
++  }};
++  struct ReaderContext {
++    pdfium::span<const VeloceParsedTranslationOriginLine> lines;
++    size_t index = 0u;
++  };
++  ReaderContext context{lines};
++  const auto reader = [](void* opaque,
++                         VeloceParsedTranslationOriginLine* line) {
++    auto* context = static_cast<ReaderContext*>(opaque);
++    if (context->index >= context->lines.size()) {
++      return false;
++    }
++    *line = context->lines[context->index++];
++    return true;
++  };
++  VeloceParsedTranslationOriginLine last_line;
++
++  EXPECT_EQ(2u, builder.AppendParsedTranslationOriginLineStream(
++                    2u, CFX_Matrix(), object->graphic_states(),
++                    *object->GetContentMarks(), &context, reader, &last_line));
++  EXPECT_EQ(2u, context.index);
++  EXPECT_EQ(lines[1].end, last_line.end);
++  EXPECT_EQ(lines[1].translation_x, last_line.translation_x);
++  EXPECT_EQ(lines[1].translation_y, last_line.translation_y);
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  EXPECT_EQ(3u, program->command_count());
++  EXPECT_TRUE(program->IsExactNoOp(2u));
++  EXPECT_EQ(1u, program->native_translation_line_count());
++  ASSERT_TRUE(program->spatial_index());
++  EXPECT_EQ(2u, program->spatial_index()->covered_command_count());
++}
++
+ TEST(VeloceRenderProgramTest,
+      TranslationLineConservativeBoundsContainPriorTightBounds) {
+   auto object = MakeOpaqueLine(1.0f, 3.0f);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..aeb4557c3 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -585,8 +585,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=replay "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-10-0140 event=replay "
++        "mode=direct_stream_acquisition_sink "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
