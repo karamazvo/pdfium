@@ -1,0 +1,496 @@
+diff --git a/core/fpdfapi/page/BUILD.gn b/core/fpdfapi/page/BUILD.gn
+index 6f6ae5ddc..da57df7c8 100644
+--- a/core/fpdfapi/page/BUILD.gn
++++ b/core/fpdfapi/page/BUILD.gn
+@@ -108,6 +108,7 @@ source_set("page") {
+     "ipdf_page.h",
+     "jpx_decode_conversion.cpp",
+     "jpx_decode_conversion.h",
++    "veloce_parsed_line.h",
+     "veloce_render_program.cpp",
+     "veloce_render_program.h",
+   ]
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d06f6990a..eaa0eeb0f 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-8-0138 event=form_cache result=hit "
++            "revision=r25-11-0141 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-8-0138 event=form_cache result=store "
++          "revision=r25-11-0141 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 2e83b268c..dc139594f 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -113,6 +113,8 @@ void CPDF_PageObjectHolder::StartParse(
+   veloce_preactivation_rejects_ = 0u;
+   veloce_parsed_line_run_count_ = 0u;
+   veloce_parsed_line_run_command_count_ = 0u;
++  veloce_packed_line_run_count_ = 0u;
++  veloce_packed_line_run_command_count_ = 0u;
+   veloce_activation_ordinal_ = UINT32_MAX;
+ #if BUILDFLAG(IS_ANDROID)
+   veloce_acquisition_measurement_active_ =
+@@ -173,13 +175,14 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=acquire_policy "
+-        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
++        "revision=r25-11-0141 event=acquire_policy "
++        "mode=packed_operator_decoder result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+         "preactivationRejects=%u builderActivated=%d activationSource=%s "
+         "activationOrdinal=%u directLineRuns=%u directLineRunCommands=%zu "
++        "packedLineRuns=%u packedLineRunCommands=%zu "
+         "nativeCommands=%u programBytes=%zu",
+         result, VeloceNowMicros() - veloce_parse_start_micros_, finish_micros,
+         veloce_source_object_count_, page_object_list_.size(),
+@@ -188,6 +191,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+         builder_activated, activation_source, veloce_activation_ordinal_,
+         veloce_parsed_line_run_count_,
+         veloce_parsed_line_run_command_count_,
++        veloce_packed_line_run_count_,
++        veloce_packed_line_run_command_count_,
+         program ? program->header().native_command_count : 0u,
+         program ? program->EstimatedBytes() : 0u);
+   }
+@@ -431,12 +436,17 @@ size_t CPDF_PageObjectHolder::RecordVeloceParsedTranslationOriginLineRun(
+   return omitted_count;
+ }
+ 
+-void CPDF_PageObjectHolder::RecordVeloceParsedLineRun(size_t command_count) {
++void CPDF_PageObjectHolder::RecordVeloceParsedLineRun(size_t command_count,
++                                                      bool packed_layout) {
+   if (command_count == 0u) {
+     return;
+   }
+   ++veloce_parsed_line_run_count_;
+   veloce_parsed_line_run_command_count_ += command_count;
++  if (packed_layout) {
++    ++veloce_packed_line_run_count_;
++    veloce_packed_line_run_command_count_ += command_count;
++  }
+ }
+ 
+ bool CPDF_PageObjectHolder::HasVeloceParsedLineContext() const {
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 9429576c7..6a9407299 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -20,6 +20,7 @@
+ #include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_transparency.h"
++#include "core/fpdfapi/page/veloce_parsed_line.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fxcrt/bytestring.h"
+ #include "core/fxcrt/fx_coordinates.h"
+@@ -37,15 +38,6 @@ class PauseIndicatorIface;
+ class VeloceRenderProgram;
+ class VeloceRenderProgramBuilder;
+ 
+-// One exact `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q` command after the
+-// parser has folded the two matrices that follow the local translation.
+-struct VeloceParsedTranslationOriginLine {
+-  CFX_PointF end;
+-  float translation_x = 0.0f;
+-  float translation_y = 0.0f;
+-};
+-static_assert(sizeof(VeloceParsedTranslationOriginLine) == 16u);
+-
+ // These structs are used to keep track of resources that have already been
+ // generated in the page object holder.
+ struct GraphicsData {
+@@ -132,7 +124,7 @@ class CPDF_PageObjectHolder {
+       const CFX_Matrix& common_matrix,
+       const CPDF_GraphicStates& states,
+       const CPDF_ContentMarks& content_marks);
+-  void RecordVeloceParsedLineRun(size_t command_count);
++  void RecordVeloceParsedLineRun(size_t command_count, bool packed_layout);
+   bool HasVeloceParsedLineContext() const;
+   void AppendRecordedPageObject(std::unique_ptr<CPDF_PageObject> page_obj);
+   bool CanRecordVeloceParsedPath() const {
+@@ -247,6 +239,8 @@ class CPDF_PageObjectHolder {
+   uint32_t veloce_preactivation_rejects_ = 0u;
+   uint32_t veloce_parsed_line_run_count_ = 0u;
+   size_t veloce_parsed_line_run_command_count_ = 0u;
++  uint32_t veloce_packed_line_run_count_ = 0u;
++  size_t veloce_packed_line_run_command_count_ = 0u;
+   uint32_t veloce_activation_ordinal_ = UINT32_MAX;
+   uint64_t veloce_parse_start_micros_ = 0u;
+   bool veloce_acquisition_measurement_active_ = false;
+diff --git a/core/fpdfapi/page/cpdf_streamcontentparser.cpp b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+index ecdd39642..7a5b69f0c 100644
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1793,33 +1793,43 @@ size_t CPDF_StreamContentParser::TryParseVeloceTranslationOriginStrokeLineRun(
+   const CFX_Matrix common_matrix = current_matrix * mt_content_to_user_;
+   std::array<VeloceParsedTranslationOriginLine, kMaxRunCommands> lines;
+   std::array<uint32_t, kMaxRunCommands> unit_starts = {};
+-  size_t parsed_count = 0u;
+-  while (parsed_count < command_limit) {
+-    const uint32_t unit_start = syntax_->GetPos();
+-    std::array<float, 4> operands = {};
+-    if (!syntax_->TryParseTranslationOriginStrokeLine(&operands)) {
+-      break;
+-    }
+-    const uint32_t unit_end = syntax_->GetPos();
+-    if (unit_end > stream_end) {
+-      syntax_->SetPos(unit_start);
+-      break;
++  size_t parsed_count =
++      syntax_->TryParsePackedTranslationOriginStrokeLineRun(
++          pdfium::span(lines).first(command_limit),
++          pdfium::span(unit_starts).first(command_limit), stream_end);
++  const bool packed_layout = parsed_count != 0u;
++  if (!packed_layout) {
++    while (parsed_count < command_limit) {
++      const uint32_t unit_start = syntax_->GetPos();
++      std::array<float, 4> operands = {};
++      if (!syntax_->TryParseTranslationOriginStrokeLine(&operands)) {
++        break;
++      }
++      const uint32_t unit_end = syntax_->GetPos();
++      if (unit_end > stream_end) {
++        syntax_->SetPos(unit_start);
++        break;
++      }
++      unit_starts[parsed_count] = unit_start;
++      lines[parsed_count] = {
++          CFX_PointF(operands[2], operands[3]), operands[0], operands[1]};
++      ++parsed_count;
+     }
+-
++  }
++  for (VeloceParsedTranslationOriginLine& line :
++       pdfium::span(lines).first(parsed_count)) {
+     const float translated_x =
+-        operands[0] * current_matrix.a + operands[1] * current_matrix.c +
+-        current_matrix.e;
++        line.translation_x * current_matrix.a +
++        line.translation_y * current_matrix.c + current_matrix.e;
+     const float translated_y =
+-        operands[0] * current_matrix.b + operands[1] * current_matrix.d +
+-        current_matrix.f;
+-    unit_starts[parsed_count] = unit_start;
+-    lines[parsed_count] = {
+-        CFX_PointF(operands[2], operands[3]),
++        line.translation_x * current_matrix.b +
++        line.translation_y * current_matrix.d + current_matrix.f;
++    line.translation_x =
+         translated_x * mt_content_to_user_.a +
+-            translated_y * mt_content_to_user_.c + mt_content_to_user_.e,
++        translated_y * mt_content_to_user_.c + mt_content_to_user_.e;
++    line.translation_y =
+         translated_x * mt_content_to_user_.b +
+-            translated_y * mt_content_to_user_.d + mt_content_to_user_.f};
+-    ++parsed_count;
++        translated_y * mt_content_to_user_.d + mt_content_to_user_.f;
+   }
+   if (parsed_count == 0u) {
+     return 0u;
+@@ -1839,7 +1849,7 @@ size_t CPDF_StreamContentParser::TryParseVeloceTranslationOriginStrokeLineRun(
+   path_start_ = CFX_PointF();
+   path_current_ = lines[processed_count - 1u].end;
+   all_ctms_[stream_index] = current_matrix;
+-  object_holder_->RecordVeloceParsedLineRun(processed_count);
++  object_holder_->RecordVeloceParsedLineRun(processed_count, packed_layout);
+   can_try_balanced_line_unit_ = true;
+   return processed_count;
+ }
+diff --git a/core/fpdfapi/page/cpdf_streamparser.cpp b/core/fpdfapi/page/cpdf_streamparser.cpp
+index b51d62611..616dbca4f 100644
+--- a/core/fpdfapi/page/cpdf_streamparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamparser.cpp
+@@ -112,6 +112,25 @@ bool ReadVeloceExactPathToken(pdfium::raw_span<const uint8_t> buffer,
+   return true;
+ }
+ 
++template <size_t N>
++bool ReadVeloceExactBytes(pdfium::raw_span<const uint8_t> buffer,
++                          uint32_t* position,
++                          const char (&expected)[N]) {
++  static_assert(N > 1u);
++  constexpr size_t kExpectedSize = N - 1u;
++  if (*position > buffer.size() ||
++      buffer.size() - *position < kExpectedSize) {
++    return false;
++  }
++  for (size_t i = 0u; i < kExpectedSize; ++i) {
++    if (buffer[*position + i] != static_cast<uint8_t>(expected[i])) {
++      return false;
++    }
++  }
++  *position += kExpectedSize;
++  return true;
++}
++
+ float DecodeVeloceIntegerNumber(ByteStringView word, bool negative) {
+   FX_SAFE_UINT32 unsigned_value = 0;
+   const size_t first_digit =
+@@ -204,6 +223,36 @@ bool ReadVeloceExactPathNumber(pdfium::raw_span<const uint8_t> buffer,
+   return true;
+ }
+ 
++bool ReadVelocePackedTranslationOriginStrokeLine(
++    pdfium::raw_span<const uint8_t> buffer,
++    uint32_t* position,
++    VeloceParsedTranslationOriginLine* line) {
++  uint32_t candidate_position = *position;
++  SkipVelocePathTrivia(buffer, &candidate_position);
++
++  float translation_x = 0.0f;
++  float translation_y = 0.0f;
++  float end_x = 0.0f;
++  float end_y = 0.0f;
++  if (!ReadVeloceExactBytes(buffer, &candidate_position, "q 1 0 0 1 ") ||
++      !ReadVeloceExactPathNumber(buffer, &candidate_position,
++                                 &translation_x) ||
++      !ReadVeloceExactBytes(buffer, &candidate_position, " ") ||
++      !ReadVeloceExactPathNumber(buffer, &candidate_position,
++                                 &translation_y) ||
++      !ReadVeloceExactBytes(buffer, &candidate_position, " cm\n0 0 m\n") ||
++      !ReadVeloceExactPathNumber(buffer, &candidate_position, &end_x) ||
++      !ReadVeloceExactBytes(buffer, &candidate_position, " ") ||
++      !ReadVeloceExactPathNumber(buffer, &candidate_position, &end_y) ||
++      !ReadVeloceExactBytes(buffer, &candidate_position, " l\nS\nQ")) {
++    return false;
++  }
++
++  *position = candidate_position;
++  *line = {CFX_PointF(end_x, end_y), translation_x, translation_y};
++  return true;
++}
++
+ bool ReadVelocePathNumber(pdfium::raw_span<const uint8_t> buffer,
+                           uint32_t* position,
+                           float* value) {
+@@ -402,6 +451,42 @@ bool CPDF_StreamParser::TryParseTranslationOriginStrokeLine(
+   return true;
+ }
+ 
++size_t CPDF_StreamParser::TryParsePackedTranslationOriginStrokeLineRun(
++    pdfium::span<VeloceParsedTranslationOriginLine> lines,
++    pdfium::span<uint32_t> unit_starts,
++    uint32_t end_position) {
++  const size_t line_limit = std::min(lines.size(), unit_starts.size());
++  if (line_limit == 0u) {
++    return 0u;
++  }
++  end_position = static_cast<uint32_t>(
++      std::min(static_cast<size_t>(end_position), buf_.size()));
++
++  uint32_t candidate_position = pos_;
++  size_t parsed_count = 0u;
++  while (parsed_count < line_limit) {
++    const uint32_t unit_start = candidate_position;
++    VeloceParsedTranslationOriginLine line;
++    if (!ReadVelocePackedTranslationOriginStrokeLine(
++            buf_, &candidate_position, &line) ||
++        candidate_position > end_position) {
++      candidate_position = unit_start;
++      break;
++    }
++    unit_starts[parsed_count] = unit_start;
++    lines[parsed_count] = line;
++    ++parsed_count;
++  }
++  if (parsed_count == 0u) {
++    return 0u;
++  }
++
++  last_obj_.Reset();
++  word_size_ = 0u;
++  pos_ = candidate_position;
++  return parsed_count;
++}
++
+ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
+     CPDF_Document* doc,
+     RetainPtr<CPDF_Dictionary> dict,
+diff --git a/core/fpdfapi/page/cpdf_streamparser.h b/core/fpdfapi/page/cpdf_streamparser.h
+index 2e1d9b2ce..9b6c6e33d 100644
+--- a/core/fpdfapi/page/cpdf_streamparser.h
++++ b/core/fpdfapi/page/cpdf_streamparser.h
+@@ -7,10 +7,12 @@
+ #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
+ #define CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
+ 
++#include <stddef.h>
+ #include <stdint.h>
+ 
+ #include <array>
+ 
++#include "core/fpdfapi/page/veloce_parsed_line.h"
+ #include "core/fxcrt/data_vector.h"
+ #include "core/fxcrt/raw_span.h"
+ #include "core/fxcrt/retain_ptr.h"
+@@ -42,6 +44,14 @@ class CPDF_StreamParser {
+   // `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q`.
+   // Only the four non-constant operands are converted.
+   bool TryParseTranslationOriginStrokeLine(std::array<float, 4>* operands);
++  // Transactionally consumes the common exact byte layout emitted by CAD
++  // producers. The fixed 256-command caller buffer is both the work quantum
++  // and memory bound. A byte-layout mismatch leaves the parser position
++  // unchanged so the general grammar remains authoritative.
++  size_t TryParsePackedTranslationOriginStrokeLineRun(
++      pdfium::span<VeloceParsedTranslationOriginLine> lines,
++      pdfium::span<uint32_t> unit_starts,
++      uint32_t end_position);
+   ByteStringView GetWord() const {
+     return ByteStringView(word_buffer_).First(word_size_);
+   }
+diff --git a/core/fpdfapi/page/cpdf_streamparser_unittest.cpp b/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+index ddee4be64..4717bab0a 100644
+--- a/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+@@ -110,6 +110,66 @@ TEST(CPDFStreamParserTest, ParsesTranslationOriginStrokeWithFourConversions) {
+   EXPECT_EQ("q", parser.GetWord());
+ }
+ 
++TEST(CPDFStreamParserTest,
++     ParsesBoundedPackedTranslationOriginStrokeLineRun) {
++  uint8_t data[] =
++      "q 1 0 0 1 10 -20 cm\n"
++      "0 0 m\n"
++      "3 4.5 l\n"
++      "S\n"
++      "Q\n"
++      "q 1 0 0 1 -7 8.25 cm\n"
++      "0 0 m\n"
++      "-9 10 l\n"
++      "S\n"
++      "Q\n"
++      "q 1 0 0 1 1 2 cm 0 0 m 3 4 l S Q";
++  CPDF_StreamParser parser(data);
++  std::array<VeloceParsedTranslationOriginLine, 4> lines;
++  std::array<uint32_t, 4> unit_starts = {};
++
++  EXPECT_EQ(2u, parser.TryParsePackedTranslationOriginStrokeLineRun(
++                    lines, unit_starts, sizeof(data) - 1u));
++  EXPECT_EQ(CFX_PointF(3.0f, 4.5f), lines[0].end);
++  EXPECT_FLOAT_EQ(10.0f, lines[0].translation_x);
++  EXPECT_FLOAT_EQ(-20.0f, lines[0].translation_y);
++  EXPECT_EQ(CFX_PointF(-9.0f, 10.0f), lines[1].end);
++  EXPECT_FLOAT_EQ(-7.0f, lines[1].translation_x);
++  EXPECT_FLOAT_EQ(8.25f, lines[1].translation_y);
++  EXPECT_EQ(0u, unit_starts[0]);
++  EXPECT_LT(unit_starts[0], unit_starts[1]);
++
++  std::array<float, 4> operands = {};
++  EXPECT_TRUE(parser.TryParseTranslationOriginStrokeLine(&operands));
++  EXPECT_FLOAT_EQ(1.0f, operands[0]);
++  EXPECT_FLOAT_EQ(2.0f, operands[1]);
++}
++
++TEST(CPDFStreamParserTest, PackedLineRunRespectsContentStreamBoundary) {
++  uint8_t data[] =
++      "q 1 0 0 1 10 20 cm\n0 0 m\n30 40 l\nS\nQ\n"
++      "q 1 0 0 1 50 60 cm\n0 0 m\n70 80 l\nS\nQ";
++  CPDF_StreamParser parser(data);
++  std::array<VeloceParsedTranslationOriginLine, 2> lines;
++  std::array<uint32_t, 2> unit_starts = {};
++  constexpr uint32_t kFirstStreamEnd = 37u;
++
++  EXPECT_EQ(1u, parser.TryParsePackedTranslationOriginStrokeLineRun(
++                    lines, unit_starts, kFirstStreamEnd));
++  EXPECT_LE(parser.GetPos(), kFirstStreamEnd);
++}
++
++TEST(CPDFStreamParserTest, PackedLineRunMismatchIsTransactional) {
++  uint8_t data[] = "q 1 0 0 1 10 20 cm 0 0 m 30 40 l S Q";
++  CPDF_StreamParser parser(data);
++  std::array<VeloceParsedTranslationOriginLine, 2> lines;
++  std::array<uint32_t, 2> unit_starts = {};
++
++  EXPECT_EQ(0u, parser.TryParsePackedTranslationOriginStrokeLineRun(
++                    lines, unit_starts, sizeof(data) - 1u));
++  EXPECT_EQ(0u, parser.GetPos());
++}
++
+ TEST(CPDFStreamParserTest, CompactTranslationGrammarFailsClosed) {
+   uint8_t data[] = "q 1.0 0 0 1 10 -20 cm 0 0 m 3 4 l S Q";
+   CPDF_StreamParser parser(data);
+diff --git a/core/fpdfapi/page/veloce_parsed_line.h b/core/fpdfapi/page/veloce_parsed_line.h
+new file mode 100644
+index 000000000..693c0ba12
+--- /dev/null
++++ b/core/fpdfapi/page/veloce_parsed_line.h
+@@ -0,0 +1,21 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CORE_FPDFAPI_PAGE_VELOCE_PARSED_LINE_H_
++#define CORE_FPDFAPI_PAGE_VELOCE_PARSED_LINE_H_
++
++#include "core/fxcrt/fx_coordinates.h"
++
++// One exact `q 1 0 0 1 tx ty cm 0 0 m dx dy l S Q` command. The stream
++// parser first writes the four non-constant operands here. The content parser
++// then folds the two enclosing matrices into the translation fields before
++// the immutable RenderProgram builder consumes the bounded batch.
++struct VeloceParsedTranslationOriginLine {
++  CFX_PointF end;
++  float translation_x = 0.0f;
++  float translation_y = 0.0f;
++};
++static_assert(sizeof(VeloceParsedTranslationOriginLine) == 16u);
++
++#endif  // CORE_FPDFAPI_PAGE_VELOCE_PARSED_LINE_H_
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9414a3a43..b58f6d849 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3151,7 +3151,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-11-0141 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3161,8 +3161,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=compile "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-11-0141 event=compile "
++        "mode=packed_operator_decoder "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..ed55ca1a5 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -585,8 +585,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=replay "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-11-0141 event=replay "
++        "mode=packed_operator_decoder "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
