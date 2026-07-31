@@ -1,0 +1,638 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d06f6990a..dc03695f9 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-8-0138 event=form_cache result=hit "
++            "revision=r25-12-0142 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-8-0138 event=form_cache result=store "
++          "revision=r25-12-0142 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 2e83b268c..429e2c8a8 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=acquire_policy "
+-        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
++        "revision=r25-12-0142 event=acquire_policy "
++        "mode=direct_compact_line_span result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9414a3a43..ef62b9cdb 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3151,7 +3151,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-12-0142 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3161,8 +3161,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=compile "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-12-0142 event=compile "
++        "mode=direct_compact_line_span "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..ce10eb9dd 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -406,6 +406,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t line_batch_commands = 0;
+   size_t line_batch_dispatches = 0;
+   size_t line_batch_fallbacks = 0;
++  size_t compact_line_span_commands = 0;
++  size_t compact_line_span_dispatches = 0;
++  size_t compact_line_span_fallbacks = 0;
+   size_t max_line_batch = 0;
+   size_t native_fill_draws = 0;
+   size_t replay_work_units = 0;
+@@ -439,6 +442,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   std::array<CFX_OrderedPathDraw, kMaxLineBatch> line_batch;
+   std::array<uint32_t, kMaxLineBatch> line_batch_commands_by_ordinal;
+   size_t line_batch_count = 0u;
++  std::array<CFX_CompactTranslationLine, kMaxLineBatch> compact_line_batch;
++  std::array<uint32_t, kMaxLineBatch>
++      compact_line_batch_commands_by_ordinal;
++  size_t compact_line_batch_count = 0u;
+   std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
+       ordered_path_context;
+   bool ordered_path_context_attempted = false;
+@@ -576,6 +583,63 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     native_clip_ready = false;
+     return true;
+   };
++  auto flush_compact_line_batch = [&]() -> bool {
++    if (compact_line_batch_count == 0u) {
++      return true;
++    }
++    CHECK_EQ(line_batch_count, 0u);
++    if (!ordered_path_context_attempted) {
++      ordered_path_context = device_->CreateOrderedPathBatchContext();
++      ordered_path_context_attempted = true;
++    }
++    const size_t flushed_count = compact_line_batch_count;
++    CFX_OrderedPathBatchStats batch_stats;
++    if (device_->DrawCompactTranslationLineBatch(
++            ordered_path_context.get(),
++            pdfium::span(compact_line_batch).first(flushed_count),
++            holder_to_device, &current_graph_state, current_stroke_argb,
++            current_fill_options, &batch_stats)) {
++      CHECK_EQ(batch_stats.source_draws, flushed_count);
++      CHECK_EQ(batch_stats.raster_passes, batch_stats.source_draws);
++      CHECK_EQ(batch_stats.direct_butt_line_draws,
++               batch_stats.source_draws);
++      native_draws += flushed_count;
++      line_batch_commands += flushed_count;
++      compact_line_span_commands += flushed_count;
++      dense_raster_passes += batch_stats.raster_passes;
++      stroke_renderer_builds += batch_stats.stroke_renderer_builds;
++      stroke_transform_builds += batch_stats.stroke_transform_builds;
++      stroke_transform_hits += batch_stats.stroke_transform_hits;
++      direct_butt_line_draws += batch_stats.direct_butt_line_draws;
++      generic_stroke_draws += batch_stats.generic_stroke_draws;
++      ++line_batch_dispatches;
++      ++compact_line_span_dispatches;
++      max_line_batch = std::max(max_line_batch, flushed_count);
++      compact_line_batch_count = 0u;
++      return true;
++    }
++
++    // The compact entry point rejects before pixels. Reconstruct the accepted
++    // ordered packet and use the established driver path without materializing
++    // page objects.
++    for (size_t i = 0; i < flushed_count; ++i) {
++      const CFX_CompactTranslationLine& line = compact_line_batch[i];
++      line_batch[i] = CFX_OrderedPathDraw{
++          nullptr, CFX_PointF(), line.end,
++          ComposeVeloceInlineTranslation(
++              line.translation_x, line.translation_y, holder_to_device),
++          0, current_fill_options};
++      line_batch_commands_by_ordinal[i] =
++          compact_line_batch_commands_by_ordinal[i];
++    }
++    line_batch_count = flushed_count;
++    compact_line_batch_count = 0u;
++    ++compact_line_span_fallbacks;
++    return flush_line_batch();
++  };
++  const auto flush_stroke_batches = [&]() {
++    return flush_compact_line_batch() && flush_line_batch();
++  };
+ 
+   auto log_result = [&](const char* result) {
+ #if BUILDFLAG(IS_ANDROID)
+@@ -585,8 +649,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=replay "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-12-0142 event=replay "
++        "mode=direct_compact_line_span "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
+@@ -596,6 +660,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "blocksSkipped=%zu sourceEpochCurrent=1 "
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
++        "compactLineSpanCommands=%zu compactLineSpanDispatches=%zu "
++        "compactLineSpanFallbacks=%zu "
+         "lineRasterPasses=%zu strokeRendererBuilds=%zu "
+         "exactNoOpLinesSkipped=%zu "
+         "exactNoOpWords=%zu exactNoOpRankBlocks=%zu "
+@@ -619,7 +685,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         native_darken_draws, native_darken_fallbacks, blocks_tested,
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+-        max_line_batch, native_fill_draws, dense_raster_passes,
++        max_line_batch, native_fill_draws, compact_line_span_commands,
++        compact_line_span_dispatches, compact_line_span_fallbacks,
++        dense_raster_passes,
+         stroke_renderer_builds, exact_noop_lines_skipped,
+         program->exact_noop_word_count(),
+         program->exact_noop_rank_block_count(),
+@@ -660,6 +728,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(line_batch_commands);
+     static_cast<void>(line_batch_dispatches);
+     static_cast<void>(line_batch_fallbacks);
++    static_cast<void>(compact_line_span_commands);
++    static_cast<void>(compact_line_span_dispatches);
++    static_cast<void>(compact_line_span_fallbacks);
+     static_cast<void>(max_line_batch);
+     static_cast<void>(native_fill_draws);
+     static_cast<void>(dense_raster_passes);
+@@ -802,7 +873,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+ 
+     if (!is_any_native_line && !is_native_path && !is_native_darken &&
+         !is_native_fill) {
+-      if (!flush_line_batch()) {
++      if (!flush_stroke_batches()) {
+         log_result("cancelled");
+         return true;
+       }
+@@ -922,7 +993,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     }
+     if (!native_clip_ready ||
+         applied_clip_run_index != active_clip_run_index) {
+-      if (!flush_line_batch()) {
++      if (!flush_stroke_batches()) {
+         log_result("cancelled");
+         return true;
+       }
+@@ -959,7 +1030,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       const VeloceOpaquePathState& state =
+           program->opaque_path_states()[state_index];
+       if (current_state_index != state_index) {
+-        if (!flush_line_batch()) {
++        if (!flush_stroke_batches()) {
+           log_result("cancelled");
+           return true;
+         }
+@@ -984,6 +1055,33 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       }
+     }
+ 
++    if (is_native_translation_line &&
++        matrix_index == kVeloceInlineTranslationMatrixIndex) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
++      cur_obj_ = nullptr;
++      compact_line_batch[compact_line_batch_count] =
++          CFX_CompactTranslationLine{
++              translation_line->end, translation_line->translation_x,
++              translation_line->translation_y};
++      compact_line_batch_commands_by_ordinal[compact_line_batch_count] =
++          static_cast<uint32_t>(command_index);
++      ++compact_line_batch_count;
++      advance_command();
++      if (compact_line_batch_count == compact_line_batch.size() &&
++          !flush_compact_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
++      continue;
++    }
++
++    if (!flush_compact_line_batch()) {
++      log_result("cancelled");
++      return true;
++    }
+     CFX_Matrix object_path_matrix;
+     CFX_Matrix path_matrix;
+     if (matrix_index == kVeloceInlineTranslationMatrixIndex) {
+@@ -997,7 +1095,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       path_matrix = object_path_matrix * holder_to_device;
+     }
+     if (!IsAvailableMatrix(path_matrix)) {
+-      if (!flush_line_batch()) {
++      if (!flush_stroke_batches()) {
+         log_result("cancelled");
+         return true;
+       }
+@@ -1035,7 +1133,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+           options_.GetOptions();
+       if (options_.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
+           render_options.bConvertFillToStroke) {
+-        if (!flush_line_batch()) {
++        if (!flush_stroke_batches()) {
+           log_result("cancelled");
+           return true;
+         }
+@@ -1080,7 +1178,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const CFX_Path* draw_path =
+         is_any_native_line ? nullptr : &native_path->path;
+     if (is_native_darken) {
+-      if (!flush_line_batch()) {
++      if (!flush_stroke_batches()) {
+         log_result("cancelled");
+         return true;
+       }
+@@ -1132,7 +1230,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     continue;
+   }
+ 
+-  if (!flush_line_batch()) {
++  if (!flush_stroke_batches()) {
+     log_result("cancelled");
+     return true;
+   }
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index fc945f935..6639f9efb 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <array>
+ #include <optional>
+ #include <utility>
+ 
+@@ -1648,6 +1649,149 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+   return true;
+ }
+ 
++bool CFX_AggDeviceDriver::DrawCompactTranslationLineBatch(
++    OrderedPathBatchContext* context,
++    pdfium::span<const CFX_CompactTranslationLine> lines,
++    const CFX_Matrix& holder_to_device,
++    const CFX_GraphStateData* stroke_state,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& stroke_options,
++    CFX_OrderedPathBatchStats* stats) {
++  static constexpr size_t kMaxCompactLines = 256u;
++  if (lines.empty()) {
++    return true;
++  }
++  if (lines.size() > kMaxCompactLines || !context ||
++      !context->IsOwnedBy(this) || bitmap_->GetBuffer().empty() ||
++      !stroke_state || FXARGB_A(stroke_color) == 0 ||
++      stroke_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill ||
++      !stroke_options.stroke || stroke_options.zero_area ||
++      stroke_state->line_cap() != CFX_GraphStateData::LineCap::kButt ||
++      !stroke_state->dash_array().empty()) {
++    return false;
++  }
++  if (!std::isfinite(holder_to_device.a) ||
++      !std::isfinite(holder_to_device.b) ||
++      !std::isfinite(holder_to_device.c) ||
++      !std::isfinite(holder_to_device.d) ||
++      !std::isfinite(holder_to_device.e) ||
++      !std::isfinite(holder_to_device.f)) {
++    return false;
++  }
++
++  const float stroke_scale =
++      std::max(fabs(holder_to_device.a), fabs(holder_to_device.b));
++  const float determinant =
++      holder_to_device.a * holder_to_device.d -
++      holder_to_device.b * holder_to_device.c;
++  if (!std::isfinite(stroke_scale) || stroke_scale == 0.0f ||
++      !std::isfinite(determinant) || determinant == 0.0f) {
++    return false;
++  }
++  const CFX_Matrix stroke_to_device(
++      holder_to_device.a / stroke_scale,
++      holder_to_device.b / stroke_scale,
++      holder_to_device.c / stroke_scale,
++      holder_to_device.d / stroke_scale, 0.0f, 0.0f);
++  const CFX_Matrix stroke_to_device_inverse =
++      stroke_to_device.GetInverse();
++  const float device_unit =
++      1.0f /
++      ((stroke_to_device.GetXUnit() + stroke_to_device.GetYUnit()) / 2.0f);
++  const float stroke_width =
++      std::max(stroke_state->line_width() * stroke_scale, device_unit);
++  if (!std::isfinite(stroke_width) || stroke_width <= 0.0f) {
++    return false;
++  }
++
++  const auto object_to_device =
++      [&](const CFX_CompactTranslationLine& line) {
++        return CFX_Matrix(
++            holder_to_device.a, holder_to_device.b, holder_to_device.c,
++            holder_to_device.d,
++            line.translation_x * holder_to_device.a +
++                line.translation_y * holder_to_device.c +
++                holder_to_device.e,
++            line.translation_x * holder_to_device.b +
++                line.translation_y * holder_to_device.d +
++                holder_to_device.f);
++      };
++  std::array<std::array<CFX_PointF, 4>, kMaxCompactLines> stroke_vertices;
++  const float half_width = stroke_width / 2.0f;
++  for (size_t i = 0; i < lines.size(); ++i) {
++    const CFX_CompactTranslationLine& line = lines[i];
++    if (!std::isfinite(line.end.x) || !std::isfinite(line.end.y) ||
++        !std::isfinite(line.translation_x) ||
++        !std::isfinite(line.translation_y) ||
++        line.end == CFX_PointF()) {
++      return false;
++    }
++    const CFX_Matrix object_to_stroke =
++        object_to_device(line) * stroke_to_device_inverse;
++    const CFX_PointF start =
++        HardClip(object_to_stroke.Transform(CFX_PointF()));
++    const CFX_PointF end =
++        HardClip(object_to_stroke.Transform(line.end));
++    const float segment_x = end.x - start.x;
++    const float segment_y = end.y - start.y;
++    const float segment_length = FXSYS_sqrt2(segment_x, segment_y);
++    if (!std::isfinite(segment_length) || segment_length <= 1.0e-14f) {
++      return false;
++    }
++    const float normal_x = segment_y * half_width / segment_length;
++    const float normal_y = segment_x * half_width / segment_length;
++    stroke_vertices[i] = {
++        CFX_PointF(start.x - normal_x, start.y + normal_y),
++        CFX_PointF(start.x + normal_x, start.y - normal_y),
++        CFX_PointF(end.x + normal_x, end.y - normal_y),
++        CFX_PointF(end.x - normal_x, end.y + normal_y)};
++  }
++
++  fill_options_ = stroke_options;
++  RetainPtr<CFX_DIBitmap> backdrop =
++      group_knockout_ ? backdrop_bitmap_ : nullptr;
++  CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                           stroke_options.full_cover, rgb_byte_order_);
++  auto* agg_context = static_cast<AggOrderedPathBatchContext*>(context);
++  CFX_OrderedPathBatchStats packet_stats;
++  packet_stats.source_draws = lines.size();
++  packet_stats.stroke_renderer_builds = 1u;
++  packet_stats.stroke_transform_builds = 1u;
++
++  for (size_t i = 0; i < lines.size(); ++i) {
++    agg_context->rasterizer.reset();
++    agg_context->rasterizer.filling_rule(agg::fill_non_zero);
++    const auto add_transformed_vertex =
++        [&](const CFX_PointF& point, unsigned command) {
++          const CFX_PointF transformed = stroke_to_device.Transform(point);
++          agg_context->rasterizer.add_vertex(
++              transformed.x, transformed.y, command);
++        };
++    add_transformed_vertex(stroke_vertices[i][0], agg::path_cmd_move_to);
++    add_transformed_vertex(stroke_vertices[i][1], agg::path_cmd_line_to);
++    add_transformed_vertex(stroke_vertices[i][2], agg::path_cmd_line_to);
++    add_transformed_vertex(stroke_vertices[i][3], agg::path_cmd_line_to);
++    add_transformed_vertex(
++        CFX_PointF(),
++        static_cast<unsigned>(agg::path_cmd_end_poly) |
++            agg::path_flags_close);
++    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                          renderer, stroke_options.aliased_path);
++    ++packet_stats.raster_passes;
++    ++packet_stats.direct_butt_line_draws;
++  }
++
++  if (stats) {
++    stats->source_draws += packet_stats.source_draws;
++    stats->raster_passes += packet_stats.raster_passes;
++    stats->stroke_renderer_builds += packet_stats.stroke_renderer_builds;
++    stats->stroke_transform_builds += packet_stats.stroke_transform_builds;
++    stats->direct_butt_line_draws += packet_stats.direct_butt_line_draws;
++  }
++  return true;
++}
++
+ bool CFX_AggDeviceDriver::DrawPathWithBlend(
+     const CFX_Path& path,
+     const CFX_Matrix* pObject2Device,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 01819d0f5..9bafdf593 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -87,6 +87,14 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& stroke_options,
+       CFX_OrderedPathBatchStats* stats) override;
++  bool DrawCompactTranslationLineBatch(
++      OrderedPathBatchContext* context,
++      pdfium::span<const CFX_CompactTranslationLine> lines,
++      const CFX_Matrix& holder_to_device,
++      const CFX_GraphStateData* stroke_state,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats) override;
+   bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
+   FX_RECT GetClipBox() const override;
+   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index 5d49558ef..dad9a4d66 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -258,6 +258,60 @@ TEST(CFXDefaultRenderDeviceTest,
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+ 
++TEST(CFXDefaultRenderDeviceTest,
++     CompactTranslationLineBatchPreservesIndependentSourceOrder) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice compact;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      compact.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  compact.GetBitmap()->Clear(0xffffffff);
++
++  constexpr uint32_t kStrokeColor = 0x80204080;
++  CFX_GraphStateData graphics_state;
++  graphics_state.set_line_width(2.0f);
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  const CFX_Matrix holder_to_device(
++      1.25f, 0.0f, 0.0f, 1.25f, 2.0f, 3.0f);
++  const std::array<CFX_CompactTranslationLine, 3> lines = {
++      CFX_CompactTranslationLine{{40.0f, 40.0f}, 2.0f, 2.0f},
++      CFX_CompactTranslationLine{{40.0f, -40.0f}, 2.0f, 42.0f},
++      CFX_CompactTranslationLine{{40.0f, 0.0f}, 2.0f, 22.0f},
++  };
++
++  for (const CFX_CompactTranslationLine& line : lines) {
++    CFX_Path path;
++    path.AppendLine(CFX_PointF(), line.end);
++    const CFX_Matrix matrix(
++        holder_to_device.a, holder_to_device.b, holder_to_device.c,
++        holder_to_device.d,
++        line.translation_x * holder_to_device.a +
++            line.translation_y * holder_to_device.c + holder_to_device.e,
++        line.translation_x * holder_to_device.b +
++            line.translation_y * holder_to_device.d + holder_to_device.f);
++    ASSERT_TRUE(baseline.DrawPath(
++        path, &matrix, &graphics_state, /*fill_color=*/0, kStrokeColor,
++        stroke_options));
++  }
++
++  auto context = compact.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(compact.DrawCompactTranslationLineBatch(
++      context.get(), lines, holder_to_device, &graphics_state, kStrokeColor,
++      stroke_options, &stats));
++  EXPECT_EQ(lines.size(), stats.source_draws);
++  EXPECT_EQ(lines.size(), stats.raster_passes);
++  EXPECT_EQ(lines.size(), stats.direct_butt_line_draws);
++  EXPECT_EQ(1u, stats.stroke_renderer_builds);
++  EXPECT_EQ(1u, stats.stroke_transform_builds);
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 compact.GetBitmap()->GetBuffer()));
++}
++
+ TEST(CFXDefaultRenderDeviceTest,
+      OrderedRoundLinesFailClosedToGenericStroke) {
+   CFX_DefaultRenderDevice baseline;
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 338d99fa8..d3c8bf1ee 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -840,6 +840,22 @@ bool CFX_RenderDevice::DrawOrderedPathBatch(
+       context, draws, stroke_state, stroke_color, stroke_options, stats);
+ }
+ 
++bool CFX_RenderDevice::DrawCompactTranslationLineBatch(
++    RenderDeviceDriverIface::OrderedPathBatchContext* context,
++    pdfium::span<const CFX_CompactTranslationLine> lines,
++    const CFX_Matrix& holder_to_device,
++    const CFX_GraphStateData* stroke_state,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& stroke_options,
++    CFX_OrderedPathBatchStats* stats) {
++  if (lines.empty()) {
++    return true;
++  }
++  return device_driver_->DrawCompactTranslationLineBatch(
++      context, lines, holder_to_device, stroke_state, stroke_color,
++      stroke_options, stats);
++}
++
+ // This can be removed once PDFium entirely relies on Skia
+ bool CFX_RenderDevice::DrawFillStrokePath(
+     const CFX_Path& path,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 64d70d7c7..a96ed79db 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -112,6 +112,14 @@ class CFX_RenderDevice {
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& stroke_options,
+       CFX_OrderedPathBatchStats* stats);
++  bool DrawCompactTranslationLineBatch(
++      RenderDeviceDriverIface::OrderedPathBatchContext* context,
++      pdfium::span<const CFX_CompactTranslationLine> lines,
++      const CFX_Matrix& holder_to_device,
++      const CFX_GraphStateData* stroke_state,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats);
+   bool FillRect(const FX_RECT& rect, uint32_t color);
+ 
+   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index f8592b438..e1e316615 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -50,6 +50,17 @@ bool RenderDeviceDriverIface::DrawOrderedPathBatch(
+   return false;
+ }
+ 
++bool RenderDeviceDriverIface::DrawCompactTranslationLineBatch(
++    OrderedPathBatchContext*,
++    pdfium::span<const CFX_CompactTranslationLine>,
++    const CFX_Matrix&,
++    const CFX_GraphStateData*,
++    uint32_t,
++    const CFX_FillRenderOptions&,
++    CFX_OrderedPathBatchStats*) {
++  return false;
++}
++
+ bool RenderDeviceDriverIface::RenderCapGetBits() const {
+   return false;
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 769220cf9..3261795b0 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -52,6 +52,16 @@ struct CFX_OrderedPathDraw {
+   CFX_FillRenderOptions fill_options;
+ };
+ 
++// One translation-origin line in a homogeneous ordered stroke packet. The
++// packet supplies the common holder-to-device linear transform and paint
++// state; each entry retains only the exact source endpoint and translation.
++struct CFX_CompactTranslationLine {
++  CFX_PointF end;
++  float translation_x = 0.0f;
++  float translation_y = 0.0f;
++};
++static_assert(sizeof(CFX_CompactTranslationLine) == 16u);
++
+ struct CFX_OrderedPathBatchStats {
+   size_t source_draws = 0;
+   size_t raster_passes = 0;
+@@ -180,6 +190,14 @@ class RenderDeviceDriverIface {
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& stroke_options,
+       CFX_OrderedPathBatchStats* stats);
++  virtual bool DrawCompactTranslationLineBatch(
++      OrderedPathBatchContext* context,
++      pdfium::span<const CFX_CompactTranslationLine> lines,
++      const CFX_Matrix& holder_to_device,
++      const CFX_GraphStateData* stroke_state,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& stroke_options,
++      CFX_OrderedPathBatchStats* stats);
+   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
+   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                 const CFX_PointF& ptLineTo,
