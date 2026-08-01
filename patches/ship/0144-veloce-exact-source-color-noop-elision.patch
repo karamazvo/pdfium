@@ -1,0 +1,484 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d06f6990a..f0cd43f32 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-8-0138 event=form_cache result=hit "
++            "revision=r25-14-0144 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-8-0138 event=form_cache result=store "
++          "revision=r25-14-0144 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 2e83b268c..855df9f66 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -173,8 +173,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=acquire_policy "
+-        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
++        "revision=r25-14-0144 event=acquire_policy "
++        "mode=exact_source_color_noop_elision result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9414a3a43..28bf8077a 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3151,7 +3151,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-14-0144 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3161,8 +3161,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=compile "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-14-0144 event=compile "
++        "mode=exact_source_color_noop_elision "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..710f0a92e 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -410,6 +410,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t native_fill_draws = 0;
+   size_t replay_work_units = 0;
+   size_t stroke_renderer_builds = 0;
++  size_t source_color_tested_pixels = 0;
++  size_t source_color_noop_pixels = 0;
+   size_t native_line_run_index = 0;
+   size_t native_translation_line_run_index = 0;
+   size_t block_index = 0;
+@@ -547,6 +549,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       line_batch_commands += flushed_count;
+       dense_raster_passes += batch_stats.raster_passes;
+       stroke_renderer_builds += batch_stats.stroke_renderer_builds;
++      source_color_tested_pixels += batch_stats.source_color_tested_pixels;
++      source_color_noop_pixels += batch_stats.source_color_noop_pixels;
+       stroke_transform_builds += batch_stats.stroke_transform_builds;
+       stroke_transform_hits += batch_stats.stroke_transform_hits;
+       direct_butt_line_draws += batch_stats.direct_butt_line_draws;
+@@ -585,8 +589,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=replay "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-14-0144 event=replay "
++        "mode=exact_source_color_noop_elision "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
+@@ -597,6 +601,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu fillDraws=%zu "
+         "lineRasterPasses=%zu strokeRendererBuilds=%zu "
++        "sourceColorTestedPixels=%zu sourceColorNoOpPixels=%zu "
+         "exactNoOpLinesSkipped=%zu "
+         "exactNoOpWords=%zu exactNoOpRankBlocks=%zu "
+         "strokeTransformBuilds=%zu strokeTransformHits=%zu "
+@@ -620,7 +625,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+         max_line_batch, native_fill_draws, dense_raster_passes,
+-        stroke_renderer_builds, exact_noop_lines_skipped,
++        stroke_renderer_builds, source_color_tested_pixels,
++        source_color_noop_pixels,
++        exact_noop_lines_skipped,
+         program->exact_noop_word_count(),
+         program->exact_noop_rank_block_count(),
+         stroke_transform_builds,
+@@ -664,6 +671,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(native_fill_draws);
+     static_cast<void>(dense_raster_passes);
+     static_cast<void>(stroke_renderer_builds);
++    static_cast<void>(source_color_tested_pixels);
++    static_cast<void>(source_color_noop_pixels);
+     static_cast<void>(stroke_transform_builds);
+     static_cast<void>(stroke_transform_hits);
+     static_cast<void>(direct_butt_line_draws);
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index fc945f935..838b73ff1 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -446,7 +446,15 @@ class CFX_AggRenderer {
+                   uint32_t color,
+                   bool bFullCover,
+                   bool bRgbByteOrder,
+-                  BlendMode blend_mode = BlendMode::kNormal);
++                  BlendMode blend_mode = BlendMode::kNormal,
++                  bool enable_source_color_noop = false);
++
++  size_t source_color_noop_pixels() const {
++    return source_color_noop_pixels_;
++  }
++  size_t source_color_tested_pixels() const {
++    return source_color_tested_pixels_;
++  }
+ 
+   // Needed for agg caller
+   void prepare(unsigned) {}
+@@ -532,12 +540,32 @@ class CFX_AggRenderer {
+   }
+   int GetGray() const { return std::get<int>(color_data_); }
+ 
++  bool IsSourceColorPixel(const uint8_t* pixel, int bytes_per_pixel) const {
++    if (!source_color_noop_enabled_) {
++      return false;
++    }
++    if (bytes_per_pixel == 1) {
++      return pixel[0] == GetGray();
++    }
++    const auto& bgr = GetBGR();
++    const bool color_matches =
++        rgb_byte_order_
++            ? pixel[0] == bgr.red && pixel[1] == bgr.green &&
++                  pixel[2] == bgr.blue
++            : pixel[0] == bgr.blue && pixel[1] == bgr.green &&
++                  pixel[2] == bgr.red;
++    return color_matches &&
++           (!source_color_noop_requires_opaque_dest_ || pixel[3] == 255u);
++  }
++
+   const int alpha_;
+   std::variant<FX_BGR_STRUCT<uint8_t>, int> color_data_;
+   const uint32_t color_;
+   const bool full_cover_;
+   const bool rgb_byte_order_;
+   const bool direct_blend_;
++  const bool source_color_noop_enabled_;
++  const bool source_color_noop_requires_opaque_dest_;
+   const FX_RECT clip_box_;
+   RetainPtr<CFX_DIBitmap> const backdrop_device_;
+   RetainPtr<CFX_DIBitmap> const clip_mask_;
+@@ -545,6 +573,8 @@ class CFX_AggRenderer {
+   UnownedPtr<const CFX_AggClipRgn> clip_rgn_;
+   const CompositeSpanFunc composite_span_func_;
+   CFX_ScanlineCompositor blend_compositor_;
++  size_t source_color_tested_pixels_ = 0;
++  size_t source_color_noop_pixels_ = 0;
+ };
+ 
+ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
+@@ -691,9 +721,19 @@ void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
+                                         const uint8_t* clip_scan) {
+   DCHECK(!rgb_byte_order_);
+   const int gray = GetGray();
++  if (source_color_noop_enabled_) {
++    source_color_tested_pixels_ +=
++        static_cast<size_t>(col_end - col_start);
++  }
++  size_t source_color_noop_pixels = 0;
+   UNSAFE_TODO({
+     dest_scan += col_start;
+     for (int col = col_start; col < col_end; col++) {
++      if (IsSourceColorPixel(dest_scan, bytes_per_pixel)) {
++        ++source_color_noop_pixels;
++        ++dest_scan;
++        continue;
++      }
+       int src_alpha = GetSourceAlpha(cover_scan, clip_scan, col);
+       if (src_alpha) {
+         if (src_alpha == 255) {
+@@ -705,6 +745,7 @@ void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
+       dest_scan++;
+     }
+   });
++  source_color_noop_pixels_ += source_color_noop_pixels;
+ }
+ 
+ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
+@@ -714,10 +755,20 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
+                                         const uint8_t* cover_scan,
+                                         const uint8_t* clip_scan) {
+   const auto& bgr = GetBGR();
++  if (source_color_noop_enabled_) {
++    source_color_tested_pixels_ +=
++        static_cast<size_t>(col_end - col_start);
++  }
++  size_t source_color_noop_pixels = 0;
+   UNSAFE_TODO({
+     dest_scan += col_start * bytes_per_pixel;
+     if (rgb_byte_order_) {
+       for (int col = col_start; col < col_end; col++) {
++        if (IsSourceColorPixel(dest_scan, bytes_per_pixel)) {
++          ++source_color_noop_pixels;
++          dest_scan += 4;
++          continue;
++        }
+         int src_alpha = full_cover_
+                             ? GetSrcAlpha(clip_scan, col)
+                             : GetSourceAlpha(cover_scan, clip_scan, col);
+@@ -740,9 +791,15 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
+         }
+         dest_scan += 4;
+       }
++      source_color_noop_pixels_ += source_color_noop_pixels;
+       return;
+     }
+     for (int col = col_start; col < col_end; col++) {
++      if (IsSourceColorPixel(dest_scan, bytes_per_pixel)) {
++        ++source_color_noop_pixels;
++        dest_scan += bytes_per_pixel;
++        continue;
++      }
+       int src_alpha = full_cover_ ? GetSrcAlpha(clip_scan, col)
+                                   : GetSourceAlpha(cover_scan, clip_scan, col);
+       if (src_alpha) {
+@@ -773,6 +830,7 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
+       dest_scan += bytes_per_pixel;
+     }
+   });
++  source_color_noop_pixels_ += source_color_noop_pixels;
+ }
+ 
+ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
+@@ -782,10 +840,20 @@ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
+                                        const uint8_t* cover_scan,
+                                        const uint8_t* clip_scan) {
+   const auto& bgr = GetBGR();
++  if (source_color_noop_enabled_) {
++    source_color_tested_pixels_ +=
++        static_cast<size_t>(col_end - col_start);
++  }
++  size_t source_color_noop_pixels = 0;
+   UNSAFE_TODO({
+     dest_scan += col_start * bytes_per_pixel;
+     if (rgb_byte_order_) {
+       for (int col = col_start; col < col_end; col++) {
++        if (IsSourceColorPixel(dest_scan, bytes_per_pixel)) {
++          ++source_color_noop_pixels;
++          dest_scan += bytes_per_pixel;
++          continue;
++        }
+         int src_alpha = GetSourceAlpha(cover_scan, clip_scan, col);
+         if (src_alpha) {
+           if (src_alpha == 255) {
+@@ -809,9 +877,15 @@ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
+         }
+         dest_scan += bytes_per_pixel;
+       }
++      source_color_noop_pixels_ += source_color_noop_pixels;
+       return;
+     }
+     for (int col = col_start; col < col_end; col++) {
++      if (IsSourceColorPixel(dest_scan, bytes_per_pixel)) {
++        ++source_color_noop_pixels;
++        dest_scan += bytes_per_pixel;
++        continue;
++      }
+       int src_alpha = full_cover_ ? GetSrcAlpha(clip_scan, col)
+                                   : GetSourceAlpha(cover_scan, clip_scan, col);
+       if (src_alpha) {
+@@ -837,6 +911,7 @@ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
+       dest_scan += bytes_per_pixel;
+     }
+   });
++  source_color_noop_pixels_ += source_color_noop_pixels;
+ }
+ 
+ CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+@@ -845,12 +920,19 @@ CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                                  uint32_t color,
+                                  bool bFullCover,
+                                  bool bRgbByteOrder,
+-                                 BlendMode blend_mode)
++                                 BlendMode blend_mode,
++                                 bool enable_source_color_noop)
+     : alpha_(FXARGB_A(color)),
+       color_(bRgbByteOrder ? FXARGB_TOBGRORDERDIB(color) : color),
+       full_cover_(bFullCover),
+       rgb_byte_order_(bRgbByteOrder),
+       direct_blend_(blend_mode != BlendMode::kNormal),
++      source_color_noop_enabled_(enable_source_color_noop &&
++                                 FXARGB_A(color) == 255u &&
++                                 !pBackdropDevice &&
++                                 blend_mode == BlendMode::kNormal),
++      source_color_noop_requires_opaque_dest_(
++          pDevice->GetFormat() == FXDIB_Format::kBgra),
+       clip_box_(GetClipBoxFromRegion(pDevice, pClipRgn)),
+       backdrop_device_(pBackdropDevice),
+       clip_mask_(GetClipMaskFromRegion(pClipRgn)),
+@@ -1532,7 +1614,9 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+   if (has_line) {
+     fill_options_ = stroke_options;
+     stroke_renderer.emplace(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+-                            stroke_options.full_cover, rgb_byte_order_);
++                            stroke_options.full_cover, rgb_byte_order_,
++                            BlendMode::kNormal,
++                            /*enable_source_color_noop=*/true);
+     packet_stats.stroke_renderer_builds = 1u;
+   }
+ 
+@@ -1627,19 +1711,35 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+           GetAlternateOrWindingFillType(draw.fill_options));
+       CFX_AggRenderer renderer(bitmap_, nullptr, clip_rgn_.get(),
+                                draw.fill_color,
+-                               draw.fill_options.full_cover, rgb_byte_order_);
++                               draw.fill_options.full_cover, rgb_byte_order_,
++                               BlendMode::kNormal,
++                               /*enable_source_color_noop=*/true);
+       agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
+                             renderer,
+                             draw.fill_options.aliased_path);
++      packet_stats.source_color_noop_pixels +=
++          renderer.source_color_noop_pixels();
++      packet_stats.source_color_tested_pixels +=
++          renderer.source_color_tested_pixels();
+       ++packet_stats.raster_passes;
+       continue;
+     }
+     render_independent_stroke(draw);
+   }
++  if (stroke_renderer) {
++    packet_stats.source_color_noop_pixels +=
++        stroke_renderer->source_color_noop_pixels();
++    packet_stats.source_color_tested_pixels +=
++        stroke_renderer->source_color_tested_pixels();
++  }
+   if (stats) {
+     stats->source_draws += packet_stats.source_draws;
+     stats->raster_passes += packet_stats.raster_passes;
+     stats->stroke_renderer_builds += packet_stats.stroke_renderer_builds;
++    stats->source_color_noop_pixels +=
++        packet_stats.source_color_noop_pixels;
++    stats->source_color_tested_pixels +=
++        packet_stats.source_color_tested_pixels;
+     stats->stroke_transform_builds += packet_stats.stroke_transform_builds;
+     stats->stroke_transform_hits += packet_stats.stroke_transform_hits;
+     stats->direct_butt_line_draws += packet_stats.direct_butt_line_draws;
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index 5d49558ef..4000dd473 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -258,6 +258,92 @@ TEST(CFXDefaultRenderDeviceTest,
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+ 
++TEST(CFXDefaultRenderDeviceTest,
++     OrderedOpaqueSourceColorPixelsAreExactNoOps) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  batched.GetBitmap()->Clear(0xffffffff);
++
++  constexpr FX_ARGB kStrokeColor = 0xff204080;
++  CFX_GraphStateData graph_state;
++  graph_state.set_line_width(3.0f);
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  const CFX_OrderedPathDraw repeated_draw{
++      nullptr, {4.0f, 7.0f}, {56.0f, 47.0f}, CFX_Matrix(), 0,
++      stroke_options};
++  const std::array<CFX_OrderedPathDraw, 4> draws = {
++      repeated_draw, repeated_draw, repeated_draw, repeated_draw};
++
++  for (const CFX_OrderedPathDraw& draw : draws) {
++    CFX_Path line;
++    line.AppendLine(draw.line_start, draw.line_end);
++    ASSERT_TRUE(baseline.DrawPath(
++        line, &draw.object_to_device, &graph_state, /*fill_color=*/0,
++        kStrokeColor, stroke_options));
++  }
++
++  auto context = batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), draws, &graph_state, kStrokeColor, stroke_options,
++      &stats));
++  EXPECT_GT(stats.source_color_tested_pixels,
++            stats.source_color_noop_pixels);
++  EXPECT_GT(stats.source_color_noop_pixels, 0u);
++  EXPECT_EQ(draws.size(), stats.raster_passes);
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
++
++TEST(CFXDefaultRenderDeviceTest,
++     OrderedTranslucentSourceColorNoOpElisionStaysDisabled) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/64, /*height=*/64, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xffffffff);
++  batched.GetBitmap()->Clear(0xffffffff);
++
++  constexpr FX_ARGB kStrokeColor = 0x80204080;
++  CFX_GraphStateData graph_state;
++  graph_state.set_line_width(3.0f);
++  CFX_FillRenderOptions stroke_options;
++  stroke_options.stroke = true;
++  const CFX_OrderedPathDraw repeated_draw{
++      nullptr, {4.0f, 7.0f}, {56.0f, 47.0f}, CFX_Matrix(), 0,
++      stroke_options};
++  const std::array<CFX_OrderedPathDraw, 2> draws = {repeated_draw,
++                                                   repeated_draw};
++
++  for (const CFX_OrderedPathDraw& draw : draws) {
++    CFX_Path line;
++    line.AppendLine(draw.line_start, draw.line_end);
++    ASSERT_TRUE(baseline.DrawPath(
++        line, &draw.object_to_device, &graph_state, /*fill_color=*/0,
++        kStrokeColor, stroke_options));
++  }
++
++  auto context = batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  CFX_OrderedPathBatchStats stats;
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), draws, &graph_state, kStrokeColor, stroke_options,
++      &stats));
++  EXPECT_EQ(0u, stats.source_color_tested_pixels);
++  EXPECT_EQ(0u, stats.source_color_noop_pixels);
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
++
+ TEST(CFXDefaultRenderDeviceTest,
+      OrderedRoundLinesFailClosedToGenericStroke) {
+   CFX_DefaultRenderDevice baseline;
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 769220cf9..2eacbf67d 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -56,6 +56,10 @@ struct CFX_OrderedPathBatchStats {
+   size_t source_draws = 0;
+   size_t raster_passes = 0;
+   size_t stroke_renderer_builds = 0;
++  // Ordered opaque Normal-blend pixels skipped because the destination was
++  // already exactly the source color.
++  size_t source_color_tested_pixels = 0;
++  size_t source_color_noop_pixels = 0;
+   size_t stroke_transform_builds = 0;
+   size_t stroke_transform_hits = 0;
+   size_t direct_butt_line_draws = 0;

@@ -8,8 +8,16 @@
 
 **Excludes:** rejected r25-9-0139 through r25-12-0142
 
-**Status:** implemented; CI compile, pixel, coverage, and device acceptance
-pending
+**Status:** performance rejected by device result; keep for traceability and do
+not extend
+
+## Device Result
+
+Q16 exercised 1,553,522 exact axis-aligned draws, about 60% of 2,590,767
+raster passes, but bitmap time was 1,478 ms versus 1,465 ms on accepted 0138.
+Acquisition regressed from 3,185 ms to 3,978 ms and total preview from 4,651 ms
+to 5,456 ms. The kernel therefore did not reduce the dominant measured cost.
+`r25-14-0144` restarts from 0138 and excludes this patch.
 
 ## Root Cost
 
