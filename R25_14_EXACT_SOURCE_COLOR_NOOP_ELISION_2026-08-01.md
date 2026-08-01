@@ -1,7 +1,7 @@
 # r25-14 Exact Source-Color No-Op Elision
 
 **Locked:** 2026-08-01 (Asia/Taipei)
-**Status:** implemented; CI build, pixel validation, and device performance acceptance pending
+**Status:** performance rejected by device result; keep for traceability and do not extend
 **Extends:** accepted `r25-8-0138`
 **Excludes:** performance-rejected `0139`, `0140`, `0141`, `0142`, and `0143`
 **Revision:** `r25-14-0144`
@@ -110,7 +110,31 @@ Reject the performance result if hit ratio is low, bitmap gain is below 20%,
 or the added comparison branch regresses ordinary or non-overlapping content.
 Correctness alone is not sufficient to extend this experiment.
 
+## Device Result
+
+The 2026-08-01 Samsung run rejected the performance hypothesis:
+
+| Workload | 0144 result | Interpretation |
+|---|---|---|
+| 11.pdf | acquire 278 ms, bitmap 170 ms, total 449 ms; 5,396 pixels tested and zero skipped | Dominant work is 28,727 direct Darken paths. The 0144 mechanism is inactive; the good timing cannot be attributed to it. |
+| Q16 | acquire 3,826 ms, bitmap 1,658 ms, total 5,484 ms, first visible 5,835 ms; 3,768,260 of 4,183,709 tested pixels skipped (90.1%) | Versus accepted 0138 at 3,185/1,465/4,651 ms and 4,899 ms first visible, acquisition regressed 20.1%, bitmap 13.2%, total 17.9%, and first visible 19.1%. A very high hit rate with no speedup proves destination channel arithmetic/write is not dominant. |
+| EP23 human p2/p3 | p2 416/135/552 ms; p3 316/134/450 ms; dense Form hit ratio 103/296,507 (0.035%) and outer fill zero | Faster than the prior session, but 0144 is effectively inactive. Form caching and run variance explain the result, not source-color elision. |
+| 6Steps | page 0 acquire 7 ms, bitmap 266 ms, total 273 ms, first visible 638 ms; later previews roughly 34-277 ms | Pages remain `canonical_no_exact_candidate`, so 0144 does not execute. The 20 ms fast-scroll goal remains unmet. |
+
+The Q16 result is decisive even though this is one run: the proof counter shows
+that the intended shortcut covered nearly all eligible destination pixels, but
+the measured bitmap path still became slower. Do not add another destination
+compositing shortcut on top of 0144.
+
+The remaining Q16 replay cost is the 2,590,767 independent AGG raster passes,
+including rasterizer reset, geometry-to-cell conversion, scanline generation,
+and per-operation dispatch. The next exact experiment must remove raster passes
+or prove device-space zero coverage before AGG, rather than optimize the final
+channel write.
+
 ## Next Revision
 
-The next unused revision is `0145`. It must be selected from measured `0144`
-results and must not reintroduce `0139`-`0143` without new proof.
+The next unused revision is `0145`. It must restart from accepted `0138`,
+exclude `0139`-`0144`, and target exact device-space zero-coverage elimination
+before AGG. It must not add a telemetry-only build or another pixel-composite
+micro-optimization.
