@@ -119,6 +119,34 @@ Reject the performance hypothesis if the skip count is small or the added
 fixed-point comparisons do not produce the required bitmap gain. This patch
 does not claim an order-of-magnitude improvement in advance.
 
+## Device Result - 2026-08-01
+
+Reject `0145` as a performance base. The exact predicate did not match a
+single command in the supplied device runs:
+
+| Workload | Observed replays | `zeroCoverageStrokes` | Cold acquire / bitmap / total |
+| --- | ---: | ---: | ---: |
+| 11 | 40 | 0 in every replay | 218 / 150 / 369 ms |
+| Q16 | 51 | 0 in every replay | 3,942 / 1,967 / 5,910 ms |
+| EP23 | 64 | 0 in every replay | p2 390 / 377 / 767 ms; p3 840 / 160 / 1,000 ms |
+| 6Steps | 11 accelerated micro-runs | 0 in every replay | ordinary-page previews ranged from 39 to 290 ms in the captured scroll |
+
+Q16 still executed 2,590,767 raster passes for its full preview. Compared with
+accepted `0138` at 3,185 / 1,465 / 4,651 ms, this run was slower in acquisition,
+bitmap replay, and total latency. Since `zeroCoverageStrokes` was zero, no
+timing movement in any workload can be attributed to elision. The faster 11
+sample and slower EP23 samples are run variance or unrelated pipeline work.
+
+The negative result is architecturally useful: after the existing exact no-op
+mask removes 574,229 Q16 commands, the remaining direct strokes do not collapse
+to empty AGG fixed-point polygons. Their scan conversion is real rendering
+work. Broadening this rule to a width threshold, estimated coverage, or
+file/page classifier would sacrifice exactness and risks repeating the missing
+line regression seen in `0130`.
+
+Keep `r25-8-0138` as the accepted experimental base. Do not extend `0145` and
+do not reuse revision number `0145`.
+
 ## Separate Scheduling Issue
 
 Q16 zoom logs also showed seconds of render-lane queue wait around native tile
