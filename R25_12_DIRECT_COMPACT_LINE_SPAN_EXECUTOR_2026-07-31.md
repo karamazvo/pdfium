@@ -8,7 +8,7 @@
 
 **Excludes:** unaccepted r25-9-0139, r25-10-0140, and r25-11-0141
 
-**Status:** implemented, pending CI build and device acceptance
+**Status:** performance rejected after first device run; do not extend
 
 ## Measured Boundary
 
@@ -142,3 +142,34 @@ tuning. The remaining Q16 cost is independent scan conversion and
 compositing; the next project must be a separately proven exact scan kernel,
 not line merging, disjoint coalescing, another parser scanner, or a
 document-specific route.
+
+## Device Result
+
+The 2026-07-31 Samsung SM-A1660 run verified the installed binary as
+`r25-12-0142 mode=direct_compact_line_span`.
+
+```text
+Q16 0138 accepted: acquire about 3185 ms, bitmap about 1465 ms, total about 4651 ms
+Q16 0142:          acquire about 4162 ms, bitmap about 1846 ms, total about 6009 ms
+0142 delta:        acquire +30.7%, bitmap +26.0%, total +29.2%
+
+compactTranslationLines  2365882
+compactLineSpanCommands  2365882
+compactLineSpanFallbacks 0
+lineRasterPasses         2590767
+```
+
+The mechanism reached its intended representation with zero fallback, yet
+made both acquisition and bitmap replay slower. This is a valid negative
+result: compact packet transfer and precomputed vertices do not remove the
+dominant work, which remains one independent scan conversion and immediate
+composite per visible source stroke.
+
+11.pdf and EP23 did not exercise the compact span and showed no corresponding
+benefit. Most 6Steps pages remained canonical with no retained RenderProgram,
+confirming that lazy sidecar activation still protects ordinary pages. No
+crash or native error appeared, but logs alone are not a pixel-equivalence
+proof.
+
+Retain r25-8-0138 as the accepted experimental base. The next revision is
+0143; never amend, recycle, or extend 0142.
