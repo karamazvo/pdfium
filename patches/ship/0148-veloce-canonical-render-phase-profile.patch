@@ -1,0 +1,823 @@
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index ccb47af1a..48855f6df 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -19,6 +19,20 @@
+ #include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxge/cfx_renderdevice.h"
+
++#if BUILDFLAG(IS_ANDROID)
++#include <android/log.h>
++#endif
++
++namespace {
++
++#if BUILDFLAG(IS_ANDROID)
++uint64_t ProfileMicros(uint64_t nanoseconds) {
++  return (nanoseconds + 500u) / 1000u;
++}
++#endif
++
++}  // namespace
++
+ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
+     CPDF_RenderContext* context,
+     CFX_RenderDevice* pDevice,
+@@ -29,12 +43,119 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
+ }
+
+ CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
++  LogCanonicalProfile(status_ == kDone ? "done" : "closed");
+   if (render_status_) {
+     render_status_.reset();  // Release first.
+     device_->RestoreState(false);
+   }
+ }
+
++void CPDF_ProgressiveRenderer::LogCanonicalProfile(const char* result) {
++  if (!canonical_profile_.started || canonical_profile_.finished) {
++    return;
++  }
++  canonical_profile_.EndContinue();
++  canonical_profile_.finished = true;
++#if BUILDFLAG(IS_ANDROID)
++  if (canonical_profile_.cancel_observed) {
++    result = "cancelled";
++  }
++  const auto phase_us = [this](VeloceCanonicalRenderPhase phase) {
++    return ProfileMicros(
++        canonical_profile_.phase_ns[static_cast<size_t>(phase)]);
++  };
++  const uint64_t active_us = ProfileMicros(canonical_profile_.active_ns);
++  const uint64_t accounted_us =
++      ProfileMicros(canonical_profile_.AccountedNs());
++  const uint64_t traversal_us =
++      active_us > accounted_us ? active_us - accounted_us : 0u;
++  const char* route = "canonical";
++  if (canonical_profile_.path_display_list_rendered) {
++    route = "path_display_list";
++  } else if (canonical_profile_.render_program_rendered) {
++    route = "render_program";
++  }
++  __android_log_print(
++      ANDROID_LOG_INFO, "VeloceCanonicalProfile",
++      "revision=r25-18-0148 event=render result=%s route=%s "
++      "activeUs=%llu traversalUs=%llu setupUs=%llu clipUs=%llu "
++      "transparencyUs=%llu textUs=%llu pathUs=%llu imageUs=%llu "
++      "shadingUs=%llu formUs=%llu backgroundUs=%llu softMaskUs=%llu "
++      "acceleratorUs=%llu parseUs=%llu continueCalls=%llu pauses=%llu "
++      "layers=%llu objects=%llu inactive=%llu boundsCulled=%llu "
++      "rendered=%llu clipCalls=%llu transparencyCalls=%llu textCalls=%llu "
++      "pathCalls=%llu imageCalls=%llu shadingCalls=%llu formCalls=%llu "
++      "backgroundCalls=%llu softMaskCalls=%llu cancelChecks=%llu "
++      "cancelObserved=%d depthOverflow=%d",
++      result, route, static_cast<unsigned long long>(active_us),
++      static_cast<unsigned long long>(traversal_us),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kLayerSetup)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kClip)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kTransparency)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kText)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kPath)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImage)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kShading)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kForm)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kBackground)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kSoftMask)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kAccelerator)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kParseContinuation)),
++      static_cast<unsigned long long>(canonical_profile_.continue_calls),
++      static_cast<unsigned long long>(canonical_profile_.pause_returns),
++      static_cast<unsigned long long>(canonical_profile_.layers),
++      static_cast<unsigned long long>(canonical_profile_.objects_considered),
++      static_cast<unsigned long long>(canonical_profile_.objects_inactive),
++      static_cast<unsigned long long>(
++          canonical_profile_.objects_bounds_culled),
++      static_cast<unsigned long long>(canonical_profile_.objects_rendered),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kClip)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kTransparency)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kText)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kPath)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kImage)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kShading)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kForm)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kBackground)]),
++      static_cast<unsigned long long>(
++          canonical_profile_.phase_calls[static_cast<size_t>(
++              VeloceCanonicalRenderPhase::kSoftMask)]),
++      static_cast<unsigned long long>(canonical_profile_.cancel_checks),
++      canonical_profile_.cancel_observed ? 1 : 0,
++      canonical_profile_.depth_overflow ? 1 : 0);
++#else
++  static_cast<void>(result);
++#endif
++}
++
+ void CPDF_ProgressiveRenderer::Start(PauseIndicatorIface* pPause) {
+   if (status_ != kReady) {
+     status_ = kFailed;
+@@ -45,59 +166,84 @@ void CPDF_ProgressiveRenderer::Start(PauseIndicatorIface* pPause) {
+ }
+
+ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
++  VeloceCanonicalRenderProfileActivation profile_activation(
++      &canonical_profile_);
+   while (status_ == kToBeContinued) {
+     if (!current_layer_) {
+       if (layer_index_ >= context_->CountLayers()) {
+         status_ = kDone;
++        LogCanonicalProfile("done");
+         return;
+       }
+       current_layer_ = context_->GetLayer(layer_index_);
++      canonical_profile_.Start();
++      ++canonical_profile_.layers;
+       has_rendered_object_ = false;
+-      render_status_ = std::make_unique<CPDF_RenderStatus>(context_, device_);
+-      if (options_) {
+-        render_status_->SetOptions(*options_);
++      {
++        VeloceCanonicalRenderProfileScope setup_scope(
++            VeloceCanonicalRenderPhase::kLayerSetup);
++        render_status_ = std::make_unique<CPDF_RenderStatus>(context_, device_);
++        if (options_) {
++          render_status_->SetOptions(*options_);
++        }
++        render_status_->SetTransparency(
++            current_layer_->GetObjectHolder()->GetTransparency());
++        render_status_->Initialize(nullptr, nullptr);
++        device_->SaveState();
++        clip_rect_ = current_layer_->GetMatrix().GetInverse().TransformRect(
++            CFX_FloatRect(device_->GetClipBox()));
++      }
++      VelocePathDisplayListResult path_dl_result;
++      {
++        VeloceCanonicalRenderProfileScope accelerator_scope(
++            VeloceCanonicalRenderPhase::kAccelerator);
++        path_dl_result = VeloceTryRenderPathDisplayListForHolder(
++            render_status_.get(), current_layer_->GetObjectHolder(),
++            current_layer_->GetMatrix(),
++            VelocePathDisplayListHolderKind::kRootPage);
+       }
+-      render_status_->SetTransparency(
+-          current_layer_->GetObjectHolder()->GetTransparency());
+-      render_status_->Initialize(nullptr, nullptr);
+-      device_->SaveState();
+-      clip_rect_ = current_layer_->GetMatrix().GetInverse().TransformRect(
+-          CFX_FloatRect(device_->GetClipBox()));
+-      const VelocePathDisplayListResult path_dl_result =
+-          VeloceTryRenderPathDisplayListForHolder(
+-              render_status_.get(), current_layer_->GetObjectHolder(),
+-              current_layer_->GetMatrix(),
+-              VelocePathDisplayListHolderKind::kRootPage);
+       if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
+         render_status_.reset();
+         device_->RestoreState(false);
+         current_layer_ = nullptr;
+         status_ = kDone;
++        LogCanonicalProfile("cancelled");
+         return;
+       }
+       if (path_dl_result == VelocePathDisplayListResult::kRendered) {
++        canonical_profile_.path_display_list_rendered = true;
+         render_status_.reset();
+         device_->RestoreState(false);
+         current_layer_ = nullptr;
+         layer_index_++;
+         if (pPause && pPause->NeedToPauseNow()) {
++          ++canonical_profile_.pause_returns;
+           return;
+         }
+         continue;
+       }
+-      if (render_status_->TryRenderVeloceProgram(
+-              current_layer_->GetObjectHolder(), current_layer_->GetMatrix(),
+-              clip_rect_)) {
++      bool render_program_rendered = false;
++      {
++        VeloceCanonicalRenderProfileScope accelerator_scope(
++            VeloceCanonicalRenderPhase::kAccelerator);
++        render_program_rendered = render_status_->TryRenderVeloceProgram(
++            current_layer_->GetObjectHolder(), current_layer_->GetMatrix(),
++            clip_rect_);
++      }
++      if (render_program_rendered) {
++        canonical_profile_.render_program_rendered = true;
+         const bool stopped = render_status_->IsStopped();
+         render_status_.reset();
+         device_->RestoreState(false);
+         current_layer_ = nullptr;
+         if (stopped) {
+           status_ = kDone;
++          LogCanonicalProfile("cancelled");
+           return;
+         }
+         layer_index_++;
+         if (pPause && pPause->NeedToPauseNow()) {
++          ++canonical_profile_.pause_returns;
+           return;
+         }
+         continue;
+@@ -116,10 +262,15 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+     bool is_mask = false;
+     while (iter != iterEnd) {
+       CPDF_PageObject* pCurObj = iter->get();
+-      if (pCurObj->IsActive() && pCurObj->GetRect().left <= clip_rect_.right &&
+-          pCurObj->GetRect().right >= clip_rect_.left &&
+-          pCurObj->GetRect().bottom <= clip_rect_.top &&
+-          pCurObj->GetRect().top >= clip_rect_.bottom) {
++      ++canonical_profile_.objects_considered;
++      if (!pCurObj->IsActive()) {
++        ++canonical_profile_.objects_inactive;
++      } else if (pCurObj->GetRect().left > clip_rect_.right ||
++                 pCurObj->GetRect().right < clip_rect_.left ||
++                 pCurObj->GetRect().bottom > clip_rect_.top ||
++                 pCurObj->GetRect().top < clip_rect_.bottom) {
++        ++canonical_profile_.objects_bounds_culled;
++      } else {
+         if (options_->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
+             pCurObj->AsImage()->GetImage()->IsMask()) {
+ #if BUILDFLAG(IS_WIN)
+@@ -132,8 +283,10 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+ #endif
+           is_mask = true;
+         }
++        ++canonical_profile_.objects_rendered;
+         if (render_status_->ContinueSingleObject(
+                 pCurObj, current_layer_->GetMatrix(), pPause)) {
++          ++canonical_profile_.pause_returns;
+           return;
+         }
+         if (pCurObj->IsImage() && render_status_->GetRenderOptions()
+@@ -152,12 +305,14 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+       has_rendered_object_ = true;
+       if (nObjsToGo == 0) {
+         if (pPause && pPause->NeedToPauseNow()) {
++          ++canonical_profile_.pause_returns;
+           return;
+         }
+         nObjsToGo = kStepLimit;
+       }
+       ++iter;
+       if (is_mask && iter != iterEnd) {
++        ++canonical_profile_.pause_returns;
+         return;
+       }
+     }
+@@ -168,14 +323,21 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+       current_layer_ = nullptr;
+       layer_index_++;
+       if (is_mask || (pPause && pPause->NeedToPauseNow())) {
++        ++canonical_profile_.pause_returns;
+         return;
+       }
+     } else if (is_mask) {
++      ++canonical_profile_.pause_returns;
+       return;
+     } else {
+-      current_layer_->GetObjectHolder()->ContinueParse(pPause);
++      {
++        VeloceCanonicalRenderProfileScope parse_scope(
++            VeloceCanonicalRenderPhase::kParseContinuation);
++        current_layer_->GetObjectHolder()->ContinueParse(pPause);
++      }
+       if (current_layer_->GetObjectHolder()->GetParseState() !=
+           CPDF_PageObjectHolder::ParseState::kParsed) {
++        ++canonical_profile_.pause_returns;
+         return;
+       }
+     }
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.h b/core/fpdfapi/render/cpdf_progressiverenderer.h
+index 227d0d4f3..17fd27e36 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.h
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.h
+@@ -13,6 +13,7 @@
+
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/render/cpdf_rendercontext.h"
++#include "core/fpdfapi/render/veloce_canonical_render_profile.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/unowned_ptr.h"
+
+@@ -43,6 +44,8 @@ class CPDF_ProgressiveRenderer {
+   void Continue(PauseIndicatorIface* pPause);
+
+  private:
++  void LogCanonicalProfile(const char* result);
++
+   // Maximum page objects to render before checking for pause.
+   static constexpr int kStepLimit = 100;
+
+@@ -56,6 +59,7 @@ class CPDF_ProgressiveRenderer {
+   UnownedPtr<CPDF_RenderContext::Layer> current_layer_;
+   CPDF_PageObjectHolder::const_iterator last_object_rendered_;
+   bool has_rendered_object_ = false;
++  VeloceCanonicalRenderProfile canonical_profile_;
+ };
+
+ #endif  // CORE_FPDFAPI_RENDER_CPDF_PROGRESSIVERENDERER_H_
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..fb4143109 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -64,6 +64,7 @@
+ #include "core/fpdfapi/render/veloce_render_skip_mask.h"
+ #include "core/fpdfapi/render/veloce_render_callbacks.h"
+ #include "core/fpdfapi/render/cpdf_type3cache.h"
++#include "core/fpdfapi/render/veloce_canonical_render_profile.h"
+ #include "core/fxcrt/autorestorer.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/compiler_specific.h"
+@@ -293,11 +294,16 @@ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* context,
+ CPDF_RenderStatus::~CPDF_RenderStatus() = default;
+
+ bool CPDF_RenderStatus::ShouldCancelRender() const {
+-  if (VeloceShouldAbortRenderForProbe()) {
+-    return true;
+-  }
+-  return render_callbacks_ && render_callbacks_->cancel_check &&
+-         render_callbacks_->cancel_check(render_callbacks_->user_data);
++  const bool cancelled =
++      VeloceShouldAbortRenderForProbe() ||
++      (render_callbacks_ && render_callbacks_->cancel_check &&
++       render_callbacks_->cancel_check(render_callbacks_->user_data));
++  if (VeloceCanonicalRenderProfile* profile =
++          VeloceCanonicalProfileForCurrentRender()) {
++    ++profile->cancel_checks;
++    profile->cancel_observed |= cancelled;
++  }
++  return cancelled;
+ }
+
+ uint32_t CPDF_RenderStatus::GetRenderFeatureFlags() const {
+@@ -309,6 +315,8 @@ bool CPDF_RenderStatus::TryRenderVeloceProgram(
+     const CFX_Matrix& holder_to_device,
+     const CFX_FloatRect& holder_clip) {
+ #if BUILDFLAG(IS_ANDROID)
++  VeloceCanonicalRenderProfileScope accelerator_scope(
++      VeloceCanonicalRenderPhase::kAccelerator);
+   const VeloceRenderProgram* program =
+       holder ? holder->GetVeloceRenderProgram() : nullptr;
+   return (GetRenderFeatureFlags() & kVeloceFeatureRenderProgramExecutor) != 0u &&
+@@ -1188,10 +1196,14 @@ void CPDF_RenderStatus::RenderObjectList(
+   }
+
+   if (is_context_layer_holder) {
+-    const VelocePathDisplayListResult path_dl_result =
+-        VeloceTryRenderPathDisplayListForHolder(
+-            this, pObjectHolder, mtObj2Device,
+-            VelocePathDisplayListHolderKind::kRootPage);
++    VelocePathDisplayListResult path_dl_result;
++    {
++      VeloceCanonicalRenderProfileScope accelerator_scope(
++          VeloceCanonicalRenderPhase::kAccelerator);
++      path_dl_result = VeloceTryRenderPathDisplayListForHolder(
++          this, pObjectHolder, mtObj2Device,
++          VelocePathDisplayListHolderKind::kRootPage);
++    }
+     if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
+       stopped_ = true;
+       return;
+@@ -1208,7 +1220,12 @@ void CPDF_RenderStatus::RenderObjectList(
+     return;
+   }
+ #endif
++  VeloceCanonicalRenderProfile* const canonical_profile =
++      VeloceCanonicalProfileForCurrentRender();
+   for (const auto& pCurObj : *pObjectHolder) {
++    if (canonical_profile) {
++      ++canonical_profile->objects_considered;
++    }
+     if (ShouldCancelRender()) {
+       stopped_ = true;
+       return;
+@@ -1218,6 +1235,9 @@ void CPDF_RenderStatus::RenderObjectList(
+       return;
+     }
+     if (!pCurObj || !pCurObj->IsActive()) {
++      if (canonical_profile) {
++        ++canonical_profile->objects_inactive;
++      }
+       continue;
+     }
+
+@@ -1225,6 +1245,9 @@ void CPDF_RenderStatus::RenderObjectList(
+         pCurObj->GetRect().right < clip_rect.left ||
+         pCurObj->GetRect().bottom > clip_rect.top ||
+         pCurObj->GetRect().top < clip_rect.bottom) {
++      if (canonical_profile) {
++        ++canonical_profile->objects_bounds_culled;
++      }
+       continue;
+     }
+     // R12 Veloce diagnostic: preserve the page-object walk and cheap
+@@ -1233,6 +1256,9 @@ void CPDF_RenderStatus::RenderObjectList(
+     if (VeloceShouldSkipRasterizationForProbe()) {
+       continue;
+     }
++    if (canonical_profile) {
++      ++canonical_profile->objects_rendered;
++    }
+     RenderSingleObject(pCurObj.get(), mtObj2Device);
+     if (ShouldCancelRender()) {
+       stopped_ = true;
+@@ -1262,13 +1288,21 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+     stopped_ = true;
+     return;
+   }
+-  ProcessClipPath(pObj->clip_path(), mtObj2Device);
++  {
++    VeloceCanonicalRenderProfileScope clip_scope(
++        VeloceCanonicalRenderPhase::kClip);
++    ProcessClipPath(pObj->clip_path(), mtObj2Device);
++  }
+   if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+-  if (ProcessTransparency(pObj, mtObj2Device)) {
+-    return;
++  {
++    VeloceCanonicalRenderProfileScope transparency_scope(
++        VeloceCanonicalRenderPhase::kTransparency);
++    if (ProcessTransparency(pObj, mtObj2Device)) {
++      return;
++    }
+   }
+   if (ShouldCancelRender()) {
+     stopped_ = true;
+@@ -1284,6 +1318,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+                                              const CFX_Matrix& mtObj2Device,
+                                              PauseIndicatorIface* pPause) {
+   if (image_renderer_) {
++    VeloceCanonicalRenderProfileScope image_scope(
++        VeloceCanonicalRenderPhase::kImage);
+     if (image_renderer_->Continue(pPause)) {
+       if (ShouldCancelRender()) {
+         stopped_ = true;
+@@ -1294,6 +1330,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     }
+
+     if (!image_renderer_->GetResult()) {
++      VeloceCanonicalRenderProfileScope background_scope(
++          VeloceCanonicalRenderPhase::kBackground);
+       DrawObjWithBackground(pObj, mtObj2Device);
+     }
+     image_renderer_.reset();
+@@ -1309,9 +1347,17 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+
+-  ProcessClipPath(pObj->clip_path(), mtObj2Device);
+-  if (ProcessTransparency(pObj, mtObj2Device)) {
+-    return false;
++  {
++    VeloceCanonicalRenderProfileScope clip_scope(
++        VeloceCanonicalRenderPhase::kClip);
++    ProcessClipPath(pObj->clip_path(), mtObj2Device);
++  }
++  {
++    VeloceCanonicalRenderProfileScope transparency_scope(
++        VeloceCanonicalRenderPhase::kTransparency);
++    if (ProcessTransparency(pObj, mtObj2Device)) {
++      return false;
++    }
+   }
+
+   if (ShouldCancelRender()) {
+@@ -1326,6 +1372,9 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+
++  VeloceCanonicalRenderProfileScope image_scope(
++      VeloceCanonicalRenderPhase::kImage);
++
+   if (VeloceShouldDeferImage(pObj->AsImage())) {
+     FillImagePlaceholder(pObj, mtObj2Device);
+     return false;
+@@ -1335,6 +1384,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+   if (!image_renderer_->Start(pObj->AsImage(), mtObj2Device,
+                               /*bStdCS=*/false)) {
+     if (!image_renderer_->GetResult()) {
++      VeloceCanonicalRenderProfileScope background_scope(
++          VeloceCanonicalRenderPhase::kBackground);
+       DrawObjWithBackground(pObj, mtObj2Device);
+     }
+     image_renderer_.reset();
+@@ -1366,27 +1417,44 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+     return;
+   }
+   switch (pObj->GetType()) {
+-    case CPDF_PageObject::Type::kText:
++    case CPDF_PageObject::Type::kText: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kText);
+       bRet = ProcessText(pObj->AsText(), mtObj2Device, nullptr);
+       break;
+-    case CPDF_PageObject::Type::kPath:
++    }
++    case CPDF_PageObject::Type::kPath: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kPath);
+       bRet = ProcessPath(pObj->AsPath(), mtObj2Device);
+       break;
+-    case CPDF_PageObject::Type::kImage:
++    }
++    case CPDF_PageObject::Type::kImage: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kImage);
+       bRet = ProcessImage(pObj->AsImage(), mtObj2Device);
+       break;
+-    case CPDF_PageObject::Type::kShading:
++    }
++    case CPDF_PageObject::Type::kShading: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kShading);
+       ProcessShading(pObj->AsShading(), mtObj2Device);
+       return;
+-    case CPDF_PageObject::Type::kForm:
++    }
++    case CPDF_PageObject::Type::kForm: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kForm);
+       bRet = ProcessForm(pObj->AsForm(), mtObj2Device);
+       break;
++    }
+   }
+   if (!bRet) {
+     if (ShouldCancelRender()) {
+       stopped_ = true;
+       return;
+     }
++    VeloceCanonicalRenderProfileScope background_scope(
++        VeloceCanonicalRenderPhase::kBackground);
+     DrawObjWithBackground(pObj, mtObj2Device);
+   }
+ }
+@@ -1394,12 +1462,21 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+ bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
+                                          const CFX_Matrix& mtObj2Device) {
+   switch (pObj->GetType()) {
+-    case CPDF_PageObject::Type::kPath:
++    case CPDF_PageObject::Type::kPath: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kPath);
+       return ProcessPath(pObj->AsPath(), mtObj2Device);
+-    case CPDF_PageObject::Type::kImage:
++    }
++    case CPDF_PageObject::Type::kImage: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kImage);
+       return ProcessImage(pObj->AsImage(), mtObj2Device);
+-    case CPDF_PageObject::Type::kForm:
++    }
++    case CPDF_PageObject::Type::kForm: {
++      VeloceCanonicalRenderProfileScope scope(
++          VeloceCanonicalRenderPhase::kForm);
+       return ProcessForm(pObj->AsForm(), mtObj2Device);
++    }
+     case CPDF_PageObject::Type::kText:
+     case CPDF_PageObject::Type::kShading:
+       return false;
+@@ -2547,6 +2624,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+     CPDF_Dictionary* smask_dict,
+     const FX_RECT& clip_rect,
+     const CFX_Matrix& smask_matrix) {
++  VeloceCanonicalRenderProfileScope soft_mask_scope(
++      VeloceCanonicalRenderPhase::kSoftMask);
+   RetainPtr<CPDF_Stream> pGroup =
+       smask_dict->GetMutableStreamFor(pdfium::transparency::kG);
+   if (!pGroup) {
+diff --git a/core/fpdfapi/render/veloce_canonical_render_profile.h b/core/fpdfapi/render/veloce_canonical_render_profile.h
+new file mode 100644
+index 000000000..aa5dd07bb
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_canonical_render_profile.h
+@@ -0,0 +1,200 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_CANONICAL_RENDER_PROFILE_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_CANONICAL_RENDER_PROFILE_H_
++
++#include <array>
++#include <chrono>
++#include <cstddef>
++#include <cstdint>
++
++enum class VeloceCanonicalRenderPhase : uint8_t {
++  kLayerSetup,
++  kClip,
++  kTransparency,
++  kText,
++  kPath,
++  kImage,
++  kShading,
++  kForm,
++  kBackground,
++  kSoftMask,
++  kAccelerator,
++  kParseContinuation,
++  kCount,
++};
++
++struct VeloceCanonicalRenderProfile final {
++  using Clock = std::chrono::steady_clock;
++  static constexpr size_t kPhaseCount =
++      static_cast<size_t>(VeloceCanonicalRenderPhase::kCount);
++  static constexpr size_t kMaxDepth = 96u;
++
++  struct Frame final {
++    VeloceCanonicalRenderPhase phase =
++        VeloceCanonicalRenderPhase::kLayerSetup;
++    Clock::time_point resumed_at;
++  };
++
++  bool started = false;
++  bool finished = false;
++  bool continue_active = false;
++  bool path_display_list_rendered = false;
++  bool render_program_rendered = false;
++  bool depth_overflow = false;
++  Clock::time_point continue_started_at;
++  uint64_t active_ns = 0;
++  uint64_t continue_calls = 0;
++  uint64_t pause_returns = 0;
++  uint64_t layers = 0;
++  uint64_t objects_considered = 0;
++  uint64_t objects_inactive = 0;
++  uint64_t objects_bounds_culled = 0;
++  uint64_t objects_rendered = 0;
++  uint64_t cancel_checks = 0;
++  bool cancel_observed = false;
++  std::array<uint64_t, kPhaseCount> phase_ns = {};
++  std::array<uint64_t, kPhaseCount> phase_calls = {};
++  std::array<Frame, kMaxDepth> stack = {};
++  size_t depth = 0;
++
++  void Start() {
++    if (started) {
++      return;
++    }
++    started = true;
++    BeginContinue();
++  }
++
++  void BeginContinue() {
++    if (!started || finished || continue_active) {
++      return;
++    }
++    continue_active = true;
++    continue_started_at = Clock::now();
++    ++continue_calls;
++  }
++
++  void EndContinue() {
++    if (!continue_active) {
++      return;
++    }
++    const Clock::time_point now = Clock::now();
++    if (depth != 0u) {
++      AddElapsed(stack[depth - 1u].phase, stack[depth - 1u].resumed_at, now);
++      depth = 0u;
++      depth_overflow = true;
++    }
++    active_ns += DurationNs(continue_started_at, now);
++    continue_active = false;
++  }
++
++  void Enter(VeloceCanonicalRenderPhase phase) {
++    if (!started || finished || !continue_active) {
++      return;
++    }
++    const Clock::time_point now = Clock::now();
++    if (depth != 0u) {
++      AddElapsed(stack[depth - 1u].phase, stack[depth - 1u].resumed_at, now);
++    }
++    if (depth >= stack.size()) {
++      depth_overflow = true;
++      return;
++    }
++    stack[depth++] = Frame{phase, now};
++    ++phase_calls[static_cast<size_t>(phase)];
++  }
++
++  void Exit(VeloceCanonicalRenderPhase phase) {
++    if (!started || finished || !continue_active || depth == 0u) {
++      return;
++    }
++    const Clock::time_point now = Clock::now();
++    Frame& frame = stack[depth - 1u];
++    if (frame.phase != phase) {
++      depth_overflow = true;
++      depth = 0u;
++      return;
++    }
++    AddElapsed(frame.phase, frame.resumed_at, now);
++    --depth;
++    if (depth != 0u) {
++      stack[depth - 1u].resumed_at = now;
++    }
++  }
++
++  uint64_t AccountedNs() const {
++    uint64_t result = 0;
++    for (uint64_t value : phase_ns) {
++      result += value;
++    }
++    return result;
++  }
++
++ private:
++  static uint64_t DurationNs(Clock::time_point start, Clock::time_point end) {
++    return static_cast<uint64_t>(
++        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
++            .count());
++  }
++
++  void AddElapsed(VeloceCanonicalRenderPhase phase,
++                  Clock::time_point start,
++                  Clock::time_point end) {
++    phase_ns[static_cast<size_t>(phase)] += DurationNs(start, end);
++  }
++};
++
++inline thread_local VeloceCanonicalRenderProfile*
++    g_veloce_canonical_render_profile = nullptr;
++
++class VeloceCanonicalRenderProfileActivation final {
++ public:
++  explicit VeloceCanonicalRenderProfileActivation(
++      VeloceCanonicalRenderProfile* profile)
++      : previous_(g_veloce_canonical_render_profile) {
++    g_veloce_canonical_render_profile = profile;
++    if (profile && profile->started) {
++      profile->BeginContinue();
++    }
++  }
++
++  ~VeloceCanonicalRenderProfileActivation() {
++    if (g_veloce_canonical_render_profile) {
++      g_veloce_canonical_render_profile->EndContinue();
++    }
++    g_veloce_canonical_render_profile = previous_;
++  }
++
++ private:
++  VeloceCanonicalRenderProfile* const previous_;
++};
++
++class VeloceCanonicalRenderProfileScope final {
++ public:
++  explicit VeloceCanonicalRenderProfileScope(
++      VeloceCanonicalRenderPhase phase)
++      : profile_(g_veloce_canonical_render_profile), phase_(phase) {
++    if (profile_) {
++      profile_->Enter(phase_);
++    }
++  }
++
++  ~VeloceCanonicalRenderProfileScope() {
++    if (profile_) {
++      profile_->Exit(phase_);
++    }
++  }
++
++ private:
++  VeloceCanonicalRenderProfile* const profile_;
++  const VeloceCanonicalRenderPhase phase_;
++};
++
++inline VeloceCanonicalRenderProfile* VeloceCanonicalProfileForCurrentRender() {
++  return g_veloce_canonical_render_profile;
++}
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_CANONICAL_RENDER_PROFILE_H_
