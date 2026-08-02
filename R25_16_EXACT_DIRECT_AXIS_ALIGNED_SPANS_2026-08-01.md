@@ -8,7 +8,8 @@
 
 **Excludes:** rejected r25-9-0139 through r25-15-0145
 
-**Status:** implemented; awaiting workflow and device validation
+**Status:** device-invalidated because the production byte-order mode makes the
+fast path unreachable; do not use as a performance base
 
 ## Root Cost
 
@@ -76,3 +77,38 @@ Accept only if:
 If coverage is high but bitmap time does not improve, reject `0146` and close
 the per-primitive CPU-kernel direction. Do not broaden eligibility. Cold Q16
 acquisition is unchanged by design.
+
+## Device Result - 2026-08-02
+
+Do not accept `0146`. The direct executor was inactive in every captured
+replay:
+
+| Workload | Replays | `directAxisAlignedSpanDraws` | Cold acquire / bitmap / total |
+| --- | ---: | ---: | ---: |
+| 11 | 26 | 0 in every replay | 287 / 387 / 677 ms |
+| Q16 | 40 | 0 in every replay | 7,140 / 1,883 / 9,024 ms |
+| EP23 | 101 in the dedicated capture | 0 in every replay | p2 1,060 / 381 / 1,441 ms; p3 821 / 360 / 1,182 ms |
+| 6Steps continuation | 17 additional replays | 0 in every replay | first page 31 / 235 / 268 ms; common scrolling previews about 47-357 ms |
+
+Q16 still executed 2,590,767 raster passes in its full preview. It reported
+2,365,894 accepted direct butt strokes but zero direct spans, so geometry
+acquisition and ordered replay were active while the new terminal executor was
+not. The timing regression cannot be attributed to direct-span execution.
+
+The root cause is an exact integration contradiction. Android creates an
+`FPDFBitmap_BGRA` destination and always passes `FPDF_REVERSE_BYTE_ORDER` for
+RGBA Android bitmap memory. That sets PDFium's `rgb_byte_order_`. The `0146`
+eligibility predicate requires `!rgb_byte_order_`, so no production preview or
+tile can enter the direct path. The BGRA support added by `0146` is therefore
+insufficient for the app's actual BGRA-plus-reversed-byte-order contract.
+
+This result invalidates the `0146` build, not the combined scan-and-composite
+hypothesis. `0143` previously proved that 1,553,522 Q16 operations are exactly
+axis aligned. A new revision may reproduce PDFium's canonical reversed-byte
+RGBA channel and alpha equations directly and test them byte-for-byte. It must
+still fail closed before destination mutation for every unsupported blend,
+alpha, clip mask, backdrop, or geometry case. Do not amend `0146`, remove the
+JNI reverse-byte flag, or weaken geometric eligibility.
+
+Keep `r25-8-0138` as the accepted experimental base. The next unused revision
+is `0147`.
