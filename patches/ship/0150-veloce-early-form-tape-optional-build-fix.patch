@@ -1,0 +1,11 @@
+--- a/core/fpdfapi/page/cpdf_docpagedata.cpp
++++ b/core/fpdfapi/page/cpdf_docpagedata.cpp
+@@ -659,7 +659,7 @@ CPDF_DocPageData::FindVeloceFormRenderProgram(
+       MakeVeloceFormInvocationKey(std::move(stream), initial_states,
+                                   parent_matrix, transparency_group,
+                                   isolated_group);
+-  return key ? veloce_form_program_cache_->Find(*key) : nullptr;
++  return key ? veloce_form_program_cache_->Find(*key) : std::nullopt;
+ }
+ 
+ void CPDF_DocPageData::CacheVeloceFormRenderProgram(

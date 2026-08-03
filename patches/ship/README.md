@@ -941,6 +941,9 @@ Patch 0023 is authored after 0022 and changes only
 `veloce_path_display_list.{h,cpp}`; it keeps `kNotEligible` as a pre-draw
 fallback result and returns `kCancelled` for any replay-time blend failure so
 callers do not draw legacy content over partial Veloce output.
+Patch 0150 is authored after 0149 and changes only the no-key return sentinel
+in `cpdf_docpagedata.cpp` from `nullptr` to `std::nullopt`; it is a build-only
+correction with no rendering or performance behavior change.
 
 ## Upstreaming
 

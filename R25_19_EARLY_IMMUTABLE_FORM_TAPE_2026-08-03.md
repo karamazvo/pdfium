@@ -4,6 +4,8 @@
 
 **Revision:** `r25-19-0149`
 
+**Build correction:** `r25-20-0150`
+
 **Performance parent:** accepted `r25-8-0138`
 
 **Excluded:** rejected `0139` through `0147` and diagnostic-only `0148`
@@ -130,3 +132,15 @@ If EP23's first use is still too slow, the next work must target cold Form
 compilation itself. If Q16 is still too slow, it requires a root-stream
 acquisition or dense ordered raster mechanism; broadening this cache's
 eligibility would not solve that cost and would weaken correctness.
+
+## Build Correction: r25-20-0150
+
+The first `0149` CI build failed because
+`FindVeloceFormRenderProgram()` returned `nullptr` in the no-key branch after
+its return type changed from `shared_ptr` to `optional`. Patch `0150` changes
+that single sentinel to `std::nullopt`.
+
+This correction changes no eligibility, ownership, caching, rendering,
+pixels, memory bounds, or performance behavior. The accepted test artifact is
+therefore `r25-20-0150`, applying `0149` followed by `0150`. The planned
+transform-sized image decode work advances to `0151`.
