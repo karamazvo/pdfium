@@ -1,0 +1,178 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-08-03
+Subject: [EXPERIMENT r25-normal-exp-0001] Size image decode from transform
+
+Base
+====
+r25-8-0138 ordered stroke renderer tape. This is an isolated normal-page
+experiment and is not part of the accepted r25 ship sequence.
+
+Root cause
+==========
+CPDF_ImageRenderer currently asks CPDF_DIB to decode every image for the full
+render-device width and height. A normal page image that occupies only part of
+a preview therefore often misses the existing DCT/JPX reduced-resolution
+decoder path and is decoded at a higher resolution than its transformed
+destination can consume.
+
+Invariant
+=========
+Decode demand is the image's source-axis footprint after its image-to-device
+transform, bounded by the canonical device-sized demand. Invalid or degenerate
+geometry requests {0, 0}, which preserves PDFium's existing full-resolution,
+fail-closed behavior. The same destination demand applies to the image's
+explicit or soft mask.
+
+Mechanism
+=========
+Use CFX_Matrix::GetXUnit()/GetYUnit() to compute the transformed source-axis
+lengths, round each outward, and pass that size through the existing loader and
+resolution-aware page image cache. DCT and JPX can then reduce work before
+pixel allocation; unsupported codecs retain their canonical full decode.
+
+This adds no classifier, cache, persistent allocation, synchronization,
+threading, page threshold, or document-specific policy.
+
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -213,7 +213,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     return LoadState::kFail;
+   }
+ 
+-  LoadState iLoadedMask = has_mask_ ? StartLoadMask() : LoadState::kSuccess;
++  LoadState iLoadedMask =
++      has_mask_ ? StartLoadMask(max_size_required) : LoadState::kSuccess;
+   if (iCreatedDecoder == LoadState::kContinue ||
+       iLoadedMask == LoadState::kContinue) {
+     return LoadState::kContinue;
+@@ -784,7 +785,8 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
+   return !stream_acc_->GetSpan().empty();
+ }
+ 
+-CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
++CPDF_DIB::LoadState CPDF_DIB::StartLoadMask(
++    const CFX_Size& max_size_required) {
+   matte_color_ = 0XFFFFFFFF;
+ 
+   if (!jpx_inline_data_.data.empty()) {
+@@ -796,14 +798,16 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
+     dict->SetNewFor<CPDF_Number>("Height", jpx_inline_data_.height);
+     dict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
+ 
+-    return StartLoadMaskDIB(pdfium::MakeRetain<CPDF_Stream>(
+-        jpx_inline_data_.data, std::move(dict)));
++    return StartLoadMaskDIB(
++        pdfium::MakeRetain<CPDF_Stream>(jpx_inline_data_.data, std::move(dict)),
++        max_size_required);
+   }
+ 
+   RetainPtr<const CPDF_Stream> mask(dict_->GetStreamFor("SMask"));
+   if (!mask) {
+     mask = ToStream(dict_->GetDirectObjectFor("Mask"));
+-    return mask ? StartLoadMaskDIB(std::move(mask)) : LoadState::kSuccess;
++    return mask ? StartLoadMaskDIB(std::move(mask), max_size_required)
++                : LoadState::kSuccess;
+   }
+ 
+   RetainPtr<const CPDF_Array> pMatte = mask->GetDict()->GetArrayFor("Matte");
+@@ -818,7 +822,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
+         ArgbEncode(0, FXSYS_roundf(rgb.red * 255),
+                    FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
+   }
+-  return StartLoadMaskDIB(std::move(mask));
++  return StartLoadMaskDIB(std::move(mask), max_size_required);
+ }
+ 
+ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
+@@ -851,11 +855,13 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
+ }
+ 
+ CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
+-    RetainPtr<const CPDF_Stream> mask_stream) {
++    RetainPtr<const CPDF_Stream> mask_stream,
++    const CFX_Size& max_size_required) {
+   mask_ = pdfium::MakeRetain<CPDF_DIB>(document_, std::move(mask_stream));
+   LoadState ret =
+       mask_->StartLoadDIBBase(false, nullptr, nullptr, true,
+-                              CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
++                              CPDF_ColorSpace::Family::kUnknown, false,
++                              max_size_required);
+   if (ret == LoadState::kContinue) {
+     if (status_ == LoadState::kFail) {
+       status_ = LoadState::kContinue;
+diff --git a/core/fpdfapi/page/cpdf_dib.h b/core/fpdfapi/page/cpdf_dib.h
+--- a/core/fpdfapi/page/cpdf_dib.h
++++ b/core/fpdfapi/page/cpdf_dib.h
+@@ -80,8 +80,9 @@ class CPDF_DIB final : public CFX_DIBBase {
+   bool LoadInternal(const CPDF_Dictionary* pFormResources,
+                     const CPDF_Dictionary* pPageResources);
+   bool ContinueInternal();
+-  LoadState StartLoadMask();
+-  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream);
++  LoadState StartLoadMask(const CFX_Size& max_size_required);
++  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream,
++                             const CFX_Size& max_size_required);
+   bool ContinueToLoadMask();
+   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
+   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -9,6 +9,7 @@
+ #include <math.h>
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <memory>
+ #include <utility>
+ 
+@@ -56,6 +57,29 @@ bool IsImageValueTooBig(int val) {
+   FX_SAFE_INT32 safe_val = val;
+   safe_val = safe_val.Abs();
+   return safe_val.ValueOrDefault(kLimit) >= kLimit;
++}
++
++int CalculateDecodeAxisSize(float transformed_size, int device_limit) {
++  if (device_limit <= 0 || IsImageValueTooBig(device_limit) ||
++      !std::isfinite(transformed_size) || transformed_size <= 0.0f) {
++    return 0;
++  }
++
++  // Never request more than the canonical device-sized demand. This makes the
++  // experiment optimization-only while allowing smaller image footprints to
++  // select a lower decoder resolution.
++  const float bounded_size =
++      std::min(transformed_size, static_cast<float>(device_limit));
++  return std::max(1, static_cast<int>(std::ceil(bounded_size)));
++}
++
++CFX_Size CalculateDecodeSize(const CFX_Matrix& image_matrix,
++                             const CFX_Size& device_size) {
++  const int width =
++      CalculateDecodeAxisSize(image_matrix.GetXUnit(), device_size.width);
++  const int height =
++      CalculateDecodeAxisSize(image_matrix.GetYUnit(), device_size.height);
++  return width > 0 && height > 0 ? CFX_Size(width, height) : CFX_Size(0, 0);
+ }
+ 
+ }  // namespace
+@@ -70,13 +94,15 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+     return false;
+   }
+ 
++  CFX_RenderDevice* const device = render_status_->GetRenderDevice();
++  const CFX_Size decode_size = CalculateDecodeSize(
++      image_matrix_, {device->GetWidth(), device->GetHeight()});
++
+   if (!loader_->Start(
+           image_object_, render_status_->GetContext()->GetPageCache(),
+           render_status_->GetFormResource(), render_status_->GetPageResource(),
+           std_cs_, render_status_->GetGroupFamily(),
+-          render_status_->GetLoadMask(),
+-          {render_status_->GetRenderDevice()->GetWidth(),
+-           render_status_->GetRenderDevice()->GetHeight()})) {
++          render_status_->GetLoadMask(), decode_size)) {
+     return false;
+   }
+   mode_ = Mode::kDefault;

@@ -1,0 +1,1099 @@
+name: r25-normal-exp-0001 transform-sized image decode - Build libpdfium Android arm64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build libpdfium.so
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+
+    env:
+      WORK_ROOT: /tmp/pdfium-r25-normal-exp-0001-transform-sized-image-decode
+      OUT_DIR: out/android_arm64_agg
+      DIST_DIR: ${{ github.workspace }}/artifacts/libpdfium-android-arm64-r25-normal-exp-0001-transform-sized-image-decode
+
+    steps:
+      - name: Checkout PDFium patch repo
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            binutils \
+            ca-certificates \
+            curl \
+            file \
+            git \
+            lsb-release \
+            openjdk-17-jdk-headless \
+            python3 \
+            python3-pkg-resources \
+            python3-setuptools \
+            unzip \
+            xz-utils \
+            zip
+
+      - name: Fetch depot_tools
+        run: |
+          mkdir -p "$WORK_ROOT"
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git "$WORK_ROOT/depot_tools"
+          echo "$WORK_ROOT/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+
+          mkdir -p "$WORK_ROOT/pdfium_build"
+          cd "$WORK_ROOT/pdfium_build"
+
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+
+          gclient sync --no-history --nohooks
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply accepted r25-8-0138 base and normal-page experiment 0001
+        run: |
+          PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
+          for patch in \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0011-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0012-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0013-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0014-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0015-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0016-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0017-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0018-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0019-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0020-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0021-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0022-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0023-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0024-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0025-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0026-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0029-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0030-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0031-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0051-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0075-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0076-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0092-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0093-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0094-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0095-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0096-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0097-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0098-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0099-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0100-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0101-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0102-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0103-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0104-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0105-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0106-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0107-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0108-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0109-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0110-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0111-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0112-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0113-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0114-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0115-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0116-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0117-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0118-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0119-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0120-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0121-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0122-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0123-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0125-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0126-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0127-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0128-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0129-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0133-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0134-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0135-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0136-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0137-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0138-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/experiments/normal-page/0001-*.patch \
+              ; do
+            echo "Applying ${patch#$GITHUB_WORKSPACE/repo/}"
+            git -C "$PDFIUM_DIR" apply --check "$patch"
+            git -C "$PDFIUM_DIR" apply "$patch"
+          done
+          git -C "$PDFIUM_DIR" diff --check
+          git -C "$PDFIUM_DIR" diff --stat
+
+          if grep -RIE 'XPDF_ATRACE_SCOPED|ATrace_beginSection' \
+              "$PDFIUM_DIR/core/" "$PDFIUM_DIR/fpdfsdk/" 2>/dev/null; then
+            echo "ERROR: diagnostic ATrace markers present in r25-normal-exp-0001 build" >&2
+            exit 1
+          fi
+
+      - name: Install PDFium build dependencies
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          build/install-build-deps.sh --android --no-prompt --unsupported
+
+      - name: Run gclient hooks
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build"
+          gclient runhooks
+
+      - name: Generate GN files
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
+          cd "$PDFIUM_DIR"
+          gn gen "$OUT_DIR" --args='
+            target_os = "android"
+            target_cpu = "arm64"
+            is_debug = false
+            is_component_build = false
+            strip_debug_info = true
+            use_remoteexec = false
+            symbol_level = 0
+            treat_warnings_as_errors = false
+            clang_use_chrome_plugins = false
+            android_static_analysis = "off"
+            pdf_is_standalone = false
+            pdf_is_complete_lib = true
+            pdf_use_skia = false
+            pdf_use_agg = true
+            pdf_enable_v8 = false
+            pdf_enable_xfa = false
+            pdf_enable_fontations = false
+            pdf_enable_rust_png = false
+            pdf_use_partition_alloc = false
+            default_min_sdk_version = 23
+          '
+          gn args "$OUT_DIR" --list --short \
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
+
+      - name: Build static PDFium
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          ninja -C "$OUT_DIR" pdfium -j"$(nproc)"
+
+      - name: Verify r25-8-0138 ordered stroke renderer tape contract
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          trap 'echo "ERROR: r25-8-0138 contract failed at shell line $LINENO: $BASH_COMMAND" >&2' ERR
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A="$OUT_DIR/obj/libpdfium.a"
+
+          for api in \
+              FPDFEx_SetRenderAbort \
+              FPDFEx_SetRenderCallbacks \
+              FPDFEx_LoadPageWithClassification \
+              FPDFEx_SetRenderSkipMask \
+              FPDFEx_SetHugeImagePixelThreshold \
+              FPDFEx_GetPageDimensions \
+              ; do
+            if ! "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              echo "MISSING $api in libpdfium.a" >&2
+              exit 1
+            fi
+            echo "OK $api"
+          done
+
+          grep -q 'ShouldCancelRender' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM' public/fpdfex_render_callbacks.h
+          grep -q 'FPDFEx_GetPageDimensions' public/fpdfview.h
+          grep -q 'static_assert(sizeof(FPDFEx_PageDimensions) == 32)' fpdfsdk/fpdf_view.cpp
+          grep -q 'VeloceTryRenderPathDisplayListForHolder' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'VeloceTryRenderPathDisplayListForHolder' core/fpdfapi/render/cpdf_progressiverenderer.cpp
+          grep -q 'CanDrawBlendNodeWithMask' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'MaskRun' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'run_flush_end' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'FlushGroupRun' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'group_run_composites' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'groupRunComposites=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'FXDIB_Format::kBgra' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'SetDIBitsWithBlend' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'veloce_render_program.h' core/fpdfapi/page/BUILD.gn
+          grep -q 'class VeloceRenderProgram final' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'friend class VeloceRenderProgramBuilder' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::shared_ptr<const VeloceRenderProgram> veloce_render_program_' core/fpdfapi/page/cpdf_pageobjectholder.h
+          grep -q 'GetVeloceRenderProgram' core/fpdfapi/page/cpdf_pageobjectholder.h
+          grep -q 'SetVeloceRenderProgram' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'ResetVeloceRenderProgram' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'veloce_render_program.cpp' core/fpdfapi/page/BUILD.gn
+          grep -q 'kVeloceRenderProgramFormatVersion = 24u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'enum class VeloceRenderOpcode : uint8_t' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceRenderOpcode) == 1)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceRenderProgramHeader' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceRenderProgramHeader) == 16u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kMaxHolderCommands = 32u \* 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceNativeRun' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeRun) == 16u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'uint32_t first_payload = 0' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::vector<VeloceNativeRun> native_runs_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kVeloceExactNoOpWordBits = 64u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kVeloceExactNoOpRankBlockWords = 4u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::vector<uint64_t> exact_noop_words_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::vector<uint32_t> exact_noop_rank_blocks_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'AppendExactNoOp' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'BuildExactNoOpRankBlocks' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'NativeLinePayloadIndex' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'exactNoOpLines=%u exactNoOpWords=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kVeloceNativeRunLookupBlockSize = 256u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceNativeRunLookupBlock' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeRunLookupBlock) == 8u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'FindNativeRunCursorForSpatialReplay' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'struct VeloceMandatoryCommandRange' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceMandatoryCommandRange) == 8u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'class VeloceOrderedCommandCursor final' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::vector<VeloceMandatoryCommandRange> mandatory_ranges_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'native_command_count' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'has_native_commands() const' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::array<uint32_t, kVeloceRenderOpcodeCount>' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'AppendNativeRun' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'NativeRunsCoverRange' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'spatial_index_->is_valid()' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'opcode_counts_\[static_cast<size_t>(opcode)\]' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'VeloceRenderProgramBuilder::AppendPageObject' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'VeloceRenderProgramBuilder::Finish' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kNativeOpaqueLine' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kNativeTranslationOriginLine' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeLine) == 24u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeTranslationOriginLine) == 16u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'using VeloceNativeTranslationLineStorage' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeLineRun) == 12u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kVeloceInlineTranslationMatrixIndex = 0xffffu' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'CPDF_ContentMarks content_marks' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'enum class VeloceNativeLineRejectReason' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kMaxRetainedProgramBytes = 96u \* 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceOpaquePathState) == 28u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kMaxNativeLines = 3u \* 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'class VeloceTieredLineStorage final' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kFirstChunkLines = 16u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kSecondChunkLines = 64u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kThirdChunkLines = 256u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kFourthChunkLines = 1024u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kDenseChunkLines = 4096u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'NextAppendReservationLines' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'lineStorage=geometric_16_64_256_1024_4096' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'NativeLineStorageIsProportionalAndPreservesTierBoundaries' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'TranslationLineStorageUsesTheSameProportionalLayout' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          if grep -qE \
+              'VeloceNative(Line|TranslationLine)Storage::kChunkLines|std::array<VeloceNative(Line|TranslationOriginLine), kChunkLines>' \
+              core/fpdfapi/page/veloce_render_program.{h,cpp}; then
+            echo "ERROR: fixed 4096-line first allocation remains in r25-8-0138" >&2
+            exit 1
+          fi
+          grep -q 'TryAppendNativeOpaqueStroke' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kNativeOpaqueStrokePath' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceNativeStrokePath' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceClipRun' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'native_stroke_paths_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'clip_runs_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kMaxNativeStrokePathPoints = 4u \* 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'HashOpaquePathState' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'HashMatrix' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'HasSameVisibilityScope' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'RememberVisibilityScope' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'struct VeloceSpatialCommandBlock' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceSpatialCommandBlock) == 32u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kVeloceSpatialBlockUnbounded = 1u << 0' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::array<uint64_t, kVeloceSpatialBlockWordCount> candidate_words' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'class VeloceSpatialOrdinalIndex final' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'spatial_holder_bounds_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'spatial_index_abandoned_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'MarkCandidates' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kMaxBlocks = 128u \* 1024u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kCommandsPerBlock = 32u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'NativeRunsCoverSpatialRange' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'revision=r25-8-0138 event=compile' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'mode=ordered_stroke_renderer_tape' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'CanStartWithPageObject' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'CanStartWithParsedOpaqueLine' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'revision=r25-8-0138 event=acquire_policy' \
+              core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'preactivationPathProbes=%u preactivationLineProbes=%u' \
+              core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'SuccessLazyPreflightActivatesOnlyExactNativeCandidates' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          ACTIVATION_BLOCK="$(sed -n \
+              '/void CPDF_PageObjectHolder::AppendPageObject(/,/bool CPDF_PageObjectHolder::HasVeloceParsedLineContext()/p' \
+              core/fpdfapi/page/cpdf_pageobjectholder.cpp)"
+          printf '%s\n' "$ACTIVATION_BLOCK" \
+              | grep -q 'CanStartWithPageObject'
+          printf '%s\n' "$ACTIVATION_BLOCK" \
+              | grep -q 'CanStartWithParsedOpaqueLine'
+          printf '%s\n' "$ACTIVATION_BLOCK" \
+              | grep -q 'candidate->has_native_commands()'
+          if printf '%s\n' "$ACTIVATION_BLOCK" \
+              | grep -q 'VeloceNowMicros'; then
+            echo "ERROR: per-object activation timing found in r25-8-0138" >&2
+            exit 1
+          fi
+          grep -q 'parserDirectLineAttempts=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'parserLineContextHits=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'parserLineContextBuilds=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'parserLineBudgetRefills=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'parserFusedLines=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'parserConstantFoldedLines=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'spatialLineRuns=%u spatialLineRunCommands=%u' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'compactTranslationLines=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'AppendParsedOpaqueLine' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'TryAppendCachedParsedLine' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'TryReserveCachedParsedLineBudget' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'std::optional<ParsedLineContext> parsed_line_context_' \
+              core/fpdfapi/page/veloce_render_program.h
+          grep -q 'HasSameBackingStore' core/fpdfapi/page/cpdf_generalstate.h
+          grep -q 'HasSameBackingStore' core/fpdfapi/page/cpdf_colorstate.h
+          grep -q 'HasSameBackingStore' core/fxge/cfx_graphstate.h
+          grep -q 'RecordVeloceParsedLine' core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'cur_states_->graphic_states()' core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'GetBoundingBoxForStrokeLine' core/fxge/cfx_path.cpp
+          grep -q 'omittedPageObjects=%zu retainedPageObjects=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'pathStorage=adopted' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'void SetPoints(std::vector<CFX_Path::Point> points)' \
+              core/fpdfapi/page/cpdf_path.h
+          grep -q 'ref_.Emplace()->GetPoints() = std::move(points)' \
+              core/fpdfapi/page/cpdf_path.cpp
+          grep -q 'path.SetPoints(std::move(path_points))' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'AdoptedPathPointsPreserveExactPointMetadata' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'ParserDirectLineMatchesCanonicalObjectLowering' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'ParserLineContextReusesExactStateAndPreservesTranslations' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'TranslationOriginLinesUseExactCompactPayload' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'TranslationOriginNoOpPreservesExactCompactOrdinal' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'ParserLineContextInvalidatesOnStateMutation' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'ExactNoOpPreservesOrdinalWithoutGeometryOrReplayCandidate' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'ConsecutiveExactNoOpsUseOneRankedSparseLineRun' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'RankedSparseLineRunMapsAcrossWordAndRankBlockBoundaries' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'EmptyExactNoOpTapeValidates' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'rank_block = exact_noop_rank_blocks_.empty() ? 0u : 1u' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'ExactNoOpDoesNotBecomeMandatoryAcrossCanonicalBarrier' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'SamePathOnlyClip' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'exactClipChecks=%u exactClipMatches=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'TryReserveRetainedBudget' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'EstimatedVisibilityScopeBytes' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kVisibilityMarkBaseBytes' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'incrementalBudgetChecks=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'logicalRetainedBytes=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'BuildMandatoryCommandRanges' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'BuildNativeRunLookupBlocks' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'opcode == VeloceRenderOpcode::kNativeOpaqueLine ||' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kNativeOpaqueFillPath' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceNativeFillPath) == 16u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'struct VeloceNativeFillGeometry' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'TryAppendNativeOpaqueFill' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'fill_geometry_indices_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'nativeOpaqueFills=%zu exactNoOpLines=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kNativeDarkenStrokePath' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'static_assert(sizeof(VeloceCommandBlock) == 36u)' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kCommandBlockSize = 256u' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'GetVelocePageObjectMutationEpoch' core/fpdfapi/page/cpdf_pageobject.cpp
+          grep -q 'AppendCommandBlock' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'nativeOpaquePaths=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'clipRuns=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'reason=invalid_or_budget' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'visibilityRuns=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'inlineTranslationLines=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'lineRuns=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'spatialBlocks=%zu spatialCoveredCommands=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'spatialUnboundedBlocks=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'spatialIndexBytes=%zu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'rejectVisibility=%u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'compileWindowMs=%llu' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'FPDFEX_FEATURE_RENDER_PROGRAM 0x00000001u' public/fpdfex_render_callbacks.h
+          grep -q 'FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM FPDFEX_FEATURE_RENDER_PROGRAM' public/fpdfex_render_callbacks.h
+          grep -q 'GetVeloceRenderProgram' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'TryRenderVeloceProgram' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'ReplayVeloceProgram' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'render_status_->TryRenderVeloceProgram' core/fpdfapi/render/cpdf_progressiverenderer.cpp
+          grep -q 'const bool stopped = render_status_->IsStopped()' core/fpdfapi/render/cpdf_progressiverenderer.cpp
+          grep -q 'kVeloceFeatureRenderProgramExecutor' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'VeloceRenderOpcode::kNativeOpaqueLine' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'program->mutation_epoch() != GetVelocePageObjectMutationEpoch()' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'options_.CheckContentMarksVisible' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'nativeObjectLookups=%zu visibilityRunChecks=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'ProcessClipPath(clip_runs\[active_clip_run_index\].clip_path' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'is_any_native_line ? nullptr : draw_path' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'RenderSingleObject(fallback_object, holder_to_device)' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q '(replay_work_units++ & 63u) == 0u' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'revision=r25-8-0138 event=replay' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'mode=ordered_stroke_renderer_tape' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'ComposeVeloceInlineTranslation' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'lineRasterPasses=%zu strokeRendererBuilds=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'exactNoOpLinesSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'exactNoOpWords=%zu exactNoOpRankBlocks=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'command_count += skipped_count' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'strokeTransformBuilds=%zu strokeTransformHits=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'directButtLineDraws=%zu genericStrokeDraws=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'RasterizeDirectButtStrokeLine' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'graph_state.line_cap() != CFX_GraphStateData::LineCap::kButt' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q '!graph_state.dash_array().empty()' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'packet_stats.direct_butt_line_draws' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'packet_stats.generic_stroke_draws' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'OrderedRoundLinesFailClosedToGenericStroke' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'graph_state.set_line_cap(CFX_GraphStateData::LineCap::kRound)' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'class VeloceFormProgramCache final' core/fpdfapi/page/cpdf_docpagedata.cpp
+          grep -q 'kMaxBytes = 96u \* 1024u \* 1024u' core/fpdfapi/page/cpdf_docpagedata.cpp
+          grep -q 'kMaxEntries = 16u' core/fpdfapi/page/cpdf_docpagedata.cpp
+          grep -q 'GetVeloceDataGeneration' core/fpdfapi/parser/cpdf_stream.h
+          grep -q 'NoteVeloceResourceLookup' core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'header().native_command_count ==' core/fpdfapi/page/cpdf_form.cpp
+          grep -q '!VeloceParseUsedResources()' core/fpdfapi/page/cpdf_form.cpp
+          grep -q 'revision=r25-8-0138 event=form_cache result=store' core/fpdfapi/page/cpdf_form.cpp
+          grep -q 'revision=r25-8-0138 event=form_cache result=hit' core/fpdfapi/page/cpdf_form.cpp
+          grep -q 'ReusesExactResourceIndependentRenderProgram' core/fpdfapi/page/cpdf_form_unittest.cpp
+          grep -q 'StreamMutationInvalidatesCachedRenderProgram' core/fpdfapi/page/cpdf_form_unittest.cpp
+          grep -q 'InternsPointerDistinctExactPathOnlyClipRuns' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'PreservesDifferentFillRuleClipRuns' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'commandsSkipped=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'spatialMode=%u spatialBlocksTested=%u spatialBlocksSelected=%u' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'spatialCandidateMarks=%u spatialCandidates=%u spatialCulled=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'replayWorkUnits=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'std::optional<VeloceOrderedCommandCursor> ordered_command_cursor' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'active_native_run->first_payload' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'program->FindNativeRunCursorForSpatialReplay(command_index)' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'mandatoryRuns=%zu mandatoryCommands=%zu cursorWords=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'std::vector<uint64_t> veloce_candidate_words_' core/fpdfapi/render/cpdf_renderstatus.h
+          grep -q 'command_count + commands_skipped' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'device_->DrawPathWithBlend' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'device_->DrawOrderedPathBatch' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'lineBatchCommands=%zu' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'IsVeloceDeviceClipOpaque' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'direct_darken_context = !in_group_ && !transparency_.IsGroup()' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'program->is_valid()' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'TryAppendNativeOpaqueStroke(object, command_index, &bounds' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'RejectsProgramWhenObjectsChangeDuringCompile' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'last_opaque_state_index_' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'DrawStrokeLineBatch' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'class OrderedPathBatchContext' core/fxge/renderdevicedriver_iface.h
+          grep -q 'CreateOrderedPathBatchContext' core/fxge/renderdevicedriver_iface.h
+          grep -q 'class AggOrderedPathBatchContext final' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'stroke_normalized_inverse' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'stroke_transform_hits' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'struct CFX_OrderedPathBatchStats' core/fxge/renderdevicedriver_iface.h
+          grep -q 'context->IsOwnedBy(this)' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'if (!ordered_path_context_attempted)' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'ordered_path_context = device_->CreateOrderedPathBatchContext()' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'orderedPathContext=%d' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'DrawOrderedPathBatch' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'BuildAggPathInto' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'void remove_all()' third_party/agg23/agg_path_storage.h
+          grep -q 'm_total_vertices = 0' third_party/agg23/agg_path_storage.h
+          grep -q 'm_iterator = 0' third_party/agg23/agg_path_storage.h
+          grep -q 'StrokeLineBatchMatchesOrderedDrawPath' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'OrderedMixedPathBatchMatchesSourceOrder' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'OrderedLinesReuseInvariantTransformWithoutChangingPixels' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'DegenerateButtCapStrokeHasNoCoverage' core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'DegenerateButtCapLineNeedsNoSpatialCandidate' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'CompositeByteMaskLine' core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'DarkenCoverageAndClipMatchSingleBgraObject' core/fxge/dib/cfx_dibitmap_unittest.cpp
+          grep -q 'for (const auto& pCurObj : \*pObjectHolder)' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'RenderSingleObject(pCurObj.get(), mtObj2Device)' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'veloce_render_program_unittest.cpp' core/fpdfapi/page/BUILD.gn
+          grep -q 'record_veloce_render_program_ = page_object_list_.empty()' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'std::make_unique<VeloceRenderProgramBuilder>(' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'UnsupportedOnlyHolderHasNoSidecar' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'PreservesImplicitCanonicalPrefixOrdinal' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'KeepsCompactLineStateAcrossCanonicalBarriers' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'NativeRunLookupCrossesSourceBlockBoundary' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'OrderedCommandCursorMergesCandidatesAndMandatoryRanges' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'QueriesSpatialOrdinalsInHolderSpace' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'UnknownLineBoundsFailOpen' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'PreservesNativeOrdinalsAcrossCanonicalBarrier' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'InternsExactFillGeometryAndOwnsInstances' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'BuildsOneSpatialProgramAcrossExactFill' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'NonOpaqueFillFailsClosed' core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'veloce_render_program_builder_->AppendPageObject' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'veloce_render_program_builder_->Finish()' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'RecordVeloceParsedLine' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'CanRecordVeloceParsedPath' core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'may_be_compact_line' core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'kMaxRetainedOmittedPathPoints = 16u' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'ResetOmittedPathPoints(&path_points_)' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'path_points->capacity() > kMaxRetainedOmittedPathPoints' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'RetainsBoundedOmittedPathScratch' \
+              core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp
+          grep -q 'ReleasesOversizedOmittedPathScratch' \
+              core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp
+          grep -q 'OmitLastPageObject' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'RetainLastPageObject' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'retained_command_ordinals_' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'GetVeloceSourceObjectCount' core/fpdfapi/page/cpdf_pageobjectholder.h
+          grep -q 'GetVeloceRetainedPageObjectByIndex' core/fpdfapi/page/cpdf_pageobjectholder.h
+          grep -q 'EnsureCanonicalPageObjects' core/fpdfapi/page/cpdf_page.cpp
+          grep -q 'BeginVeloceCanonicalReparse' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'HasVeloceOmittedPageObjects' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'CreateOrderedPathBatchContext' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'CompactOrdinalMapPreservesCanonicalBarriersAndSourceOrder' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'veloce_render_program_builder_.reset()' core/fpdfapi/page/cpdf_pageobjectholder.cpp
+
+          if grep -q 'kMinNativeCompileCommands\|object->IsDirty()\|CheckPageObjectVisible(path_object)' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: threshold routing or per-native-object replay work remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'WouldExceedRetainedBudget' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp; then
+            echo "ERROR: per-object full retained-size recomputation remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'std::vector<uint8_t> bytecode_\|ToCanonicalOpcode\|kMaxBytecodeBytes' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp; then
+            echo "ERROR: canonical per-object bytecode remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'VeloceLineLeafRange\|VeloceLineCoarseRange\|QueryNativeLines\|RangeIndexBytes' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: superseded source-local line index remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'VeloceSpatialCell\|kMaxPostings\|kMaxAlwaysCandidates\|spatialPostings\|spatialBins' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: per-command spatial postings remain in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'FindNextVeloceCandidate\|native_line_index\|native_fill_index\|native_path_index' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: linear sparse payload traversal remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'line->start == line->end' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: exact no-op classification remains duplicated in replay" >&2
+            exit 1
+          fi
+
+          if grep -q 'VeloceExactNoOpRange\|exact_noop_ranges_\|kMaxExactNoOpRanges' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: fragmented r25-3-0119 exact no-op ranges remain in r25-8-0138" >&2
+            exit 1
+          fi
+
+          if grep -q 'PathDlSegmentKind\|kTextPassthrough\|PathDlSpatialIndex\|StrokeRunFlushReason\|stroke_run_path\|sameArgbCrossed\|sameSourceDarken' \
+              core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: post-r25 path-display-list behavior found in r25-8-0138 baseline" >&2
+            exit 1
+          fi
+          if grep -q 'FlushMaskRun\|mask_run_composites\|maskRunComposites\|run_flush_overlap\|SetMaskBitsWithBlend\b' \
+              core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: old mask-run symbols found in r25-8-0138 baseline" >&2
+            exit 1
+          fi
+          if grep -q 'DrawFillPathNodeWithBlendMask\|MaskBlendBatch\|FlushAllMaskBatches\|FlushPerNodePathBatch' \
+              core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: deprecated 0027/0028 symbols found in r25-8-0138 baseline" >&2
+            exit 1
+          fi
+          if grep -q 'veloce_render_plan.cpp\|veloce_render_plan.h' core/fpdfapi/render/BUILD.gn; then
+            echo "ERROR: experimental 0053-0074 RenderPlan v1 is present in r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -RIE 'VeloceTryRenderPlanForHolder|VeloceBuildRenderPlanSkeletonForHolder|DrawPathBatch' \
+              core/fpdfapi/render core/fxge 2>/dev/null; then
+            echo "ERROR: experimental RenderPlan v1 runtime is present in r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -RIE 'range_index_shadow|event=query mode=range_index_shadow|kNativeOpaqueLineShadow' \
+              core/fpdfapi/render core/fpdfapi/page 2>/dev/null; then
+            echo "ERROR: r25-8-0138 still contains shadow-only runtime wiring" >&2
+            exit 1
+          fi
+          grep -q 'kVeloceLegacyPathDisplayListEnabled = false' \
+              core/fpdfapi/render/veloce_path_display_list.h
+          LEGACY_ENTRY="$(sed -n '/VeloceTryRenderPathDisplayListForHolder(/,/if (!status || !holder)/p' \
+              core/fpdfapi/render/veloce_path_display_list.cpp)"
+          printf '%s\n' "$LEGACY_ENTRY" \
+            | grep -q 'if (!kVeloceLegacyPathDisplayListEnabled)'
+          printf '%s\n' "$LEGACY_ENTRY" \
+            | grep -q 'return VelocePathDisplayListResult::kNotEligible;'
+          if grep -RIE 'VeloceUnifiedRender|direct_darken_(commands|dispatches|canonical)|path_packet_commands|candidate_linear_replay' \
+              core/fpdfapi core/fxge 2>/dev/null; then
+            echo "ERROR: r25-1 live-object executor leaked into r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -qE 'DisjointLinePixelGrid|pending_disjoint_lines|denseDisjointLineDraws' \
+              core/fxge/agg/cfx_agg_devicedriver.cpp \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "ERROR: negative-value 0110 pixel-grid executor remains in r25-8-0138" >&2
+            exit 1
+          fi
+
+          PATH_BUILD_BLOCK="$(sed -n '/void CPDF_StreamContentParser::AddPathObject(/,/CPDF_Path path;/p' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp)"
+          if printf '%s\n' "$PATH_BUILD_BLOCK" \
+              | grep -q 'path.AppendPoint'; then
+            echo "ERROR: parsed path points are still copied one by one in r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -q 'CPDF_PathObject candidate' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp; then
+            echo "ERROR: temporary parser line page object remains in r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -qE 'kMinParserLine|parserLineThreshold|Classify.*ParserLine' \
+              core/fpdfapi/page/veloce_render_program.h \
+              core/fpdfapi/page/veloce_render_program.cpp \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp; then
+            echo "ERROR: classifier or threshold routing found in r25-8-0138 parser line sink" >&2
+            exit 1
+          fi
+
+          OMIT_BLOCK="$(sed -n '/if (attempted_direct_line)/,/path_points.swap(path_points_)/p' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp)"
+          printf '%s\n' "$OMIT_BLOCK" \
+            | grep -q 'VeloceParsedPathDisposition::kOmitRecorded'
+          printf '%s\n' "$OMIT_BLOCK" \
+            | grep -q 'path_clip_type == CFX_FillRenderOptions::FillType::kNoFill'
+          printf '%s\n' "$OMIT_BLOCK" \
+            | grep -q 'ResetOmittedPathPoints(&path_points_)'
+          printf '%s\n' "$OMIT_BLOCK" \
+            | grep -q 'return;'
+
+          grep -q 'bool CPDF_StreamParser::TryParseTransformedSimpleStrokeLine' \
+              core/fpdfapi/page/cpdf_streamparser.cpp
+          grep -q 'bool CPDF_StreamParser::TryParseTranslationOriginStrokeLine' \
+              core/fpdfapi/page/cpdf_streamparser.cpp
+          grep -q 'bool CPDF_StreamContentParser::TryParseVeloceTransformedSimpleStrokeLine' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'TryParseVeloceTranslationOriginStrokeLineRun' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'TryParseVeloceTransformedSimpleStrokeLine(remaining_cost)' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          if sed -n '/while (true)/,/switch (syntax_->ParseNextElement())/p' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp \
+              | grep -q 'TryParseVeloceTranslationOriginStrokeLineRun'; then
+            echo "ERROR: r25-8-0138 adds a second outer-loop parser probe" >&2
+            exit 1
+          fi
+          grep -q 'kMaxRunCommands = 256u' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'RecordVeloceParsedLineRun(processed_count)' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'RecordVeloceParsedTranslationOriginLineRun' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'AppendParsedTranslationOriginLineRun' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'AppendExactNoOp(command_index, opcode, payload_index,' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'AppendSpatialTranslationOriginLineRun' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'AppendTranslationOriginRunBoundsAndSpatial' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'AppendAxisAligned' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'TranslationOriginBatchUsesScalarRepresentationAndOrderedOrdinals' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'TranslationOriginBatchConsumesExactNoOpWithoutReparseOrReordering' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'TranslationOriginBatchBuildsOneExactSpatialUnionInSourceOrder' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          BULK_LOWERER="$(sed -n \
+              '/size_t VeloceRenderProgramBuilder::AppendParsedTranslationOriginLineRun(/,/bool VeloceRenderProgramBuilder::AppendParsedOpaqueLine(/p' \
+              core/fpdfapi/page/veloce_render_program.cpp)"
+          if printf '%s\n' "$BULK_LOWERER" \
+              | grep -qE 'BuildConservativeTranslationLineBounds|AppendSpatialOrdinal|CFX_Matrix matrix'; then
+            echo "ERROR: r25-8-0138 retained per-line matrix/rect spatial construction" >&2
+            exit 1
+          fi
+          grep -q 'AppendVeloceCanonicalStrokeLine' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'BuildConservativeTranslationLineBounds' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -Fq 'local_margin * (std::fabs(matrix.a)' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -Fq 'local_margin * (std::fabs(matrix.b)' \
+              core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'TranslationLineConservativeBoundsContainPriorTightBounds' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'object->graph_state().GetLineWidth()' \
+              core/fpdfapi/page/veloce_render_program_unittest.cpp
+          grep -q 'directLineRuns=%u directLineRunCommands=%zu' \
+              core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'mode=ordered_stroke_renderer_tape' \
+              core/fpdfapi/page/cpdf_pageobjectholder.cpp
+          grep -q 'size_t stroke_renderer_builds = 0' \
+              core/fxge/renderdevicedriver_iface.h
+          grep -q 'std::optional<CFX_AggRenderer> stroke_renderer' \
+              core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'draw.fill_options != stroke_options' \
+              core/fxge/agg/cfx_agg_devicedriver.cpp
+          grep -q 'strokeRendererBuilds=%zu' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'CHECK_EQ(batch_stats.raster_passes, batch_stats.source_draws)' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'EXPECT_EQ(1u, stats.stroke_renderer_builds)' \
+              core/fxge/cfx_defaultrenderdevice_unittest.cpp
+          grep -q 'object_holder_->HasVeloceParsedLineContext()' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'can_try_balanced_line_unit_' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'stream_fused=.*true' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'AppendRecordedPageObject' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'syntax_->SetPos(unit_start)' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp
+          grep -q 'ParsesTransformedSimpleStrokeLineTransactionally' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'LeavesPositionUnchangedOnNonLinePath' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'LeavesPositionUnchangedOnDifferentPaintOperator' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'ParsesTranslationOriginStrokeWithFourConversions' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'CompactTranslationGrammarFailsClosed' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'ReadVeloceExactPathNumber' \
+              core/fpdfapi/page/cpdf_streamparser.cpp
+          grep -q 'fast_float::from_chars' \
+              core/fpdfapi/page/cpdf_streamparser.cpp
+          grep -q 'DecodeVeloceIntegerNumber' \
+              core/fpdfapi/page/cpdf_streamparser.cpp
+          grep -q 'ExactTranslationNumbersMatchCanonicalNumberConversion' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          grep -q 'ExactTranslationNumbersPreserveCompatibilityFallback' \
+              core/fpdfapi/page/cpdf_streamparser_unittest.cpp
+          if grep -qE 'HandlePathPaintOperator|DecodePathPaintOperator' \
+              core/fpdfapi/page/cpdf_streamcontentparser.cpp \
+              core/fpdfapi/page/cpdf_streamcontentparser.h; then
+            echo "ERROR: failed r25-4-0124 nested path-paint dispatch leaked into r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -Eiq 'Q16|11\.pdf|error\.pdf|classify|page[_ -]?number' \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0125-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0126-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0127-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0128-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0129-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0133-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0134-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0135-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0136-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0137-"*.patch \
+              "$GITHUB_WORKSPACE/repo/patches/ship/0138-"*.patch; then
+            echo "ERROR: document-specific routing found in r25-8-0138" >&2
+            exit 1
+          fi
+          if grep -RIE \
+              'TryParseTranslationOriginStrokeLineChunk|AppendParsedTranslationOriginLineChunk|kMaxDisjointDrawsPerRasterPass|disjoint_bounds|revision=r25-5-0131' \
+              core/fpdfapi core/fxge 2>/dev/null; then
+            echo "ERROR: excluded 0130/0131 experiment leaked into r25-8-0138" >&2
+            exit 1
+          fi
+
+          echo "All r25-8-0138 ordered stroke renderer tape and exclusion guards passed"
+
+      - name: Verify r25-normal-exp-0001 transform-sized image decode contract
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          trap 'echo "ERROR: r25-normal-exp-0001 contract failed at shell line $LINENO: $BASH_COMMAND" >&2' ERR
+
+          grep -q 'int CalculateDecodeAxisSize(float transformed_size, int device_limit)' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp
+          grep -q 'image_matrix.GetXUnit(), device_size.width' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp
+          grep -q 'image_matrix.GetYUnit(), device_size.height' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp
+          grep -q 'std::min(transformed_size, static_cast<float>(device_limit))' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp
+          grep -q 'render_status_->GetLoadMask(), decode_size' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp
+          grep -q 'StartLoadMask(max_size_required)' \
+              core/fpdfapi/page/cpdf_dib.cpp
+          grep -q 'CPDF_ColorSpace::Family::kUnknown, false,' \
+              core/fpdfapi/page/cpdf_dib.cpp
+          grep -q 'max_size_required);' \
+              core/fpdfapi/page/cpdf_dib.cpp
+
+          if grep -E 'Q16|11\.pdf|6-steps|document[_ -]?specific|page[_ -]?class' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp \
+              core/fpdfapi/page/cpdf_dib.cpp \
+              core/fpdfapi/page/cpdf_dib.h; then
+            echo "ERROR: document-specific policy leaked into normal-page experiment" >&2
+            exit 1
+          fi
+          if grep -E '__android_log_print|std::vector|std::unordered|std::map' \
+              core/fpdfapi/render/cpdf_imagerenderer.cpp \
+              | grep -E 'CalculateDecodeAxisSize|CalculateDecodeSize'; then
+            echo "ERROR: logging or allocation leaked into decode-demand calculation" >&2
+            exit 1
+          fi
+
+          echo "All r25-normal-exp-0001 transform-sized decode guards passed"
+
+      - name: Link Android shared library
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          PDFIUM_AGG_SHRINK=1 \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+      - name: Verify exported symbols
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO="$OUT_DIR/libpdfium.so"
+
+          for api in \
+              FPDF_RenderPageBitmap \
+              FPDFEx_SetRenderAbort \
+              FPDFEx_SetRenderCallbacks \
+              FPDFEx_LoadPageWithClassification \
+              FPDFEx_SetRenderSkipMask \
+              FPDFEx_SetHugeImagePixelThreshold \
+              FPDFEx_GetPageDimensions \
+              ; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              echo "MISSING exported $api in libpdfium.so" >&2
+              exit 1
+            fi
+            echo "OK exported $api"
+          done
+
+      # Link the deliverable before test archives are materialized. The custom
+      # AGG linker scans out/obj and must not see a second libc++ object set.
+      - name: Compile r25-normal-exp-0001 unit tests after shared-library link
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          ninja -C "$OUT_DIR" pdfium_unittests -j"$(nproc)"
+
+      - name: Package artifact
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+
+          mkdir -p "$DIST_DIR/include" "$DIST_DIR/patches" \
+            "$DIST_DIR/patches/experiments/normal-page"
+          cp "$OUT_DIR/libpdfium.so" "$DIST_DIR/libpdfium.so"
+          cp "$OUT_DIR/obj/libpdfium.a" "$DIST_DIR/libpdfium.a"
+          cp -R public/. "$DIST_DIR/include/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0011-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0012-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0013-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0014-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0015-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0016-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0017-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0018-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0019-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0020-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0021-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0022-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0023-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0024-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0025-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0026-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0029-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0030-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0031-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0051-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0075-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0076-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0092-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0093-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0094-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0095-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0096-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0097-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0098-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0099-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0100-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0101-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0102-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0103-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0104-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0105-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0106-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0107-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0108-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0109-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0110-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0111-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0112-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0113-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0114-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0115-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0116-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0117-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0118-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0119-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0120-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0121-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0122-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0123-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0125-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0126-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0127-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0128-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0129-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0133-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0134-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0135-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0136-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0137-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0138-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/experiments/normal-page/0001-*.patch \
+            "$DIST_DIR/patches/experiments/normal-page/"
+          sha256sum "$DIST_DIR/libpdfium.so" > "$DIST_DIR/SHA256SUMS.txt"
+
+          {
+            printf 'revision=r25-normal-exp-0001\n'
+            printf 'series=r25-normal-page-experiments\n'
+            printf 'experiment=true\n'
+            printf 'experiment_base=r25-8-0138\n'
+            printf 'pdfium_repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'workflow_sha=%s\n' "$GITHUB_SHA"
+            printf 'pdfium_revision=%s\n' "$(git rev-parse HEAD)"
+            printf 'renderer=agg\n'
+            printf 'pgo=disabled\n'
+            printf 'official_build=false\n'
+            printf 'rendering_base=r25+0051+0075+0076+0092+0093+0094+0095+0096+0097+0098+0099+0100+0101+0102+0103+0104+0105+0106+0107+0108+0109+0110+0111+0112+0113+0114+0115+0116+0117+0118+0119+0120+0121+0122+0123+0125+0126+0127+0128+0129+0133+0134+0135+0136+0137+0138+normal-exp-0001\n'
+            printf 'image_decode_demand=outward-rounded-source-axis-transform-footprint-bounded-by-canonical-device-demand\n'
+            printf 'image_decode_codecs=dct-and-jpx-reduced-before-pixel-allocation-other-codecs-canonical-full-decode\n'
+            printf 'image_mask_decode=uses-the-same-transform-sized-demand-as-color-image\n'
+            printf 'decode_fail_closed=invalid-degenerate-or-oversized-device-geometry-requests-zero-zero-full-resolution\n'
+            printf 'normal_experiment_policy=no-classifier-no-threshold-no-new-cache-no-persistent-allocation-no-threading-change\n'
+            printf 'page_dimensions_api=0051\n'
+            printf 'render_program_format=version-24-ranked-sparse-line-tape-with-proportional-geometric-line-storage-bounded-spatial-command-blocks-and-success-lazy-activation\n'
+            printf 'pixel_owner=canonical-pdfium-with-ordered-sparse-native-sidecar\n'
+            printf 'root_progressive_entry=shared-render-status-program-executor\n'
+            printf 'native_commands=owned-opaque-lines-solid-fills-multisegment-strokes-and-exact-darken-strokes\n'
+            printf 'native_storage=24-byte-generic-lines-plus-16-byte-translation-origin-lines-in-geometric-16-64-256-1024-prefix-chunks-then-fixed-4096-dense-chunks-payload-addressable-native-runs-64-bit-exact-noop-mask-32-bit-per-256-command-rank-blocks-8-byte-per-256-command-run-lookup-blocks-compact-state-matrix-runs-16-byte-fill-instances-interned-fill-geometry-owned-paths-exact-clip-and-visibility-runs\n'
+            printf 'line_storage=payload-stable-geometric-prefix-with-o1-indexing-and-no-retained-line-copy\n'
+            printf 'spatial_index=immutable-bounded-holder-space-32-command-blocks-with-exact-candidate-mask-and-fail-open-unbounded-blocks\n'
+            printf 'spatial_builder=single-pass-source-order-line-run-union-shared-margin-direct-axis-bounds-no-per-line-matrix-or-rect-construction-no-per-command-posting-vectors-and-canonical-gap-splitting\n'
+            printf 'replay_cursor=allocation-free-merge-of-spatial-candidate-bits-and-bounded-mandatory-source-ranges-with-direct-native-payload-addressing\n'
+            printf 'render_scratch=one-status-local-bounded-command-bitset-plus-one-render-local-agg-ordered-context\n'
+            printf 'cancellation_cadence=bounded-replay-work-units-not-source-ordinals\n'
+            printf 'line_execution=ranked-bit-tape-exact-zero-coverage-butt-cap-elision-inside-unsplit-native-line-runs-then-direct-four-vertex-butt-line-raster-or-fail-closed-generic-stroke-in-independent-source-order-with-one-stack-owned-stroke-renderer-per-bounded-packet\n'
+            printf 'stroke_renderer_policy=one-validated-normal-blend-renderer-per-bounded-same-state-packet-independent-source-order-raster-and-composite-no-geometry-merging\n'
+            printf 'construction_budget=incremental-exact-logical-byte-reservation-including-retained-visibility-scopes-with-final-capacity-validation\n'
+            printf 'agg_path_scratch=one-render-local-context-reused-across-packets-remove-all-retains-blocks\n'
+            printf 'generation1_guard=exact-legacy-symbols-no-generic-darken-substring\n'
+            printf 'darken_policy=direct-coverage-for-top-level-nongroup-or-proven-opaque-outer-nonisolated-group\n'
+            printf 'mutation_policy=single-source-epoch-check-before-any-program-pixel\n'
+            printf 'matrix_policy=exact-inline-translation-or-bitwise-interned-affine\n'
+            printf 'normal_page_policy=no-sidecar-unless-an-exact-native-path-is-lowered\n'
+            printf 'sidecar_activation=allocation-free-semantic-preflight-then-complete-exact-lowerer-commit-no-builder-for-rejected-paths\n'
+            printf 'sidecar_policy=success-lazy-exact-lowering-with-source-ordinal-order-implicit-canonical-prefix-and-gaps\n'
+            printf 'acquisition_metrics=one-root-holder-line-with-parse-finish-probe-activation-native-command-and-program-byte-fields\n'
+            printf 'empty_rank_policy=zero-noop-programs-validate-with-zero-mask-and-zero-rank-blocks\n'
+            printf 'form_program_cache=document-owned-16-entry-96MiB-LRU-for-fully-native-resource-independent-exact-state-matches\n'
+            printf 'form_cache_invalidation=stream-generation-form-dictionary-state-parent-matrix-transparency-global-object-epoch-and-live-command-count\n'
+            printf 'clip_run_policy=pointer-fast-path-then-bit-exact-path-only-structural-equivalence-text-clips-fail-closed\n'
+            printf 'clip_batch_effect=equivalent-consecutive-clips-install-once-and-preserve-bounded-256-command-dispatch\n'
+            printf 'parser_path_storage=move-completed-exact-point-vector-into-canonical-cpdf-path-without-per-point-rebuild\n'
+            printf 'parser_omitted_path_scratch=retain-at-most-16-points-per-parser-only-after-exact-omit-without-clip-release-any-larger-capacity\n'
+            printf 'parser_streaming_line_compiler=after-one-exact-context-use-one-bounded-run-loop-to-consume-consecutive-q-1-0-0-1-tx-ty-cm-0-0-m-dx-dy-l-S-Q-units-and-submit-each-command-to-the-unchanged-authoritative-lowerer\n'
+            printf 'parser_numeric_decoder=allocation-free-transactional-fixed-token-scan-with-inline-exact-integer-conversion-and-direct-fast-float-decimal-conversion\n'
+            printf 'parser_numeric_correctness=bit-identical-fx-number-semantics-for-supported-pdf-numbers-with-canonical-fx-number-fallback-for-ambiguous-or-compatibility-grammar\n'
+            printf 'parser_bulk_lowerer=fixed-256-command-worker-stack-batch-validates-common-copy-on-write-state-clip-visibility-and-transform-once-then-commits-each-command-once-to-the-existing-compact-line-ranked-noop-native-run-and-spatial-program\n'
+            printf 'parser_bulk_noop_policy=exact-zero-coverage-butt-cap-lines-remain-ordered-commands-inside-the-same-parser-packet-with-rank-bits-and-no-geometry-payload-or-source-reparse\n'
+            printf 'parser_bulk_fallback=rewind-to-first-uncommitted-source-byte-and-resume-canonical-pdfium-with-no-speculative-object-omission-or-second-retained-representation\n'
+            printf 'parser_run_bound=at-most-remaining-progressive-cost-or-256-commands-with-no-unbounded-parse-loop\n'
+            printf 'parser_run_correctness=stop-at-first-token-state-stream-or-lowering-mismatch-retain-that-command-canonically-and-preserve-source-order\n'
+            printf 'translation_line_bounds=conservative-transformed-endpoint-aabb-with-full-affine-two-line-width-margin-containing-prior-tight-bounds-and-no-per-command-hypot-or-rect-transform\n'
+            printf 'excluded_experiments=0130-chunk-native-duplicate-lowerer,0131-disjoint-raster-packets\n'
+            printf 'parser_constant_fold=exact-canonical-q-1-0-0-1-tx-ty-cm-0-0-m-dx-dy-l-S-Q-grammar-converts-only-tx-ty-dx-dy-and-fails-closed-to-general-parser-on-any-token-mismatch\n'
+            printf 'parser_packed_line=16-byte-endpoint-plus-translation-payload-reconstructs-exact-zero-origin-and-shares-existing-state-matrix-clip-visibility-spatial-and-painter-order-runs\n'
+            printf 'parser_streaming_miss_policy=leave-stream-position-and-canonical-parser-state-unchanged-reject-content-stream-boundary-crossing-no-page-or-document-threshold\n'
+            printf 'parser_direct_line=immutable-pdfium-state-snapshots-to-owned-render-command-without-temporary-page-object-or-path-allocation\n'
+            printf 'parser_line_state_sink=builder-local-exact-copy-on-write-state-identity-plus-exact-transform-clip-and-visibility-reuse-with-canonical-lowering-on-any-miss\n'
+            printf 'parser_line_budget=storage-aligned-16-64-256-1024-prefix-then-4096-line-logical-reservations-under-existing-96MiB-cap\n'
+            printf 'parser_object_policy=omit-only-exact-native-opaque-lines-including-proven-payload-free-noops-retain-all-rejected-complex-fill-darken-text-image-form-and-shading-objects\n'
+            printf 'ordinal_policy=lazy-sorted-source-to-retained-object-map-created-only-after-first-exact-omission\n'
+            printf 'visibility_policy=immutable-content-mark-runs-resolved-directly-through-pdfium-oc-context\n'
+            printf 'canonical_materialization=single-original-content-reparse-on-object-enumeration-editing-or-executor-preflight-failure\n'
+            printf 'compact_preflight=ordered-agg-context-finite-device-transform-line-bounds-matrices-and-visible-stroke-alpha-before-first-pixel\n'
+            printf 'native_replay=owned-geometry-state-color-clip-with-visibility-run-resolution\n'
+            printf 'live_object_policy=retained-canonical-barriers-and-preflight-proven-exceptional-fallback-only-no-page-object-needed-for-native-line-or-visibility\n'
+            printf 'legacy_pathdl=compiled-disabled-before-work\n'
+            printf 'patches=patches/ship/01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0051,0075,0076,0092,0093,0094,0095,0096,0097,0098,0099,0100,0101,0102,0103,0104,0105,0106,0107,0108,0109,0110,0111,0112,0113,0114,0115,0116,0117,0118,0119,0120,0121,0122,0123,0125,0126,0127,0128,0129,0133,0134,0135,0136,0137,0138;patches/experiments/normal-page/0001\n'
+            printf 'excluded_post_r25=0032,0034,0035,0036,0037,0038,0039,0040,0041,0042,0043,0044,0045,0046,0047,0048,0049,0050,0052\n'
+            printf 'excluded_renderplan_v1=0053..0074\n'
+            printf 'excluded_generation1=0079..0091\n'
+            printf 'excluded_failed_r25_4=0124\n'
+          } > "$DIST_DIR/build-info.txt"
+
+      - name: Upload libpdfium artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-r25-normal-exp-0001-transform-sized-image-decode
+          path: artifacts/libpdfium-android-arm64-r25-normal-exp-0001-transform-sized-image-decode
