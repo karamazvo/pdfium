@@ -202,3 +202,24 @@ counts for diagnosis but do not treat its absolute time as production cost.
 The next performance revision must be selected from measured dominant cost.
 Do not optimize traversal, allocation, path, image, Form, or transparency
 until 0148 shows that phase dominates the target document.
+
+## Device result (2026-08-03)
+
+The profile completed on the target device:
+
+- 11 cold acquisition/bitmap measured about 185/121 ms; accelerator work was
+  about 99.6% of active bitmap time.
+- Q16 cold acquisition/bitmap measured about 3,677/1,630 ms; the dense region
+  still selected and drew roughly 2.39M commands.
+- EP23 page 2/page 3 acquisition measured about 852/844 ms. Page 3 logged a
+  cache hit for the same 28,071-fill, 707,225-point, roughly 10.3-MiB Form
+  program, proving the cache was attached only after repeated parsing and
+  child materialization.
+- 6Steps samples were image dominated.
+- Typical session-lane waits and bitmap allocation were below one
+  millisecond. No sample reported depth overflow.
+
+Conclusion: do not optimize lock acquisition or bitmap allocation. `0149`
+targets the proven late Form-cache ownership issue. Q16 cold root acquisition,
+Q16 dense replay, and normal-page image rendering remain separate measured
+problems.
