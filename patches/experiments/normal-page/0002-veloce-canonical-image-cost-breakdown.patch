@@ -1,0 +1,218 @@
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+index 794d57936..21a6b9171 100644
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -31,6 +31,7 @@
+ #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+ #include "core/fpdfapi/render/cpdf_rendercontext.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fpdfapi/render/veloce_canonical_render_profile.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/maybe_owned.h"
+@@ -70,13 +71,16 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+     return false;
+   }
+ 
+-  if (!loader_->Start(
+-          image_object_, render_status_->GetContext()->GetPageCache(),
+-          render_status_->GetFormResource(), render_status_->GetPageResource(),
+-          std_cs_, render_status_->GetGroupFamily(),
+-          render_status_->GetLoadMask(),
+-          {render_status_->GetRenderDevice()->GetWidth(),
+-           render_status_->GetRenderDevice()->GetHeight()})) {
++  VeloceCanonicalRenderProfileScope load_scope(
++      VeloceCanonicalRenderPhase::kImageLoad);
++  if (!loader_->Start(image_object_,
++                      render_status_->GetContext()->GetPageCache(),
++                      render_status_->GetFormResource(),
++                      render_status_->GetPageResource(), std_cs_,
++                      render_status_->GetGroupFamily(),
++                      render_status_->GetLoadMask(),
++                      {render_status_->GetRenderDevice()->GetWidth(),
++                       render_status_->GetRenderDevice()->GetHeight()})) {
+     return false;
+   }
+   mode_ = Mode::kDefault;
+@@ -84,6 +88,8 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+ }
+ 
+ bool CPDF_ImageRenderer::StartRenderDIBBase() {
++  VeloceCanonicalRenderProfileScope prepare_scope(
++      VeloceCanonicalRenderPhase::kImagePrepare);
+   if (!loader_->GetBitmap()) {
+     return false;
+   }
+@@ -321,6 +327,8 @@ const CPDF_RenderOptions& CPDF_ImageRenderer::GetRenderOptions() const {
+ }
+ 
+ bool CPDF_ImageRenderer::DrawPatternImage() {
++  VeloceCanonicalRenderProfileScope pattern_scope(
++      VeloceCanonicalRenderPhase::kImagePatternPaint);
+ #if BUILDFLAG(IS_WIN)
+   if (IsPrinting()) {
+     result_ = false;
+@@ -369,6 +377,8 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
+ }
+ 
+ bool CPDF_ImageRenderer::DrawMaskedImage() {
++  VeloceCanonicalRenderProfileScope mask_scope(
++      VeloceCanonicalRenderPhase::kImageMaskPaint);
+ #if BUILDFLAG(IS_WIN)
+   if (IsPrinting()) {
+     result_ = false;
+@@ -417,6 +427,8 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
+ }
+ 
+ bool CPDF_ImageRenderer::StartDIBBase() {
++  VeloceCanonicalRenderProfileScope device_scope(
++      VeloceCanonicalRenderPhase::kImageDevice);
+   if (dibbase_->GetBPP() > 1) {
+     FX_SAFE_SIZE_T image_size = dibbase_->GetBPP();
+     image_size /= 8;
+@@ -532,6 +544,8 @@ bool CPDF_ImageRenderer::StartDIBBaseFallback() {
+ #endif  // BUILDFLAG(IS_WIN)
+ 
+ bool CPDF_ImageRenderer::StartBitmapAlpha() {
++  VeloceCanonicalRenderProfileScope device_scope(
++      VeloceCanonicalRenderPhase::kImageDevice);
+   if (dibbase_->IsOpaqueImage()) {
+     CFX_Path path;
+     path.AppendRect(0, 0, 1, 1);
+@@ -599,8 +613,12 @@ bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
+ }
+ 
+ bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
+-  if (loader_->Continue(pPause)) {
+-    return true;
++  {
++    VeloceCanonicalRenderProfileScope load_scope(
++        VeloceCanonicalRenderPhase::kImageLoad);
++    if (loader_->Continue(pPause)) {
++      return true;
++    }
+   }
+ 
+   if (!StartRenderDIBBase()) {
+@@ -615,12 +633,16 @@ bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
+ }
+ 
+ bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
++  VeloceCanonicalRenderProfileScope device_scope(
++      VeloceCanonicalRenderPhase::kImageDevice);
+   return render_status_->GetRenderDevice()->ContinueDIBits(continuation_.get(),
+                                                            pPause);
+ }
+ 
+ #if BUILDFLAG(IS_WIN)
+ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
++  VeloceCanonicalRenderProfileScope device_scope(
++      VeloceCanonicalRenderPhase::kImageDevice);
+   if (transformer_->Continue(pPause)) {
+     return true;
+   }
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 48855f6df..5d39eae45 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -64,6 +64,22 @@ void CPDF_ProgressiveRenderer::LogCanonicalProfile(const char* result) {
+     return ProfileMicros(
+         canonical_profile_.phase_ns[static_cast<size_t>(phase)]);
+   };
++  const auto phase_calls = [this](VeloceCanonicalRenderPhase phase) {
++    return canonical_profile_.phase_calls[static_cast<size_t>(phase)];
++  };
++  const uint64_t image_us = ProfileMicros(
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImage)] +
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImageLoad)] +
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImagePrepare)] +
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImageMaskPaint)] +
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImagePatternPaint)] +
++      canonical_profile_.phase_ns[static_cast<size_t>(
++          VeloceCanonicalRenderPhase::kImageDevice)]);
+   const uint64_t active_us = ProfileMicros(canonical_profile_.active_ns);
+   const uint64_t accounted_us =
+       ProfileMicros(canonical_profile_.AccountedNs());
+@@ -77,14 +93,19 @@ void CPDF_ProgressiveRenderer::LogCanonicalProfile(const char* result) {
+   }
+   __android_log_print(
+       ANDROID_LOG_INFO, "VeloceCanonicalProfile",
+-      "revision=r25-18-0148 event=render result=%s route=%s "
++      "revision=r25-normal-exp-0002 event=render result=%s route=%s "
+       "activeUs=%llu traversalUs=%llu setupUs=%llu clipUs=%llu "
+       "transparencyUs=%llu textUs=%llu pathUs=%llu imageUs=%llu "
++      "imageOtherUs=%llu imageLoadUs=%llu imagePrepareUs=%llu "
++      "imageMaskPaintUs=%llu imagePatternPaintUs=%llu imageDeviceUs=%llu "
+       "shadingUs=%llu formUs=%llu backgroundUs=%llu softMaskUs=%llu "
+       "acceleratorUs=%llu parseUs=%llu continueCalls=%llu pauses=%llu "
+       "layers=%llu objects=%llu inactive=%llu boundsCulled=%llu "
+       "rendered=%llu clipCalls=%llu transparencyCalls=%llu textCalls=%llu "
+-      "pathCalls=%llu imageCalls=%llu shadingCalls=%llu formCalls=%llu "
++      "pathCalls=%llu imageCalls=%llu imageLoadCalls=%llu "
++      "imagePrepareCalls=%llu imageMaskPaintCalls=%llu "
++      "imagePatternPaintCalls=%llu imageDeviceCalls=%llu shadingCalls=%llu "
++      "formCalls=%llu "
+       "backgroundCalls=%llu softMaskCalls=%llu cancelChecks=%llu "
+       "cancelObserved=%d depthOverflow=%d",
+       result, route, static_cast<unsigned long long>(active_us),
+@@ -99,8 +120,19 @@ void CPDF_ProgressiveRenderer::LogCanonicalProfile(const char* result) {
+           phase_us(VeloceCanonicalRenderPhase::kText)),
+       static_cast<unsigned long long>(
+           phase_us(VeloceCanonicalRenderPhase::kPath)),
++      static_cast<unsigned long long>(image_us),
+       static_cast<unsigned long long>(
+           phase_us(VeloceCanonicalRenderPhase::kImage)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImageLoad)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImagePrepare)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImageMaskPaint)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImagePatternPaint)),
++      static_cast<unsigned long long>(
++          phase_us(VeloceCanonicalRenderPhase::kImageDevice)),
+       static_cast<unsigned long long>(
+           phase_us(VeloceCanonicalRenderPhase::kShading)),
+       static_cast<unsigned long long>(
+@@ -134,8 +166,17 @@ void CPDF_ProgressiveRenderer::LogCanonicalProfile(const char* result) {
+           canonical_profile_.phase_calls[static_cast<size_t>(
+               VeloceCanonicalRenderPhase::kPath)]),
+       static_cast<unsigned long long>(
+-          canonical_profile_.phase_calls[static_cast<size_t>(
+-              VeloceCanonicalRenderPhase::kImage)]),
++          phase_calls(VeloceCanonicalRenderPhase::kImage)),
++      static_cast<unsigned long long>(
++          phase_calls(VeloceCanonicalRenderPhase::kImageLoad)),
++      static_cast<unsigned long long>(
++          phase_calls(VeloceCanonicalRenderPhase::kImagePrepare)),
++      static_cast<unsigned long long>(
++          phase_calls(VeloceCanonicalRenderPhase::kImageMaskPaint)),
++      static_cast<unsigned long long>(
++          phase_calls(VeloceCanonicalRenderPhase::kImagePatternPaint)),
++      static_cast<unsigned long long>(
++          phase_calls(VeloceCanonicalRenderPhase::kImageDevice)),
+       static_cast<unsigned long long>(
+           canonical_profile_.phase_calls[static_cast<size_t>(
+               VeloceCanonicalRenderPhase::kShading)]),
+diff --git a/core/fpdfapi/render/veloce_canonical_render_profile.h b/core/fpdfapi/render/veloce_canonical_render_profile.h
+index aa5dd07bb..2bd2aba38 100644
+--- a/core/fpdfapi/render/veloce_canonical_render_profile.h
++++ b/core/fpdfapi/render/veloce_canonical_render_profile.h
+@@ -17,6 +17,11 @@ enum class VeloceCanonicalRenderPhase : uint8_t {
+   kText,
+   kPath,
+   kImage,
++  kImageLoad,
++  kImagePrepare,
++  kImageMaskPaint,
++  kImagePatternPaint,
++  kImageDevice,
+   kShading,
+   kForm,
+   kBackground,
