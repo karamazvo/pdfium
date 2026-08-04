@@ -1,0 +1,237 @@
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index abe248e5a..00f1885e1 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <optional>
+ #include <utility>
+ #include <vector>
+ 
+@@ -20,8 +21,11 @@
+ #include "core/fpdfapi/parser/cpdf_document.h"
+ #include "core/fpdfapi/parser/cpdf_stream.h"
+ #include "core/fxcrt/check.h"
++#include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxcrt/retain_ptr.h"
++#include "core/fxcrt/span_util.h"
+ #include "core/fxcrt/stl_util.h"
++#include "core/fxge/calculate_pitch.h"
+ #include "core/fxge/dib/cfx_dibbase.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ 
+@@ -44,6 +48,143 @@ struct CacheInfo {
+   bool operator<(const CacheInfo& other) const { return time < other.time; }
+ };
+ 
++// Realizes the canonical decoded bitmap as its consumer requests scanlines.
++// The prefix invariant avoids decoder rewinds and lets a progressive stretcher
++// consume each newly decoded row before the next row is produced.
++class CanonicalRowCache final : public CFX_DIBBase {
++ public:
++  static RetainPtr<CFX_DIBBase> Create(RetainPtr<CFX_DIBBase> image) {
++    // A source with an existing decoded bitmap is already realized. Wrapping
++    // it would retain two full decoded buffers until the row cache completes.
++    if (image->GetEstimatedImageMemoryBurden() != 0) {
++      return nullptr;
++    }
++    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
++    if (!bitmap->Create(image->GetWidth(), image->GetHeight(),
++                        image->GetFormat())) {
++      return nullptr;
++    }
++    bitmap->SetPalette(image->GetPaletteSpan());
++
++    std::optional<uint32_t> copy_bytes = fxge::CalculatePitch8(
++        image->GetBPP(), /*components=*/1, image->GetWidth());
++    if (!copy_bytes.has_value()) {
++      return nullptr;
++    }
++    copy_bytes = std::min(copy_bytes.value(), image->GetPitch());
++    return pdfium::MakeRetain<CanonicalRowCache>(
++        std::move(image), std::move(bitmap), copy_bytes.value());
++  }
++
++  CanonicalRowCache(RetainPtr<CFX_DIBBase> image,
++                    RetainPtr<CFX_DIBitmap> bitmap,
++                    uint32_t copy_bytes)
++      : source_(std::move(image)),
++        bitmap_(std::move(bitmap)),
++        copy_bytes_(copy_bytes) {
++    SetFormat(bitmap_->GetFormat());
++    SetWidth(bitmap_->GetWidth());
++    SetHeight(bitmap_->GetHeight());
++    SetPitch(bitmap_->GetPitch());
++    SetPalette(bitmap_->GetPaletteSpan());
++  }
++
++  pdfium::span<const uint8_t> GetScanline(int line) const override {
++    if (line < 0 || line >= GetHeight()) {
++      return {};
++    }
++    if (line < cached_rows_) {
++      return bitmap_->GetScanline(line);
++    }
++    while (cached_rows_ < line) {
++      if (!CacheNextRow()) {
++        return {};
++      }
++    }
++
++    std::optional<pdfium::span<const uint8_t>> decoded_row =
++        DecodeAndCacheNextRow();
++    if (!decoded_row.has_value()) {
++      return {};
++    }
++    if (cached_rows_ == GetHeight()) {
++      source_.Reset();
++      return bitmap_->GetScanline(line);
++    }
++    return decoded_row.value();
++  }
++
++  bool SkipToScanline(int line, PauseIndicatorIface* pause) const override {
++    const int target = std::clamp(line, 0, GetHeight());
++    while (cached_rows_ < target) {
++      if (!CacheNextRow()) {
++        return false;
++      }
++      if (pause && pause->NeedToPauseNow()) {
++        return true;
++      }
++    }
++    return false;
++  }
++
++  size_t GetEstimatedImageMemoryBurden() const override {
++    size_t bytes = CFX_DIBBase::GetEstimatedImageMemoryBurden() +
++                   bitmap_->GetEstimatedImageMemoryBurden();
++    if (source_) {
++      bytes += source_->GetEstimatedImageMemoryBurden();
++    }
++    return bytes;
++  }
++
++#if BUILDFLAG(IS_WIN) || defined(PDF_USE_SKIA)
++  RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const override {
++    return CacheThroughRow(GetHeight() - 1) ? bitmap_ : nullptr;
++  }
++#endif
++
++ private:
++  ~CanonicalRowCache() override = default;
++
++  bool CacheThroughRow(int line) const {
++    while (cached_rows_ <= line) {
++      if (!CacheNextRow()) {
++        return false;
++      }
++    }
++    return true;
++  }
++
++  bool CacheNextRow() const {
++    if (!DecodeAndCacheNextRow().has_value()) {
++      return false;
++    }
++    if (cached_rows_ == GetHeight()) {
++      source_.Reset();
++    }
++    return true;
++  }
++
++  std::optional<pdfium::span<const uint8_t>> DecodeAndCacheNextRow() const {
++    if (!source_ || cached_rows_ >= GetHeight()) {
++      return std::nullopt;
++    }
++    const pdfium::span<const uint8_t> source_row =
++        source_->GetScanline(cached_rows_);
++    if (source_row.size() < copy_bytes_) {
++      return std::nullopt;
++    }
++    fxcrt::spancpy(bitmap_->GetWritableScanline(cached_rows_),
++                   source_row.first(copy_bytes_));
++    ++cached_rows_;
++    return source_row;
++  }
++
++  mutable RetainPtr<CFX_DIBBase> source_;
++  RetainPtr<CFX_DIBitmap> const bitmap_;
++  const uint32_t copy_bytes_;
++  mutable int cached_rows_ = 0;
++};
++
+ #if defined(PDF_USE_SKIA)
+ // Wrapper around a `CFX_DIBBase` that memoizes `RealizeSkImage()`. This is only
+ // safe if the underlying `CFX_DIBBase` is not mutable.
+@@ -107,7 +248,11 @@ RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
+     return pdfium::MakeRetain<CachedImage>(std::move(image));
+   }
+ #endif  // defined(PDF_USE_SKIA)
+-  return realize_hint ? image->Realize() : image;
++  if (!realize_hint) {
++    return image;
++  }
++  RetainPtr<CFX_DIBBase> row_cache = CanonicalRowCache::Create(image);
++  return row_cache ? std::move(row_cache) : image->Realize();
+ }
+ 
+ }  // namespace
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+index eed9b1ccb..8aab6bead 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+@@ -4,11 +4,13 @@
+ 
+ #include "core/fpdfapi/page/cpdf_pageimagecache.h"
+ 
++#include <algorithm>
+ #include <memory>
+ #include <string>
+ #include <utility>
+ 
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
++#include "core/fpdfapi/page/cpdf_dib.h"
+ #include "core/fpdfapi/page/cpdf_image.h"
+ #include "core/fpdfapi/page/cpdf_imageobject.h"
+ #include "core/fpdfapi/page/cpdf_page.h"
+@@ -66,6 +68,37 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+ 
+     RetainPtr<CFX_DIBBase> bitmap_small = page_image_cache->DetachCurBitmap();
+ 
++    RetainPtr<CPDF_DIB> reference_dib = image->GetImage()->CreateNewDIB();
++    CPDF_DIB::LoadState reference_state = reference_dib->StartLoadDIBBase(
++        true, nullptr, page->GetMutablePageResources(), true,
++        CPDF_ColorSpace::Family::kICCBased, false, {50, 50});
++    while (reference_state == CPDF_DIB::LoadState::kContinue) {
++      reference_state = reference_dib->ContinueLoadDIBBase(nullptr);
++    }
++    ASSERT_EQ(CPDF_DIB::LoadState::kSuccess, reference_state);
++    RetainPtr<CFX_DIBitmap> reference_bitmap = reference_dib->Realize();
++    ASSERT_TRUE(reference_bitmap);
++    ASSERT_EQ(reference_bitmap->GetWidth(), bitmap_small->GetWidth());
++    ASSERT_EQ(reference_bitmap->GetHeight(), bitmap_small->GetHeight());
++
++    // Exercise a non-sequential consumer before full realization. The cache
++    // still produces canonical rows and retains a single forward prefix.
++    const int middle_row = bitmap_small->GetHeight() / 2;
++    const pdfium::span<const uint8_t> middle_scanline =
++        bitmap_small->GetScanline(middle_row);
++    ASSERT_LE(middle_scanline.size(),
++              reference_bitmap->GetScanline(middle_row).size());
++    EXPECT_TRUE(std::ranges::equal(
++        middle_scanline,
++        reference_bitmap->GetScanline(middle_row).first(
++            middle_scanline.size())));
++    EXPECT_TRUE(std::ranges::equal(bitmap_small->GetScanline(0),
++                                   reference_bitmap->GetScanline(0)));
++    RetainPtr<CFX_DIBitmap> realized_small = bitmap_small->Realize();
++    ASSERT_TRUE(realized_small);
++    EXPECT_TRUE(std::ranges::equal(realized_small->GetBuffer(),
++                                   reference_bitmap->GetBuffer()));
++
+     // And render with large scale.
+     should_continue = page_image_cache->StartGetCachedBitmap(
+         image->GetImage(), nullptr, page->GetMutablePageResources(), true,
