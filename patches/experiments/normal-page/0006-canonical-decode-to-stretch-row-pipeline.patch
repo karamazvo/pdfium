@@ -197,6 +197,13 @@ index eed9b1ccb..8aab6bead 100644
  #include "core/fpdfapi/page/cpdf_image.h"
  #include "core/fpdfapi/page/cpdf_imageobject.h"
  #include "core/fpdfapi/page/cpdf_page.h"
+@@ -17,5 +19,6 @@
+ #include "core/fpdfapi/parser/cpdf_parser.h"
+ #include "core/fpdfapi/render/cpdf_docrenderdata.h"
+ #include "core/fxcrt/cfx_fileaccess_stream.h"
++#include "core/fxge/dib/cfx_dibitmap.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ #include "testing/utils/path_service.h"
 @@ -66,6 +68,37 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
  
      RetainPtr<CFX_DIBBase> bitmap_small = page_image_cache->DetachCurBitmap();
