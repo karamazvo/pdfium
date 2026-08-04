@@ -1,0 +1,693 @@
+diff --git a/core/fxge/dib/cstretchengine.cpp b/core/fxge/dib/cstretchengine.cpp
+index df5920142..2fe7c0bd7 100644
+--- a/core/fxge/dib/cstretchengine.cpp
++++ b/core/fxge/dib/cstretchengine.cpp
+@@ -28,6 +28,10 @@ static_assert(
+ 
+ namespace {
+ 
++constexpr size_t kMaxCanonicalIntermediateBytes = 1024 * 1024;
++constexpr size_t kMaxBoundedIntermediateBytes = 1024 * 1024;
++constexpr int kStretchPauseRows = 10;
++
+ size_t TotalBytesForWeightCount(size_t weight_count) {
+   // Always room for one weight even for empty ranges due to declaration
+   // of weights_[1] in the header. Don't shrink below this since
+@@ -191,7 +195,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
+                                int dest_height,
+                                const FX_RECT& clip_rect,
+                                const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+-                               const FXDIB_ResampleOptions& options)
++                               const FXDIB_ResampleOptions& options,
++                               bool allow_bounded_rows)
+     : dest_format_(dest_format),
+       dest_bpp_(GetBppFromFormat(dest_format)),
+       src_bpp_(pSrcBitmap->GetBPP()),
+@@ -203,7 +208,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
+       dest_bitmap_(pDestBitmap),
+       dest_width_(dest_width),
+       dest_height_(dest_height),
+-      dest_clip_(clip_rect) {
++      dest_clip_(clip_rect),
++      allow_bounded_rows_(allow_bounded_rows) {
+   if (has_alpha_) {
+     // TODO(crbug.com/42271020): Consider adding support for
+     // `FXDIB_Format::kBgraPremul`
+@@ -280,6 +286,10 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
+ CStretchEngine::~CStretchEngine() = default;
+ 
+ bool CStretchEngine::Continue(PauseIndicatorIface* pPause) {
++  if (state_ == State::kBoundedRows) {
++    return ContinueBoundedRows(pPause);
++  }
++
+   while (state_ == State::kHorizontal) {
+     if (ContinueStretchHorz(pPause)) {
+       return true;
+@@ -302,20 +312,202 @@ bool CStretchEngine::StartStretchHorz() {
+   if (size == 0) {
+     return false;
+   }
+-  inter_buf_ = FixedSizeDataVector<uint8_t>::TryZeroed(size);
+-  if (inter_buf_.empty()) {
+-    return false;
+-  }
+   if (!weight_table_.CalculateWeights(
+           dest_width_, dest_clip_.left, dest_clip_.right, src_width_,
+           src_clip_.left, src_clip_.right, resample_options_)) {
+     return false;
+   }
++  if (allow_bounded_rows_ && size > kMaxCanonicalIntermediateBytes &&
++      TryStartBoundedRows(size)) {
++    return true;
++  }
++
++  inter_buf_ = FixedSizeDataVector<uint8_t>::TryZeroed(size);
++  if (inter_buf_.empty()) {
++    return false;
++  }
+   cur_row_ = src_clip_.top;
+   state_ = State::kHorizontal;
+   return true;
+ }
+ 
++bool CStretchEngine::TryStartBoundedRows(size_t full_intermediate_bytes) {
++  if (dest_height_ <= 0 || dest_clip_.IsEmpty() || src_clip_.IsEmpty()) {
++    return false;
++  }
++  if (!vertical_weight_table_.CalculateWeights(
++          dest_height_, dest_clip_.top, dest_clip_.bottom, src_height_,
++          src_clip_.top, src_clip_.bottom, resample_options_)) {
++    return false;
++  }
++
++  size_t max_source_rows = 0;
++  int previous_start = src_clip_.top;
++  int previous_end = src_clip_.top - 1;
++  for (int row = dest_clip_.top; row < dest_clip_.bottom; ++row) {
++    const PixelWeight* weights = vertical_weight_table_.GetPixelWeight(row);
++    if (weights->src_start_ < src_clip_.top ||
++        weights->src_end_ >= src_clip_.bottom ||
++        weights->src_start_ > weights->src_end_ ||
++        weights->src_start_ < previous_start ||
++        weights->src_end_ < previous_end) {
++      return false;
++    }
++    previous_start = weights->src_start_;
++    previous_end = weights->src_end_;
++    max_source_rows =
++        std::max(max_source_rows,
++                 static_cast<size_t>(weights->src_end_ -
++                                     weights->src_start_ + 1));
++  }
++  if (max_source_rows == 0) {
++    return false;
++  }
++
++  FX_SAFE_SIZE_T safe_size = max_source_rows;
++  safe_size *= inter_pitch_;
++  const size_t bounded_bytes = safe_size.ValueOrDefault(0);
++  if (bounded_bytes == 0 ||
++      bounded_bytes > kMaxBoundedIntermediateBytes ||
++      bounded_bytes >= full_intermediate_bytes) {
++    return false;
++  }
++
++  inter_buf_ = FixedSizeDataVector<uint8_t>::TryZeroed(bounded_bytes);
++  if (inter_buf_.empty()) {
++    return false;
++  }
++  bounded_row_capacity_ = max_source_rows;
++  cur_row_ = dest_clip_.top;
++  next_bounded_source_row_ = src_clip_.top;
++  uses_bounded_rows_ = true;
++  state_ = State::kBoundedRows;
++  return true;
++}
++
++pdfium::span<uint8_t> CStretchEngine::GetBoundedIntermediateRow(
++    int source_row) {
++  CHECK_GT(bounded_row_capacity_, 0u);
++  CHECK_GE(source_row, src_clip_.top);
++  const size_t row_index =
++      static_cast<size_t>(source_row - src_clip_.top) % bounded_row_capacity_;
++  return inter_buf_.subspan(row_index * inter_pitch_, inter_pitch_);
++}
++
++void CStretchEngine::StretchHorizontalScanline(
++    pdfium::span<const uint8_t> src_scan,
++    pdfium::span<uint8_t> dest_span) {
++  const int bytes_per_pixel = dest_bpp_ / 8;
++  size_t dest_span_index = 0;
++  switch (trans_method_) {
++    case TransformMethod::k1BppTo8Bpp:
++    case TransformMethod::k1BppToManyBpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        uint32_t dest_a = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          UNSAFE_TODO({
++            if (src_scan[j / 8] & (1 << (7 - j % 8))) {
++              dest_a += pixel_weight * 255;
++            }
++          });
++        }
++        dest_span[dest_span_index++] = PixelFromFixed(dest_a);
++      }
++      break;
++    }
++    case TransformMethod::k8BppTo8Bpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        uint32_t dest_a = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          UNSAFE_TODO({ dest_a += pixel_weight * src_scan[j]; });
++        }
++        dest_span[dest_span_index++] = PixelFromFixed(dest_a);
++      }
++      break;
++    }
++    case TransformMethod::k8BppToManyBpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        uint32_t dest_r = 0;
++        uint32_t dest_g = 0;
++        uint32_t dest_b = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          UNSAFE_TODO({
++            FX_ARGB argb = src_palette_[src_scan[j]];
++            if (dest_format_ == FXDIB_Format::kBgr) {
++              dest_r += pixel_weight * static_cast<uint8_t>(argb >> 16);
++              dest_g += pixel_weight * static_cast<uint8_t>(argb >> 8);
++              dest_b += pixel_weight * static_cast<uint8_t>(argb);
++            } else {
++              dest_b += pixel_weight * static_cast<uint8_t>(argb >> 24);
++              dest_g += pixel_weight * static_cast<uint8_t>(argb >> 16);
++              dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
++            }
++          });
++        }
++        dest_span[dest_span_index++] = PixelFromFixed(dest_b);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_g);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_r);
++      }
++      break;
++    }
++    case TransformMethod::kManyBpptoManyBpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        uint32_t dest_r = 0;
++        uint32_t dest_g = 0;
++        uint32_t dest_b = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          UNSAFE_TODO({
++            const uint8_t* src_pixel = src_scan.data() + j * bytes_per_pixel;
++            dest_b += pixel_weight * (*src_pixel++);
++            dest_g += pixel_weight * (*src_pixel++);
++            dest_r += pixel_weight * (*src_pixel);
++          });
++        }
++        dest_span[dest_span_index++] = PixelFromFixed(dest_b);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_g);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_r);
++        dest_span_index += bytes_per_pixel - 3;
++      }
++      break;
++    }
++    case TransformMethod::kManyBpptoManyBppWithAlpha: {
++      DCHECK(has_alpha_);
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        uint32_t dest_a = 0;
++        uint32_t dest_r = 0;
++        uint32_t dest_g = 0;
++        uint32_t dest_b = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          UNSAFE_TODO({
++            const uint8_t* src_pixel = src_scan.data() + j * bytes_per_pixel;
++            uint32_t pixel_weight =
++                weights->GetWeightForPosition(j) * src_pixel[3] / 255;
++            dest_b += pixel_weight * (*src_pixel++);
++            dest_g += pixel_weight * (*src_pixel++);
++            dest_r += pixel_weight * (*src_pixel);
++            dest_a += pixel_weight;
++          });
++        }
++        dest_span[dest_span_index++] = PixelFromFixed(dest_b);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_g);
++        dest_span[dest_span_index++] = PixelFromFixed(dest_r);
++        dest_span[dest_span_index] = PixelFromFixed(255 * dest_a);
++        dest_span_index += bytes_per_pixel - 3;
++      }
++      break;
++    }
++  }
++}
++
+ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
+   if (!dest_width_) {
+     return false;
+@@ -324,131 +516,150 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
+     return true;
+   }
+ 
+-  int Bpp = dest_bpp_ / 8;
+-  static const int kStrechPauseRows = 10;
+-  int rows_to_go = kStrechPauseRows;
++  int rows_to_go = kStretchPauseRows;
+   for (; cur_row_ < src_clip_.bottom; ++cur_row_) {
+     if (rows_to_go == 0) {
+       if (pPause && pPause->NeedToPauseNow()) {
+         return true;
+       }
+ 
+-      rows_to_go = kStrechPauseRows;
++      rows_to_go = kStretchPauseRows;
+     }
+ 
+-    const uint8_t* src_scan = source_->GetScanline(cur_row_).data();
++    pdfium::span<const uint8_t> src_scan = source_->GetScanline(cur_row_);
+     pdfium::span<uint8_t> dest_span = inter_buf_.subspan(
+         (cur_row_ - src_clip_.top) * inter_pitch_, inter_pitch_);
+-    size_t dest_span_index = 0;
+-    // TODO(npm): reduce duplicated code here
+-    switch (trans_method_) {
+-      case TransformMethod::k1BppTo8Bpp:
+-      case TransformMethod::k1BppToManyBpp: {
+-        for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+-          const PixelWeight* pWeights = weight_table_.GetPixelWeight(col);
+-          uint32_t dest_a = 0;
+-          for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
+-            uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
+-            UNSAFE_TODO({
+-              if (src_scan[j / 8] & (1 << (7 - j % 8))) {
+-                dest_a += pixel_weight * 255;
+-              }
+-            });
+-          }
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_a);
++    StretchHorizontalScanline(src_scan, dest_span);
++    rows_to_go--;
++  }
++  return false;
++}
++
++void CStretchEngine::StretchBoundedVertScanline(
++    const PixelWeight* weights) {
++  const int dest_bytes_per_pixel = dest_bpp_ / 8;
++  uint8_t* dest_scan = dest_scanline_.data();
++  switch (trans_method_) {
++    case TransformMethod::k1BppTo8Bpp:
++    case TransformMethod::k1BppToManyBpp:
++    case TransformMethod::k8BppTo8Bpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const size_t pixel_offset =
++            static_cast<size_t>(col - dest_clip_.left) * dest_bytes_per_pixel;
++        uint32_t dest_a = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          const pdfium::span<const uint8_t> src_row =
++              GetBoundedIntermediateRow(j);
++          dest_a += weights->GetWeightForPosition(j) * src_row[pixel_offset];
+         }
+-        break;
++        UNSAFE_TODO({
++          *dest_scan = PixelFromFixed(dest_a);
++          dest_scan += dest_bytes_per_pixel;
++        });
+       }
+-      case TransformMethod::k8BppTo8Bpp: {
+-        for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+-          const PixelWeight* pWeights = weight_table_.GetPixelWeight(col);
+-          uint32_t dest_a = 0;
+-          for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
+-            uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
+-            UNSAFE_TODO({ dest_a += pixel_weight * src_scan[j]; });
+-          }
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_a);
++      break;
++    }
++    case TransformMethod::k8BppToManyBpp:
++    case TransformMethod::kManyBpptoManyBpp: {
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const size_t pixel_offset =
++            static_cast<size_t>(col - dest_clip_.left) * dest_bytes_per_pixel;
++        uint32_t dest_r = 0;
++        uint32_t dest_g = 0;
++        uint32_t dest_b = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          const pdfium::span<const uint8_t> src_pixel =
++              GetBoundedIntermediateRow(j).subspan(pixel_offset, 3u);
++          const uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          dest_b += pixel_weight * src_pixel[0];
++          dest_g += pixel_weight * src_pixel[1];
++          dest_r += pixel_weight * src_pixel[2];
+         }
+-        break;
++        UNSAFE_TODO({
++          dest_scan[0] = PixelFromFixed(dest_b);
++          dest_scan[1] = PixelFromFixed(dest_g);
++          dest_scan[2] = PixelFromFixed(dest_r);
++          dest_scan += dest_bytes_per_pixel;
++        });
+       }
+-      case TransformMethod::k8BppToManyBpp: {
+-        for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+-          const PixelWeight* pWeights = weight_table_.GetPixelWeight(col);
+-          uint32_t dest_r = 0;
+-          uint32_t dest_g = 0;
+-          uint32_t dest_b = 0;
+-          for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
+-            uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
+-            UNSAFE_TODO({
+-              FX_ARGB argb = src_palette_[src_scan[j]];
+-              if (dest_format_ == FXDIB_Format::kBgr) {
+-                dest_r += pixel_weight * static_cast<uint8_t>(argb >> 16);
+-                dest_g += pixel_weight * static_cast<uint8_t>(argb >> 8);
+-                dest_b += pixel_weight * static_cast<uint8_t>(argb);
+-              } else {
+-                dest_b += pixel_weight * static_cast<uint8_t>(argb >> 24);
+-                dest_g += pixel_weight * static_cast<uint8_t>(argb >> 16);
+-                dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
+-              }
+-            });
+-          }
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
++      break;
++    }
++    case TransformMethod::kManyBpptoManyBppWithAlpha: {
++      DCHECK(has_alpha_);
++      for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++        const size_t pixel_offset =
++            static_cast<size_t>(col - dest_clip_.left) * dest_bytes_per_pixel;
++        uint32_t dest_a = 0;
++        uint32_t dest_r = 0;
++        uint32_t dest_g = 0;
++        uint32_t dest_b = 0;
++        for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
++          const pdfium::span<const uint8_t> src_pixel =
++              GetBoundedIntermediateRow(j).subspan(pixel_offset, 4u);
++          const uint32_t pixel_weight = weights->GetWeightForPosition(j);
++          dest_b += pixel_weight * src_pixel[0];
++          dest_g += pixel_weight * src_pixel[1];
++          dest_r += pixel_weight * src_pixel[2];
++          dest_a += pixel_weight * src_pixel[3];
+         }
+-        break;
+-      }
+-      case TransformMethod::kManyBpptoManyBpp: {
+-        for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+-          const PixelWeight* pWeights = weight_table_.GetPixelWeight(col);
+-          uint32_t dest_r = 0;
+-          uint32_t dest_g = 0;
+-          uint32_t dest_b = 0;
+-          for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
+-            uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
+-            UNSAFE_TODO({
+-              const uint8_t* src_pixel = src_scan + j * Bpp;
+-              dest_b += pixel_weight * (*src_pixel++);
+-              dest_g += pixel_weight * (*src_pixel++);
+-              dest_r += pixel_weight * (*src_pixel);
+-            });
+-          }
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
+-          dest_span_index += Bpp - 3;
++        if (dest_a) {
++          const int r = static_cast<uint32_t>(dest_r) * 255 / dest_a;
++          const int g = static_cast<uint32_t>(dest_g) * 255 / dest_a;
++          const int b = static_cast<uint32_t>(dest_b) * 255 / dest_a;
++          UNSAFE_TODO({
++            dest_scan[0] = std::clamp(b, 0, 255);
++            dest_scan[1] = std::clamp(g, 0, 255);
++            dest_scan[2] = std::clamp(r, 0, 255);
++          });
+         }
+-        break;
++        UNSAFE_TODO({
++          dest_scan[3] = PixelFromFixed(dest_a);
++          dest_scan += dest_bytes_per_pixel;
++        });
+       }
+-      case TransformMethod::kManyBpptoManyBppWithAlpha: {
+-        DCHECK(has_alpha_);
+-        for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+-          const PixelWeight* pWeights = weight_table_.GetPixelWeight(col);
+-          uint32_t dest_a = 0;
+-          uint32_t dest_r = 0;
+-          uint32_t dest_g = 0;
+-          uint32_t dest_b = 0;
+-          for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
+-            UNSAFE_TODO({
+-              const uint8_t* src_pixel = src_scan + j * Bpp;
+-              uint32_t pixel_weight =
+-                  pWeights->GetWeightForPosition(j) * src_pixel[3] / 255;
+-              dest_b += pixel_weight * (*src_pixel++);
+-              dest_g += pixel_weight * (*src_pixel++);
+-              dest_r += pixel_weight * (*src_pixel);
+-              dest_a += pixel_weight;
+-            });
+-          }
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+-          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
+-          dest_span[dest_span_index] = PixelFromFixed(255 * dest_a);
+-          dest_span_index += Bpp - 3;
++      break;
++    }
++  }
++}
++
++bool CStretchEngine::ContinueBoundedRows(PauseIndicatorIface* pPause) {
++  int work_rows_until_pause = kStretchPauseRows;
++  while (cur_row_ < dest_clip_.bottom) {
++    const PixelWeight* weights =
++        vertical_weight_table_.GetPixelWeight(cur_row_);
++    if (next_bounded_source_row_ < weights->src_start_) {
++      if (source_->SkipToScanline(weights->src_start_, pPause)) {
++        return true;
++      }
++      next_bounded_source_row_ = weights->src_start_;
++    }
++    if (next_bounded_source_row_ <= weights->src_end_ &&
++        source_->SkipToScanline(next_bounded_source_row_, pPause)) {
++      return true;
++    }
++    while (next_bounded_source_row_ <= weights->src_end_) {
++      const pdfium::span<const uint8_t> src_scan =
++          source_->GetScanline(next_bounded_source_row_);
++      StretchHorizontalScanline(
++          src_scan, GetBoundedIntermediateRow(next_bounded_source_row_));
++      ++next_bounded_source_row_;
++      if (--work_rows_until_pause == 0) {
++        if (pPause && pPause->NeedToPauseNow()) {
++          return true;
+         }
+-        break;
++        work_rows_until_pause = kStretchPauseRows;
+       }
+     }
+-    rows_to_go--;
++
++    StretchBoundedVertScanline(weights);
++    dest_bitmap_->ComposeScanline(cur_row_ - dest_clip_.top, dest_scanline_);
++    ++cur_row_;
++    if (--work_rows_until_pause == 0) {
++      if (pPause && pPause->NeedToPauseNow()) {
++        return true;
++      }
++      work_rows_until_pause = kStretchPauseRows;
++    }
+   }
+   return false;
+ }
+diff --git a/core/fxge/dib/cstretchengine.h b/core/fxge/dib/cstretchengine.h
+index e56411bd9..ec5772bdb 100644
+--- a/core/fxge/dib/cstretchengine.h
++++ b/core/fxge/dib/cstretchengine.h
+@@ -16,6 +16,7 @@
+ #include "core/fxcrt/fx_system.h"
+ #include "core/fxcrt/raw_span.h"
+ #include "core/fxcrt/retain_ptr.h"
++#include "core/fxcrt/span.h"
+ #include "core/fxcrt/unowned_ptr.h"
+ #include "core/fxge/dib/fx_dib.h"
+ 
+@@ -118,7 +119,8 @@ class CStretchEngine {
+                  int dest_height,
+                  const FX_RECT& clip_rect,
+                  const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+-                 const FXDIB_ResampleOptions& options);
++                 const FXDIB_ResampleOptions& options,
++                 bool allow_bounded_rows = true);
+   ~CStretchEngine();
+ 
+   bool Continue(PauseIndicatorIface* pPause);
+@@ -129,9 +131,16 @@ class CStretchEngine {
+   const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {
+     return resample_options_;
+   }
++  bool UsesBoundedRowsForTest() const { return uses_bounded_rows_; }
++  size_t IntermediateBytesForTest() const { return inter_buf_.size(); }
+ 
+  private:
+-  enum class State : uint8_t { kInitial, kHorizontal, kVertical };
++  enum class State : uint8_t {
++    kInitial,
++    kHorizontal,
++    kVertical,
++    kBoundedRows
++  };
+ 
+   enum class TransformMethod : uint8_t {
+     k1BppTo8Bpp,
+@@ -142,6 +151,13 @@ class CStretchEngine {
+     kManyBpptoManyBppWithAlpha
+   };
+ 
++  bool TryStartBoundedRows(size_t full_intermediate_bytes);
++  bool ContinueBoundedRows(PauseIndicatorIface* pPause);
++  void StretchHorizontalScanline(pdfium::span<const uint8_t> src_scan,
++                                 pdfium::span<uint8_t> dest_span);
++  void StretchBoundedVertScanline(const PixelWeight* weights);
++  pdfium::span<uint8_t> GetBoundedIntermediateRow(int source_row);
++
+   const FXDIB_Format dest_format_;
+   const int dest_bpp_;
+   const int src_bpp_;
+@@ -161,9 +177,14 @@ class CStretchEngine {
+   int extra_mask_pitch_;
+   FXDIB_ResampleOptions resample_options_;
+   TransformMethod trans_method_;
++  const bool allow_bounded_rows_;
++  bool uses_bounded_rows_ = false;
+   State state_ = State::kInitial;
+   int cur_row_ = 0;
++  int next_bounded_source_row_ = 0;
++  size_t bounded_row_capacity_ = 0;
+   WeightTable weight_table_;
++  WeightTable vertical_weight_table_;
+ };
+ 
+ #endif  // CORE_FXGE_DIB_CSTRETCHENGINE_H_
+diff --git a/core/fxge/dib/cstretchengine_unittest.cpp b/core/fxge/dib/cstretchengine_unittest.cpp
+index d15965bba..8d3958577 100644
+--- a/core/fxge/dib/cstretchengine_unittest.cpp
++++ b/core/fxge/dib/cstretchengine_unittest.cpp
+@@ -4,12 +4,15 @@
+ 
+ #include "core/fxge/dib/cstretchengine.h"
+ 
++#include <algorithm>
+ #include <utility>
+ 
+ #include "core/fpdfapi/page/cpdf_dib.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_number.h"
+ #include "core/fpdfapi/parser/cpdf_stream.h"
++#include "core/fxge/dib/cfx_bitmapstorer.h"
++#include "core/fxge/dib/cfx_dibitmap.h"
+ #include "core/fxge/dib/fx_dib.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
+@@ -66,6 +69,31 @@ void ExecuteStretchTests(const FXDIB_ResampleOptions& options) {
+   }
+ }
+ 
++bool RunStretch(const RetainPtr<const CFX_DIBBase>& source,
++                FXDIB_Format format,
++                int dest_width,
++                int dest_height,
++                const FXDIB_ResampleOptions& options,
++                bool allow_bounded_rows,
++                CFX_BitmapStorer* storer,
++                bool* used_bounded_rows,
++                size_t* intermediate_bytes) {
++  const FX_RECT clip_rect(0, 0, dest_width, dest_height);
++  if (!storer->SetInfo(dest_width, dest_height, format, {})) {
++    return false;
++  }
++  CStretchEngine engine(storer, format, dest_width, dest_height, clip_rect,
++                        source, options, allow_bounded_rows);
++  if (!engine.StartStretchHorz()) {
++    return false;
++  }
++  while (engine.Continue(nullptr)) {
++  }
++  *used_bounded_rows = engine.UsesBoundedRowsForTest();
++  *intermediate_bytes = engine.IntermediateBytesForTest();
++  return true;
++}
++
+ }  // namespace
+ 
+ TEST(CStretchEngine, OverflowInCtor) {
+@@ -150,3 +178,62 @@ TEST(CStretchEngine, TooManyWeights) {
+                                       kTooBigSrcLen, 0, kTooBigSrcLen,
+                                       options));
+ }
++
++TEST(CStretchEngine, BoundedRowsMatchCanonicalPixelsExactly) {
++  static constexpr int kSourceWidth = 1024;
++  static constexpr int kSourceHeight = 1024;
++  static constexpr int kDestWidth = 1200;
++  static constexpr int kDestHeight = 512;
++
++  for (FXDIB_Format format :
++       {FXDIB_Format::k8bppMask, FXDIB_Format::kBgr,
++        FXDIB_Format::kBgra}) {
++    auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++    ASSERT_TRUE(source->Create(kSourceWidth, kSourceHeight, format));
++    pdfium::span<uint8_t> source_buffer = source->GetWritableBuffer();
++    for (size_t i = 0; i < source_buffer.size(); ++i) {
++      source_buffer[i] = static_cast<uint8_t>((i * 29u + i / 17u) & 0xffu);
++    }
++
++    for (bool no_smoothing : {false, true}) {
++      FXDIB_ResampleOptions options;
++      options.bNoSmoothing = no_smoothing;
++      CFX_BitmapStorer bounded_storer;
++      CFX_BitmapStorer canonical_storer;
++      bool used_bounded_rows = false;
++      bool canonical_used_bounded_rows = true;
++      size_t bounded_bytes = 0;
++      size_t canonical_bytes = 0;
++      ASSERT_TRUE(RunStretch(source, format, kDestWidth, kDestHeight, options,
++                             true, &bounded_storer, &used_bounded_rows,
++                             &bounded_bytes));
++      ASSERT_TRUE(RunStretch(source, format, kDestWidth, kDestHeight, options,
++                             false, &canonical_storer,
++                             &canonical_used_bounded_rows, &canonical_bytes));
++
++      EXPECT_TRUE(used_bounded_rows);
++      EXPECT_FALSE(canonical_used_bounded_rows);
++      EXPECT_LT(bounded_bytes, canonical_bytes);
++      EXPECT_LE(bounded_bytes, 1024u * 1024u);
++      ASSERT_TRUE(bounded_storer.GetBitmap());
++      ASSERT_TRUE(canonical_storer.GetBitmap());
++      EXPECT_TRUE(std::ranges::equal(bounded_storer.GetBitmap()->GetBuffer(),
++                                     canonical_storer.GetBitmap()->GetBuffer()))
++          << "format=" << static_cast<int>(format)
++          << " no_smoothing=" << no_smoothing;
++    }
++  }
++}
++
++TEST(CStretchEngine, SmallIntermediateKeepsCanonicalPath) {
++  auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++  ASSERT_TRUE(source->Create(64, 64, FXDIB_Format::kBgr));
++  CFX_BitmapStorer storer;
++  bool used_bounded_rows = true;
++  size_t intermediate_bytes = 0;
++  ASSERT_TRUE(RunStretch(source, FXDIB_Format::kBgr, 32, 32,
++                         FXDIB_ResampleOptions(), true, &storer,
++                         &used_bounded_rows, &intermediate_bytes));
++  EXPECT_FALSE(used_bounded_rows);
++  EXPECT_EQ(32u * 3u * 64u, intermediate_bytes);
++}
