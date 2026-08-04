@@ -1,0 +1,306 @@
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -37,7 +37,6 @@
+ #include "core/fxcrt/zip.h"
+ #include "core/fxge/cfx_defaultrenderdevice.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
+-#include "core/fxge/cfx_gemodule.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/dib/cfx_dibbase.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+@@ -401,14 +400,11 @@
+     return true;
+   }
+ 
+-#if defined(PDF_USE_SKIA)
+-  if (CFX_GEModule::Get()->UseSkiaRenderer() &&
+-      render_status_->GetRenderDevice()->SetBitsWithMask(
++  if (render_status_->GetRenderDevice()->SetBitsWithMask(
+           bitmap_device.GetBitmap(), mask_bitmap, rect.left, rect.top, alpha_,
+           blend_type_)) {
+     return false;
+   }
+-#endif
+   bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
+   bitmap_device.GetBitmap()->MultiplyAlpha(alpha_);
+   render_status_->GetRenderDevice()->SetDIBitsWithBlend(
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -220,17 +220,17 @@
+                               uint32_t color,
+                               const CFX_TextRenderOptions& options);
+   virtual int GetDriverType() const;
+-#if defined(PDF_USE_SKIA)
+-  virtual bool DrawShading(const CPDF_ShadingPattern& pattern,
+-                           const CFX_Matrix& matrix,
+-                           const FX_RECT& clip_rect,
+-                           int alpha);
+   virtual bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                                RetainPtr<const CFX_DIBBase> mask,
+                                int left,
+                                int top,
+                                float alpha,
+                                BlendMode blend_type);
++#if defined(PDF_USE_SKIA)
++  virtual bool DrawShading(const CPDF_ShadingPattern& pattern,
++                           const CFX_Matrix& matrix,
++                           const FX_RECT& clip_rect,
++                           int alpha);
+   virtual void SetGroupKnockout(bool group_knockout);
+ 
+   // For `CFX_SkiaDeviceDriver` only:
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -147,14 +147,6 @@
+   return 0;
+ }
+ 
+-#if defined(PDF_USE_SKIA)
+-bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
+-                                          const CFX_Matrix& matrix,
+-                                          const FX_RECT& clip_rect,
+-                                          int alpha) {
+-  return false;
+-}
+-
+ bool RenderDeviceDriverIface::SetBitsWithMask(
+     RetainPtr<const CFX_DIBBase> bitmap,
+     RetainPtr<const CFX_DIBBase> mask,
+@@ -165,6 +157,14 @@
+   return false;
+ }
+ 
++#if defined(PDF_USE_SKIA)
++bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
++                                          const CFX_Matrix& matrix,
++                                          const FX_RECT& clip_rect,
++                                          int alpha) {
++  return false;
++}
++
+ void RenderDeviceDriverIface::SetGroupKnockout(bool group_knockout) {}
+ 
+ void RenderDeviceDriverIface::SyncInternalBitmaps() {}
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -224,18 +224,18 @@
+   // See RenderDeviceDriverIface methods of the same name.
+   bool MultiplyAlpha(float alpha);
+   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
+-
+-#if defined(PDF_USE_SKIA)
+-  bool DrawShading(const CPDF_ShadingPattern& pattern,
+-                   const CFX_Matrix& matrix,
+-                   const FX_RECT& clip_rect,
+-                   int alpha);
+   bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                        RetainPtr<const CFX_DIBBase> mask,
+                        int left,
+                        int top,
+                        float alpha,
+                        BlendMode blend_type);
++
++#if defined(PDF_USE_SKIA)
++  bool DrawShading(const CPDF_ShadingPattern& pattern,
++                   const CFX_Matrix& matrix,
++                   const FX_RECT& clip_rect,
++                   int alpha);
+   void SyncInternalBitmaps();
+ #endif  // defined(PDF_USE_SKIA)
+ 
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -1166,14 +1166,6 @@
+     RenderDeviceDriverIface::Continuation* continuation,
+     PauseIndicatorIface* pPause) {
+   return device_driver_->ContinueDIBits(continuation, pPause);
+-}
+-
+-#if defined(PDF_USE_SKIA)
+-bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
+-                                   const CFX_Matrix& matrix,
+-                                   const FX_RECT& clip_rect,
+-                                   int alpha) {
+-  return device_driver_->DrawShading(pattern, matrix, clip_rect, alpha);
+ }
+ 
+ bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+@@ -1184,6 +1176,14 @@
+                                        BlendMode blend_type) {
+   return device_driver_->SetBitsWithMask(std::move(bitmap), std::move(mask),
+                                          left, top, alpha, blend_type);
++}
++
++#if defined(PDF_USE_SKIA)
++bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
++                                   const CFX_Matrix& matrix,
++                                   const FX_RECT& clip_rect,
++                                   int alpha) {
++  return device_driver_->DrawShading(pattern, matrix, clip_rect, alpha);
+ }
+ 
+ void CFX_RenderDevice::SyncInternalBitmaps() {
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -125,6 +125,12 @@
+   int GetDriverType() const override;
+   bool MultiplyAlpha(float alpha) override;
+   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) override;
++  bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
++                       RetainPtr<const CFX_DIBBase> mask,
++                       int dest_left,
++                       int dest_top,
++                       float alpha,
++                       BlendMode blend_type) override;
+ 
+   void Clear(uint32_t color);
+ 
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -1816,6 +1816,47 @@
+                                   clip_rect, clip_mask, rgb_byte_order_);
+ }
+ 
++bool CFX_AggDeviceDriver::SetBitsWithMask(
++    RetainPtr<const CFX_DIBBase> bitmap,
++    RetainPtr<const CFX_DIBBase> mask,
++    int dest_left,
++    int dest_top,
++    float alpha,
++    BlendMode blend_type) {
++  // The canonical path first turns this opaque bitmap into BGRA using the
++  // mask, then composites it. For the exact common case below, the existing
++  // scanline compositor can consume the same mask as coverage directly.
++  if (alpha != 1.0f || blend_type != BlendMode::kNormal ||
++      bitmap->GetFormat() != FXDIB_Format::kBgrx ||
++      mask->GetFormat() != FXDIB_Format::k8bppMask ||
++      bitmap->GetWidth() != mask->GetWidth() ||
++      bitmap->GetHeight() != mask->GetHeight() || group_knockout_ ||
++      (clip_rgn_ && clip_rgn_->GetMask())) {
++    return false;
++  }
++  if (bitmap_->GetBuffer().empty()) {
++    return true;
++  }
++
++  const FX_RECT image_rect(dest_left, dest_top,
++                           dest_left + bitmap->GetWidth(),
++                           dest_top + bitmap->GetHeight());
++  FX_RECT draw_rect = image_rect;
++  const FX_RECT device_rect(0, 0, bitmap_->GetWidth(), bitmap_->GetHeight());
++  draw_rect.Intersect(device_rect);
++  if (clip_rgn_) {
++    draw_rect.Intersect(clip_rgn_->GetBox());
++  }
++  if (draw_rect.IsEmpty()) {
++    return true;
++  }
++
++  return bitmap_->CompositeBitmap(
++      draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
++      std::move(bitmap), draw_rect.left - dest_left, draw_rect.top - dest_top,
++      blend_type, &image_rect, std::move(mask), rgb_byte_order_);
++}
++
+ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                         uint32_t argb,
+                                         int dest_left,
+diff --git a/core/fxge/dib/cfx_dibitmap.h b/core/fxge/dib/cfx_dibitmap.h
+--- a/core/fxge/dib/cfx_dibitmap.h
++++ b/core/fxge/dib/cfx_dibitmap.h
+@@ -131,7 +131,7 @@
+                        int src_top,
+                        BlendMode blend_type,
+                        const FX_RECT* clip_rect,
+-                       RetainPtr<CFX_DIBitmap> clip_mask,
++                       RetainPtr<const CFX_DIBBase> clip_mask,
+                        bool bRgbByteOrder);
+ 
+   bool CompositeMask(int dest_left,
+diff --git a/core/fxge/dib/cfx_dibitmap.cpp b/core/fxge/dib/cfx_dibitmap.cpp
+--- a/core/fxge/dib/cfx_dibitmap.cpp
++++ b/core/fxge/dib/cfx_dibitmap.cpp
+@@ -550,7 +550,7 @@
+                                    int src_top,
+                                    BlendMode blend_type,
+                                    const FX_RECT* clip_rect,
+-                                   RetainPtr<CFX_DIBitmap> clip_mask,
++                                   RetainPtr<const CFX_DIBBase> clip_mask,
+                                    bool bRgbByteOrder) {
+   // Should have called CompositeMask().
+   CHECK(!source->IsMaskFormat());
+@@ -594,7 +594,7 @@
+             .subspan(static_cast<size_t>(src_left * src_bytes_per_pixel));
+     pdfium::span<const uint8_t> clip_scan;
+     if (clip_mask) {
+-      clip_scan = clip_mask->GetWritableScanline(dest_top + row - clip_box.top)
++      clip_scan = clip_mask->GetScanline(dest_top + row - clip_box.top)
+                       .subspan(static_cast<size_t>(dest_left - clip_box.left));
+     }
+     if (bRgb) {
+diff --git a/core/fxge/dib/cfx_dibitmap_unittest.cpp b/core/fxge/dib/cfx_dibitmap_unittest.cpp
+--- a/core/fxge/dib/cfx_dibitmap_unittest.cpp
++++ b/core/fxge/dib/cfx_dibitmap_unittest.cpp
+@@ -193,6 +193,55 @@
+   }
+ }
+ 
++TEST(CFXDIBitmapTest, OpaqueBitmapMaskMatchesCanonicalBgraComposite) {
++  constexpr uint32_t kSource = 0xff2850a0;
++  constexpr FXDIB_Format kDestinationFormats[] = {
++      FXDIB_Format::kBgr, FXDIB_Format::kBgrx, FXDIB_Format::kBgra};
++  constexpr uint32_t kDestinations[] = {0xffc86432, 0x80c86432, 0x00000000};
++  constexpr uint8_t kCoverages[] = {0, 1, 64, 127, 255};
++  constexpr bool kRgbByteOrders[] = {false, true};
++  const FX_RECT image_rect(0, 0, 1, 1);
++
++  for (FXDIB_Format destination_format : kDestinationFormats) {
++    for (uint32_t destination : kDestinations) {
++      for (uint8_t coverage : kCoverages) {
++        for (bool rgb_byte_order : kRgbByteOrders) {
++          auto baseline = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto direct = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto baseline_source = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto direct_source = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto baseline_mask = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto direct_mask = pdfium::MakeRetain<CFX_DIBitmap>();
++          ASSERT_TRUE(baseline->Create(1, 1, destination_format));
++          ASSERT_TRUE(direct->Create(1, 1, destination_format));
++          ASSERT_TRUE(baseline_source->Create(1, 1, FXDIB_Format::kBgrx));
++          ASSERT_TRUE(direct_source->Create(1, 1, FXDIB_Format::kBgrx));
++          ASSERT_TRUE(
++              baseline_mask->Create(1, 1, FXDIB_Format::k8bppMask));
++          ASSERT_TRUE(direct_mask->Create(1, 1, FXDIB_Format::k8bppMask));
++          baseline->Clear(destination);
++          direct->Clear(destination);
++          baseline_source->Clear(kSource);
++          direct_source->Clear(kSource);
++          baseline_mask->GetWritableScanline(0)[0] = coverage;
++          direct_mask->GetWritableScanline(0)[0] = coverage;
++
++          ASSERT_TRUE(
++              baseline_source->MultiplyAlphaMask(std::move(baseline_mask)));
++          ASSERT_TRUE(baseline->CompositeBitmap(
++              0, 0, 1, 1, baseline_source, 0, 0, BlendMode::kNormal, nullptr,
++              nullptr, rgb_byte_order));
++          ASSERT_TRUE(direct->CompositeBitmap(
++              0, 0, 1, 1, direct_source, 0, 0, BlendMode::kNormal,
++              &image_rect, std::move(direct_mask), rgb_byte_order));
++          EXPECT_TRUE(std::ranges::equal(baseline->GetBuffer(),
++                                         direct->GetBuffer()));
++        }
++      }
++    }
++  }
++}
++
+ #if defined(PDF_USE_SKIA)
+ TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
+   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
