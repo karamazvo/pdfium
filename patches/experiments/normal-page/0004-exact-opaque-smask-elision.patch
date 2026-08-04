@@ -1,0 +1,46 @@
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -18,6 +18,7 @@
+ #include "core/fpdfapi/parser/cpdf_stream.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/retain_ptr.h"
++#include "core/fxcrt/span.h"
+ #include "core/fxcrt/stl_util.h"
+ #include "core/fxge/dib/cfx_dibbase.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+@@ -47,3 +48,21 @@ struct CacheInfo {
++bool IsExactOpaqueMask(const CFX_DIBBase& mask) {
++  if (mask.GetFormat() != FXDIB_Format::k8bppMask || mask.GetWidth() <= 0 ||
++      mask.GetHeight() <= 0) {
++    return false;
++  }
++
++  const size_t width = static_cast<size_t>(mask.GetWidth());
++  for (int row = 0; row < mask.GetHeight(); ++row) {
++    pdfium::span<const uint8_t> scanline = mask.GetScanline(row);
++    if (scanline.size() < width ||
++        !std::ranges::all_of(scanline.first(width),
++                             [](uint8_t value) { return value == 255; })) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ #if defined(PDF_USE_SKIA)
+ // Wrapper around a `CFX_DIBBase` that memoizes `RealizeSkImage()`. This is only
+ // safe if the underlying `CFX_DIBBase` is not mutable.
+@@ -328,6 +347,12 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+   if (cur_mask_) {
+     cached_mask_ = MakeCachedImage(cur_mask_, /*realize_hint=*/true);
+     cur_mask_.Reset();
++    // A decoded 8-bit mask containing only full coverage is the identity
++    // operation. Drop it once at cache construction so every render can use
++    // the ordinary image path without scaling or compositing the mask.
++    if (cached_mask_ && IsExactOpaqueMask(*cached_mask_)) {
++      cached_mask_.Reset();
++    }
+   }
+   cur_bitmap_ = cached_bitmap_;
+   cur_mask_ = cached_mask_;
