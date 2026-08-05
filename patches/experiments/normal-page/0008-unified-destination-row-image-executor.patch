@@ -104,7 +104,7 @@ index acaf74d23..f21784a67 100644
    if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Format::kBgrx)) {
      return true;
 diff --git a/core/fxge/agg/cfx_agg_bitmapcomposer.cpp b/core/fxge/agg/cfx_agg_bitmapcomposer.cpp
-index fd2051585..efa8b9902 100644
+index fd2051585..fbf56f9dc 100644
 --- a/core/fxge/agg/cfx_agg_bitmapcomposer.cpp
 +++ b/core/fxge/agg/cfx_agg_bitmapcomposer.cpp
 @@ -54,6 +54,11 @@ void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
@@ -143,7 +143,7 @@ index fd2051585..efa8b9902 100644
    pdfium::span<const uint8_t> opacity_scan;
    if (opacity_mask_) {
      opacity_scan = opacity_mask_
-@@ -138,6 +135,32 @@ void CFX_AggBitmapComposer::ComposeScanline(
+@@ -138,6 +135,33 @@ void CFX_AggBitmapComposer::ComposeScanline(
                                                      opacity_mask_rect_.left),
                                  static_cast<size_t>(dest_width_));
    }
@@ -157,8 +157,9 @@ index fd2051585..efa8b9902 100644
 +  CHECK(!vertical_);
 +  CHECK(!opacity_mask_);
 +  CHECK_GE(opacity_scanline.size(), static_cast<size_t>(dest_width_));
-+  ComposeScanlineInternal(line, scanline,
-+                          opacity_scanline.first(dest_width_));
++  ComposeScanlineInternal(
++      line, scanline,
++      opacity_scanline.first(static_cast<size_t>(dest_width_)));
 +}
 +
 +void CFX_AggBitmapComposer::ComposeScanlineInternal(
@@ -176,7 +177,7 @@ index fd2051585..efa8b9902 100644
    pdfium::span<uint8_t> dest_scan =
        bitmap_->GetWritableScanline(line + dest_top_);
    if (!dest_scan.empty()) {
-@@ -150,7 +173,7 @@ void CFX_AggBitmapComposer::ComposeScanline(
+@@ -150,7 +174,7 @@ void CFX_AggBitmapComposer::ComposeScanline(
  
      dest_scan = dest_scan.subspan(offset.ValueOrDie());
    }
@@ -288,10 +289,10 @@ index aea4d6065..10a159b43 100644
                                BlendMode blend_type) const override;
    StartResult StartDIBitsWithMask(
 diff --git a/core/fxge/agg/cfx_agg_imagerenderer.cpp b/core/fxge/agg/cfx_agg_imagerenderer.cpp
-index ae52a3655..17ff935a5 100644
+index ae52a3655..0fd095eb9 100644
 --- a/core/fxge/agg/cfx_agg_imagerenderer.cpp
 +++ b/core/fxge/agg/cfx_agg_imagerenderer.cpp
-@@ -8,14 +8,94 @@
+@@ -8,14 +8,95 @@
  
  #include <math.h>
  
@@ -330,7 +331,8 @@ index ae52a3655..17ff935a5 100644
 +                       pdfium::span<const uint8_t> scanline) override {
 +    CHECK(!ready_);
 +    CHECK_GE(scanline.size(), static_cast<size_t>(width_));
-+    std::ranges::copy(scanline.first(width_), row_.begin());
++    std::ranges::copy(scanline.first(static_cast<size_t>(width_)),
++                      row_.begin());
 +    line_ = line;
 +    ready_ = true;
 +  }
@@ -386,7 +388,7 @@ index ae52a3655..17ff935a5 100644
  
  CFX_AggImageRenderer::CFX_AggImageRenderer(
      const RetainPtr<CFX_DIBitmap>& pDevice,
-@@ -58,6 +138,47 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
+@@ -58,6 +139,47 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
      return;
    }
  
@@ -434,7 +436,7 @@ index ae52a3655..17ff935a5 100644
    if ((fabs(matrix_.b) >= 0.5f || matrix_.a == 0) ||
        (fabs(matrix_.c) >= 0.5f || matrix_.d == 0)) {
      if (fabs(matrix_.a) < fabs(matrix_.b) / 20 &&
-@@ -118,10 +239,41 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
+@@ -118,10 +240,41 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
  
  CFX_AggImageRenderer::~CFX_AggImageRenderer() = default;
  
