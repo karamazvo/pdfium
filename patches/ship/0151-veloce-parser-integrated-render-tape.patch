@@ -1,0 +1,241 @@
+diff --git a/core/fpdfapi/page/cpdf_form.cpp b/core/fpdfapi/page/cpdf_form.cpp
+index d06f6990a..87b5bbda1 100644
+--- a/core/fpdfapi/page/cpdf_form.cpp
++++ b/core/fpdfapi/page/cpdf_form.cpp
+@@ -114,7 +114,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+         __android_log_print(
+             ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-            "revision=r25-8-0138 event=form_cache result=hit "
++            "revision=r25-21-0151 event=form_cache result=hit "
+             "streamObj=%u commands=%zu bytes=%zu",
+             GetStream()->GetObjNum(), GetVeloceRenderProgram()->command_count(),
+             GetVeloceRenderProgram()->EstimatedBytes());
+@@ -136,7 +136,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+ #if BUILDFLAG(IS_ANDROID)
+       __android_log_print(
+           ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-          "revision=r25-8-0138 event=form_cache result=store "
++          "revision=r25-21-0151 event=form_cache result=store "
+           "streamObj=%u commands=%zu bytes=%zu",
+           GetStream()->GetObjNum(), built_program->command_count(),
+           built_program->EstimatedBytes());
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 2e83b268c..1a04f8729 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -16,6 +16,7 @@
+ #include "core/fpdfapi/page/cpdf_allstates.h"
+ #include "core/fpdfapi/page/cpdf_contentparser.h"
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
+ #include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+@@ -107,6 +108,7 @@ void CPDF_PageObjectHolder::StartParse(
+   record_veloce_render_program_ = page_object_list_.empty();
+   veloce_source_object_count_ = page_object_list_.size();
+   veloce_omitted_page_object_count_ = 0u;
++  veloce_parser_owned_path_count_ = 0u;
+   veloce_parse_used_resources_ = false;
+   veloce_preactivation_path_probes_ = 0u;
+   veloce_preactivation_line_probes_ = 0u;
+@@ -173,17 +175,19 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+                                                                 : "path";
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=acquire_policy "
+-        "mode=ordered_stroke_renderer_tape result=%s parseUs=%llu "
++        "revision=r25-21-0151 event=acquire_policy "
++        "mode=parser_integrated_render_tape result=%s parseUs=%llu "
+         "finishUs=%llu "
+         "sourceCommands=%zu retainedPageObjects=%zu omittedPageObjects=%zu "
++        "parserOwnedPaths=%zu "
+         "preactivationPathProbes=%u preactivationLineProbes=%u "
+         "preactivationRejects=%u builderActivated=%d activationSource=%s "
+         "activationOrdinal=%u directLineRuns=%u directLineRunCommands=%zu "
+         "nativeCommands=%u programBytes=%zu",
+         result, VeloceNowMicros() - veloce_parse_start_micros_, finish_micros,
+         veloce_source_object_count_, page_object_list_.size(),
+-        veloce_omitted_page_object_count_, veloce_preactivation_path_probes_,
++        veloce_omitted_page_object_count_, veloce_parser_owned_path_count_,
++        veloce_preactivation_path_probes_,
+         veloce_preactivation_line_probes_, veloce_preactivation_rejects_,
+         builder_activated, activation_source, veloce_activation_ordinal_,
+         veloce_parsed_line_run_count_,
+@@ -321,18 +325,18 @@ void CPDF_PageObjectHolder::AppendPageObject(
+     std::unique_ptr<CPDF_PageObject> pPageObj) {
+   EnsureCanonicalPageObjects();
+   CHECK(pPageObj);
+-  page_object_list_.push_back(std::move(pPageObj));
+   ++veloce_source_object_count_;
+   const size_t current_ordinal = veloce_source_object_count_ - 1u;
++  bool appended_native_path = false;
+   if (record_veloce_render_program_ && !veloce_render_program_builder_ &&
+-      page_object_list_.back()->AsPath() &&
++      pPageObj->AsPath() &&
+       current_ordinal <= std::numeric_limits<uint32_t>::max()) {
+     ++veloce_preactivation_path_probes_;
+     if (VeloceRenderProgramBuilder::CanStartWithPageObject(
+-            *page_object_list_.back())) {
++            *pPageObj)) {
+       auto candidate = std::make_unique<VeloceRenderProgramBuilder>(
+           static_cast<uint32_t>(current_ordinal), bbox_);
+-      candidate->AppendPageObject(*page_object_list_.back());
++      appended_native_path = candidate->AppendPageObject(*pPageObj);
+       if (candidate->has_native_commands()) {
+         veloce_activation_ordinal_ =
+             static_cast<uint32_t>(current_ordinal);
+@@ -346,8 +350,30 @@ void CPDF_PageObjectHolder::AppendPageObject(
+   }
+   if (veloce_render_program_builder_ &&
+       veloce_activation_ordinal_ != current_ordinal) {
+-    veloce_render_program_builder_->AppendPageObject(*page_object_list_.back());
++    appended_native_path =
++        veloce_render_program_builder_->AppendPageObject(*pPageObj);
++  }
++
++  // The parser and tape share one source ordinal. Once an ordinary opaque
++  // path is represented exactly by the immutable tape, retaining the same
++  // CPDF_PathObject would duplicate geometry and make holder lifetime part of
++  // replay. Darken remains retained because its device-dependent executor can
++  // still require canonical fallback.
++  const CPDF_PathObject* path = pPageObj->AsPath();
++  const bool tape_can_own_path =
++      appended_native_path && veloce_render_program_builder_ && IsPage() &&
++      path && path->IsActive() &&
++      path->general_state().GetBlendType() == BlendMode::kNormal &&
++      ((path->stroke() && path->has_no_filltype()) ||
++       (!path->stroke() &&
++        (path->has_winding_filltype() || path->has_alternate_filltype())));
++  if (tape_can_own_path &&
++      veloce_render_program_builder_->OmitLastPageObject()) {
++    ++veloce_omitted_page_object_count_;
++    ++veloce_parser_owned_path_count_;
++    return;
+   }
++
+   if (veloce_render_program_builder_) {
+     veloce_render_program_builder_->RetainLastPageObject();
+   } else {
+@@ -355,7 +381,8 @@ void CPDF_PageObjectHolder::AppendPageObject(
+       ResetVeloceRenderProgram();
+     }
+   }
+-  page_object_list_.back()->SetVeloceAttachedToHolder(true);
++  pPageObj->SetVeloceAttachedToHolder(true);
++  page_object_list_.push_back(std::move(pPageObj));
+ }
+ 
+ CPDF_PageObjectHolder::VeloceParsedPathDisposition
+@@ -553,6 +580,7 @@ void CPDF_PageObjectHolder::BeginVeloceCanonicalReparse() {
+   background_alpha_needed_ = false;
+   veloce_source_object_count_ = 0u;
+   veloce_omitted_page_object_count_ = 0u;
++  veloce_parser_owned_path_count_ = 0u;
+   parse_state_ = ParseState::kNotParsed;
+   veloce_canonical_reparse_in_progress_ = true;
+ }
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 9429576c7..ffb0211bb 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -242,6 +242,7 @@ class CPDF_PageObjectHolder {
+   bool veloce_parse_used_resources_ = false;
+   size_t veloce_source_object_count_ = 0u;
+   size_t veloce_omitted_page_object_count_ = 0u;
++  size_t veloce_parser_owned_path_count_ = 0u;
+   uint32_t veloce_preactivation_path_probes_ = 0u;
+   uint32_t veloce_preactivation_line_probes_ = 0u;
+   uint32_t veloce_preactivation_rejects_ = 0u;
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9414a3a43..2e77a4096 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3151,7 +3151,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-21-0151 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -3161,8 +3161,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=compile "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-21-0151 event=compile "
++        "mode=parser_integrated_render_tape "
+         "lineStorage=geometric_16_64_256_1024_4096 "
+         "pathStorage=adopted omittedPageObjects=%zu retainedPageObjects=%zu "
+         "commands=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 4a21f8443..a2e5d0c73 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -1020,6 +1020,31 @@ TEST(VeloceRenderProgramTest, BuildsBoundedOwnedPathBlocks) {
+   EXPECT_LT(first.bounds.right, second.bounds.left);
+ }
+ 
++TEST(VeloceRenderProgramTest,
++     ParserTapeCanOwnExactGeneralStrokeAndFillGeometry) {
++  VeloceRenderProgramBuilder builder(
++      0u, CFX_FloatRect(-100.0f, -100.0f, 100.0f, 100.0f));
++  auto stroke = MakeOpaqueStrokePath();
++  auto fill = MakeOpaqueFill();
++
++  ASSERT_TRUE(builder.AppendPageObject(*stroke));
++  ASSERT_TRUE(builder.OmitLastPageObject());
++  ASSERT_TRUE(builder.AppendPageObject(*fill));
++  ASSERT_TRUE(builder.OmitLastPageObject());
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++  ASSERT_TRUE(program);
++  EXPECT_TRUE(program->has_omitted_page_objects());
++  EXPECT_EQ(2u, program->command_count());
++  EXPECT_EQ(0u, program->retained_page_object_count());
++  EXPECT_EQ(1u, program->native_stroke_path_count());
++  EXPECT_EQ(1u, program->native_fill_path_count());
++  EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueStrokePath,
++            program->native_runs()[0].opcode);
++  EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueFillPath,
++            program->native_runs()[1].opcode);
++}
++
+ TEST(VeloceRenderProgramTest, UnsupportedOnlyHolderHasNoSidecar) {
+   auto path = MakeOpaqueLine(1.0f, 3.0f);
+   path->set_winding_filltype();
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..3336fccdb 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -474,8 +474,13 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         return false;
+       }
+     }
+-    if (program->native_line_count() != 0u ||
+-        program->native_translation_line_count() != 0u) {
++    const bool needs_ordered_path_executor =
++        program->native_line_count() != 0u ||
++        program->native_translation_line_count() != 0u ||
++        program->opcode_count(VeloceRenderOpcode::kNativeOpaqueStrokePath) !=
++            0u ||
++        program->native_fill_path_count() != 0u;
++    if (needs_ordered_path_executor) {
+       ordered_path_context = device_->CreateOrderedPathBatchContext();
+       ordered_path_context_attempted = true;
+       if (!ordered_path_context) {
+@@ -585,8 +590,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-8-0138 event=replay "
+-        "mode=ordered_stroke_renderer_tape "
++        "revision=r25-21-0151 event=replay "
++        "mode=parser_integrated_render_tape "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "omittedPageObjects=%zu retainedPageObjects=%zu "
+         "nativeLines=%zu compactTranslationLines=%zu "
