@@ -1,0 +1,300 @@
+diff --git a/core/fxge/dib/cstretchengine.cpp b/core/fxge/dib/cstretchengine.cpp
+index 2fe7c0bd7..b6eb30e8b 100644
+--- a/core/fxge/dib/cstretchengine.cpp
++++ b/core/fxge/dib/cstretchengine.cpp
+@@ -12,10 +12,15 @@
+ #include <type_traits>
+ #include <utility>
+ 
++#if defined(__ARM_NEON)
++#include <arm_neon.h>
++#endif
++
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/fx_system.h"
+ #include "core/fxcrt/pauseindicator_iface.h"
++#include "core/fxcrt/span_util.h"
+ #include "core/fxge/calculate_pitch.h"
+ #include "core/fxge/dib/cfx_dibbase.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+@@ -32,6 +37,40 @@ constexpr size_t kMaxCanonicalIntermediateBytes = 1024 * 1024;
+ constexpr size_t kMaxBoundedIntermediateBytes = 1024 * 1024;
+ constexpr int kStretchPauseRows = 10;
+ 
++bool HasOneOrTwoSourceRows(const CStretchEngine::PixelWeight* weights) {
++  return weights->src_start_ <= weights->src_end_ &&
++         weights->src_end_ - weights->src_start_ <= 1;
++}
++
++#if defined(__ARM_NEON)
++uint8x8_t BlendExact8(uint8x8_t first,
++                      uint8x8_t second,
++                      uint16_t first_weight,
++                      uint16_t second_weight) {
++  const uint16x8_t first_wide = vmovl_u8(first);
++  const uint16x8_t second_wide = vmovl_u8(second);
++  const uint32x4_t low =
++      vmlal_n_u16(vmull_n_u16(vget_low_u16(first_wide), first_weight),
++                  vget_low_u16(second_wide), second_weight);
++  const uint32x4_t high =
++      vmlal_n_u16(vmull_n_u16(vget_high_u16(first_wide), first_weight),
++                  vget_high_u16(second_wide), second_weight);
++  return vmovn_u16(
++      vcombine_u16(vshrn_n_u32(low, CStretchEngine::kFixedPointBits),
++                   vshrn_n_u32(high, CStretchEngine::kFixedPointBits)));
++}
++
++uint8x16_t BlendExact16(uint8x16_t first,
++                        uint8x16_t second,
++                        uint16_t first_weight,
++                        uint16_t second_weight) {
++  return vcombine_u8(BlendExact8(vget_low_u8(first), vget_low_u8(second),
++                                 first_weight, second_weight),
++                     BlendExact8(vget_high_u8(first), vget_high_u8(second),
++                                 first_weight, second_weight));
++}
++#endif
++
+ size_t TotalBytesForWeightCount(size_t weight_count) {
+   // Always room for one weight even for empty ranges due to declaration
+   // of weights_[1] in the header. Don't shrink below this since
+@@ -535,8 +574,93 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
+   return false;
+ }
+ 
++bool CStretchEngine::TryStretchExactVectorVertScanline(
++    const PixelWeight* weights,
++    pdfium::span<const uint8_t> first_row,
++    pdfium::span<const uint8_t> second_row) {
++  if (!HasOneOrTwoSourceRows(weights) ||
++      (trans_method_ != TransformMethod::k8BppTo8Bpp &&
++       trans_method_ != TransformMethod::k8BppToManyBpp &&
++       trans_method_ != TransformMethod::kManyBpptoManyBpp)) {
++    return false;
++  }
++
++  const size_t bytes_per_pixel = static_cast<size_t>(dest_bpp_ / 8);
++  if (bytes_per_pixel != 1u && bytes_per_pixel != 3u) {
++    return false;
++  }
++  const size_t pixel_count = static_cast<size_t>(dest_clip_.Width());
++  const size_t active_bytes = pixel_count * bytes_per_pixel;
++  if (first_row.size() < active_bytes || dest_scanline_.size() < active_bytes) {
++    return false;
++  }
++
++  const uint32_t first_weight =
++      weights->GetWeightForPosition(weights->src_start_);
++  if (weights->src_start_ == weights->src_end_) {
++    if (first_weight != kFixedPointOne) {
++      return false;
++    }
++    fxcrt::spancpy(pdfium::span(dest_scanline_).first(active_bytes),
++                   first_row.first(active_bytes));
++    return true;
++  }
++
++  if (second_row.size() < active_bytes) {
++    return false;
++  }
++  const uint32_t second_weight =
++      weights->GetWeightForPosition(weights->src_end_);
++  if (first_weight > kFixedPointOne || second_weight > kFixedPointOne ||
++      first_weight + second_weight != kFixedPointOne) {
++    return false;
++  }
++  if (first_weight == kFixedPointOne || second_weight == kFixedPointOne) {
++    const pdfium::span<const uint8_t> source_row =
++        first_weight == kFixedPointOne ? first_row : second_row;
++    fxcrt::spancpy(pdfium::span(dest_scanline_).first(active_bytes),
++                   source_row.first(active_bytes));
++    return true;
++  }
++#if defined(__ARM_NEON)
++  const uint16_t first_weight_16 = static_cast<uint16_t>(first_weight);
++  const uint16_t second_weight_16 = static_cast<uint16_t>(second_weight);
++  size_t byte_offset = 0;
++  for (; byte_offset + 16u <= active_bytes; byte_offset += 16u) {
++    UNSAFE_TODO({
++      const uint8x16_t first = vld1q_u8(first_row.data() + byte_offset);
++      const uint8x16_t second = vld1q_u8(second_row.data() + byte_offset);
++      vst1q_u8(
++          dest_scanline_.data() + byte_offset,
++          BlendExact16(first, second, first_weight_16, second_weight_16));
++    });
++  }
++
++  for (; byte_offset < active_bytes; ++byte_offset) {
++    dest_scanline_[byte_offset] =
++        PixelFromFixed(first_weight * first_row[byte_offset] +
++                       second_weight * second_row[byte_offset]);
++  }
++  return true;
++#else
++  return false;
++#endif
++}
++
+ void CStretchEngine::StretchBoundedVertScanline(
+     const PixelWeight* weights) {
++  if (HasOneOrTwoSourceRows(weights)) {
++    const pdfium::span<const uint8_t> first_row =
++        GetBoundedIntermediateRow(weights->src_start_);
++    const pdfium::span<const uint8_t> second_row =
++        weights->src_start_ == weights->src_end_
++            ? pdfium::span<const uint8_t>()
++            : GetBoundedIntermediateRow(weights->src_end_);
++    if (TryStretchExactVectorVertScanline(weights, first_row, second_row)) {
++      return;
++    }
++  }
++
+   const int dest_bytes_per_pixel = dest_bpp_ / 8;
+   uint8_t* dest_scan = dest_scanline_.data();
+   switch (trans_method_) {
+@@ -680,6 +804,21 @@ void CStretchEngine::StretchVert() {
+   for (int row = dest_clip_.top; row < dest_clip_.bottom; ++row) {
+     unsigned char* dest_scan = dest_scanline_.data();
+     const PixelWeight* pWeights = table.GetPixelWeight(row);
++    if (HasOneOrTwoSourceRows(pWeights)) {
++      const size_t first_offset =
++          static_cast<size_t>(pWeights->src_start_ - src_clip_.top) *
++          inter_pitch_;
++      const pdfium::span<const uint8_t> first_row =
++          inter_buf_.subspan(first_offset, inter_pitch_);
++      const pdfium::span<const uint8_t> second_row =
++          pWeights->src_start_ == pWeights->src_end_
++              ? pdfium::span<const uint8_t>()
++              : inter_buf_.subspan(first_offset + inter_pitch_, inter_pitch_);
++      if (TryStretchExactVectorVertScanline(pWeights, first_row, second_row)) {
++        dest_bitmap_->ComposeScanline(row - dest_clip_.top, dest_scanline_);
++        continue;
++      }
++    }
+     switch (trans_method_) {
+       case TransformMethod::k1BppTo8Bpp:
+       case TransformMethod::k1BppToManyBpp:
+diff --git a/core/fxge/dib/cstretchengine.h b/core/fxge/dib/cstretchengine.h
+index ec5772bdb..524a41b03 100644
+--- a/core/fxge/dib/cstretchengine.h
++++ b/core/fxge/dib/cstretchengine.h
+@@ -155,6 +155,10 @@ class CStretchEngine {
+   bool ContinueBoundedRows(PauseIndicatorIface* pPause);
+   void StretchHorizontalScanline(pdfium::span<const uint8_t> src_scan,
+                                  pdfium::span<uint8_t> dest_span);
++  bool TryStretchExactVectorVertScanline(
++      const PixelWeight* weights,
++      pdfium::span<const uint8_t> first_row,
++      pdfium::span<const uint8_t> second_row);
+   void StretchBoundedVertScanline(const PixelWeight* weights);
+   pdfium::span<uint8_t> GetBoundedIntermediateRow(int source_row);
+ 
+diff --git a/core/fxge/dib/cstretchengine_unittest.cpp b/core/fxge/dib/cstretchengine_unittest.cpp
+index 8d3958577..cb69f926d 100644
+--- a/core/fxge/dib/cstretchengine_unittest.cpp
++++ b/core/fxge/dib/cstretchengine_unittest.cpp
+@@ -94,6 +94,91 @@ bool RunStretch(const RetainPtr<const CFX_DIBBase>& source,
+   return true;
+ }
+ 
++void ExpectBilinearStretchMatchesWeightTableReference(FXDIB_Format format) {
++  static constexpr int kSourceWidth = 17;
++  static constexpr int kSourceHeight = 13;
++  static constexpr int kDestWidth = 29;
++  static constexpr int kDestHeight = 23;
++  const size_t components = static_cast<size_t>(GetCompsFromFormat(format));
++  ASSERT_TRUE(components == 1u || components == 3u);
++
++  auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++  ASSERT_TRUE(source->Create(kSourceWidth, kSourceHeight, format));
++  for (int row = 0; row < kSourceHeight; ++row) {
++    pdfium::span<uint8_t> scanline = source->GetWritableScanline(row);
++    for (int col = 0; col < kSourceWidth; ++col) {
++      for (size_t channel = 0; channel < components; ++channel) {
++        scanline[static_cast<size_t>(col) * components + channel] =
++            static_cast<uint8_t>((row * 37 + col * 19 + channel * 71) & 0xff);
++      }
++    }
++  }
++
++  FXDIB_ResampleOptions options;
++  options.bInterpolateBilinear = true;
++  CFX_BitmapStorer storer;
++  bool used_bounded_rows = true;
++  size_t intermediate_bytes = 0;
++  ASSERT_TRUE(RunStretch(source, format, kDestWidth, kDestHeight, options, true,
++                         &storer, &used_bounded_rows, &intermediate_bytes));
++  EXPECT_FALSE(used_bounded_rows);
++  ASSERT_TRUE(storer.GetBitmap());
++
++  CStretchEngine::WeightTable horizontal_weights;
++  ASSERT_TRUE(horizontal_weights.CalculateWeights(
++      kDestWidth, 0, kDestWidth, kSourceWidth, 0, kSourceWidth, options));
++  CStretchEngine::WeightTable vertical_weights;
++  ASSERT_TRUE(vertical_weights.CalculateWeights(
++      kDestHeight, 0, kDestHeight, kSourceHeight, 0, kSourceHeight, options));
++
++  DataVector<uint8_t> horizontal(static_cast<size_t>(kDestWidth) *
++                                 kSourceHeight * components);
++  for (int row = 0; row < kSourceHeight; ++row) {
++    const pdfium::span<const uint8_t> source_row = source->GetScanline(row);
++    for (int col = 0; col < kDestWidth; ++col) {
++      const CStretchEngine::PixelWeight* weights =
++          horizontal_weights.GetPixelWeight(col);
++      for (size_t channel = 0; channel < components; ++channel) {
++        uint32_t sum = 0;
++        for (int source_col = weights->src_start_;
++             source_col <= weights->src_end_; ++source_col) {
++          sum += weights->GetWeightForPosition(source_col) *
++                 source_row[static_cast<size_t>(source_col) * components +
++                            channel];
++        }
++        const size_t offset =
++            (static_cast<size_t>(row) * kDestWidth + col) * components +
++            channel;
++        horizontal[offset] = CStretchEngine::PixelFromFixed(sum);
++      }
++    }
++  }
++
++  for (int row = 0; row < kDestHeight; ++row) {
++    const CStretchEngine::PixelWeight* weights =
++        vertical_weights.GetPixelWeight(row);
++    const pdfium::span<const uint8_t> actual =
++        storer.GetBitmap()->GetScanline(row);
++    for (int col = 0; col < kDestWidth; ++col) {
++      for (size_t channel = 0; channel < components; ++channel) {
++        uint32_t sum = 0;
++        for (int source_row = weights->src_start_;
++             source_row <= weights->src_end_; ++source_row) {
++          const size_t offset =
++              (static_cast<size_t>(source_row) * kDestWidth + col) *
++                  components +
++              channel;
++          sum += weights->GetWeightForPosition(source_row) * horizontal[offset];
++        }
++        const size_t actual_offset =
++            static_cast<size_t>(col) * components + channel;
++        EXPECT_EQ(CStretchEngine::PixelFromFixed(sum), actual[actual_offset])
++            << "row=" << row << " col=" << col << " channel=" << channel;
++      }
++    }
++  }
++}
++
+ }  // namespace
+ 
+ TEST(CStretchEngine, OverflowInCtor) {
+@@ -225,6 +310,11 @@ TEST(CStretchEngine, BoundedRowsMatchCanonicalPixelsExactly) {
+   }
+ }
+ 
++TEST(CStretchEngine, ExactVectorRowsMatchWeightTableReference) {
++  ExpectBilinearStretchMatchesWeightTableReference(FXDIB_Format::k8bppMask);
++  ExpectBilinearStretchMatchesWeightTableReference(FXDIB_Format::kBgr);
++}
++
+ TEST(CStretchEngine, SmallIntermediateKeepsCanonicalPath) {
+   auto source = pdfium::MakeRetain<CFX_DIBitmap>();
+   ASSERT_TRUE(source->Create(64, 64, FXDIB_Format::kBgr));
