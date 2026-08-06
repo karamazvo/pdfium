@@ -1,0 +1,274 @@
+diff --git a/core/fxge/dib/cstretchengine.cpp b/core/fxge/dib/cstretchengine.cpp
+index 2fe7c0bd7..97f76175e 100644
+--- a/core/fxge/dib/cstretchengine.cpp
++++ b/core/fxge/dib/cstretchengine.cpp
+@@ -43,6 +43,11 @@ size_t TotalBytesForWeightCount(size_t weight_count) {
+   return total_bytes.ValueOrDie();
+ }
+ 
++bool HasExactFixedSupport(const CStretchEngine::PixelWeight* weights) {
++  return weights->src_start_ <= weights->src_end_ &&
++         weights->src_end_ - weights->src_start_ <= 1;
++}
++
+ }  // namespace
+ 
+ // static
+@@ -420,6 +425,18 @@ void CStretchEngine::StretchHorizontalScanline(
+     case TransformMethod::k8BppTo8Bpp: {
+       for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+         const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        if (HasExactFixedSupport(weights)) {
++          const int source_col = weights->src_start_;
++          const uint32_t first_weight =
++              weights->GetWeightForPosition(source_col);
++          uint32_t dest_a = first_weight * src_scan[source_col];
++          if (weights->src_end_ != source_col) {
++            dest_a += weights->GetWeightForPosition(source_col + 1) *
++                      src_scan[source_col + 1];
++          }
++          dest_span[dest_span_index++] = PixelFromFixed(dest_a);
++          continue;
++        }
+         uint32_t dest_a = 0;
+         for (int j = weights->src_start_; j <= weights->src_end_; ++j) {
+           uint32_t pixel_weight = weights->GetWeightForPosition(j);
+@@ -459,6 +476,30 @@ void CStretchEngine::StretchHorizontalScanline(
+     case TransformMethod::kManyBpptoManyBpp: {
+       for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
+         const PixelWeight* weights = weight_table_.GetPixelWeight(col);
++        if (HasExactFixedSupport(weights)) {
++          const int source_col = weights->src_start_;
++          const uint32_t first_weight =
++              weights->GetWeightForPosition(source_col);
++          const uint8_t* first_pixel =
++              UNSAFE_TODO(src_scan.data() + source_col * bytes_per_pixel);
++          uint32_t dest_b = first_weight * first_pixel[0];
++          uint32_t dest_g = first_weight * first_pixel[1];
++          uint32_t dest_r = first_weight * first_pixel[2];
++          if (weights->src_end_ != source_col) {
++            const uint32_t second_weight =
++                weights->GetWeightForPosition(source_col + 1);
++            const uint8_t* second_pixel =
++                UNSAFE_TODO(first_pixel + bytes_per_pixel);
++            dest_b += second_weight * second_pixel[0];
++            dest_g += second_weight * second_pixel[1];
++            dest_r += second_weight * second_pixel[2];
++          }
++          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
++          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
++          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
++          dest_span_index += bytes_per_pixel - 3;
++          continue;
++        }
+         uint32_t dest_r = 0;
+         uint32_t dest_g = 0;
+         uint32_t dest_b = 0;
+@@ -508,6 +549,53 @@ void CStretchEngine::StretchHorizontalScanline(
+   }
+ }
+ 
++bool CStretchEngine::StretchExactFixedSupportVertScanline(
++    const PixelWeight* weights,
++    pdfium::span<const uint8_t> first_row,
++    pdfium::span<const uint8_t> second_row) {
++  if (!HasExactFixedSupport(weights) ||
++      trans_method_ == TransformMethod::kManyBpptoManyBppWithAlpha) {
++    return false;
++  }
++
++  const uint32_t first_weight =
++      weights->GetWeightForPosition(weights->src_start_);
++  const bool has_second = weights->src_end_ != weights->src_start_;
++  const uint32_t second_weight =
++      has_second ? weights->GetWeightForPosition(weights->src_end_) : 0;
++  const int bytes_per_pixel = dest_bpp_ / 8;
++  uint8_t* dest_scan = dest_scanline_.data();
++  for (int col = dest_clip_.left; col < dest_clip_.right; ++col) {
++    const size_t pixel_offset =
++        static_cast<size_t>(col - dest_clip_.left) * bytes_per_pixel;
++    if (trans_method_ == TransformMethod::k1BppTo8Bpp ||
++        trans_method_ == TransformMethod::k1BppToManyBpp ||
++        trans_method_ == TransformMethod::k8BppTo8Bpp) {
++      uint32_t dest_a = first_weight * first_row[pixel_offset];
++      if (has_second) {
++        dest_a += second_weight * second_row[pixel_offset];
++      }
++      *dest_scan = PixelFromFixed(dest_a);
++    } else {
++      uint32_t dest_b = first_weight * first_row[pixel_offset];
++      uint32_t dest_g = first_weight * first_row[pixel_offset + 1];
++      uint32_t dest_r = first_weight * first_row[pixel_offset + 2];
++      if (has_second) {
++        dest_b += second_weight * second_row[pixel_offset];
++        dest_g += second_weight * second_row[pixel_offset + 1];
++        dest_r += second_weight * second_row[pixel_offset + 2];
++      }
++      UNSAFE_TODO({
++        dest_scan[0] = PixelFromFixed(dest_b);
++        dest_scan[1] = PixelFromFixed(dest_g);
++        dest_scan[2] = PixelFromFixed(dest_r);
++      });
++    }
++    UNSAFE_TODO(dest_scan += bytes_per_pixel);
++  }
++  return true;
++}
++
+ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
+   if (!dest_width_) {
+     return false;
+@@ -537,6 +625,18 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
+ 
+ void CStretchEngine::StretchBoundedVertScanline(
+     const PixelWeight* weights) {
++  if (HasExactFixedSupport(weights)) {
++    const pdfium::span<const uint8_t> first_row =
++        GetBoundedIntermediateRow(weights->src_start_);
++    const pdfium::span<const uint8_t> second_row =
++        weights->src_end_ == weights->src_start_
++            ? pdfium::span<const uint8_t>()
++            : GetBoundedIntermediateRow(weights->src_end_);
++    if (StretchExactFixedSupportVertScanline(weights, first_row, second_row)) {
++      return;
++    }
++  }
++
+   const int dest_bytes_per_pixel = dest_bpp_ / 8;
+   uint8_t* dest_scan = dest_scanline_.data();
+   switch (trans_method_) {
+@@ -680,6 +780,23 @@ void CStretchEngine::StretchVert() {
+   for (int row = dest_clip_.top; row < dest_clip_.bottom; ++row) {
+     unsigned char* dest_scan = dest_scanline_.data();
+     const PixelWeight* pWeights = table.GetPixelWeight(row);
++    if (HasExactFixedSupport(pWeights)) {
++      const size_t first_row_offset =
++          static_cast<size_t>(pWeights->src_start_ - src_clip_.top) *
++          inter_pitch_;
++      const pdfium::span<const uint8_t> first_row =
++          inter_buf_.subspan(first_row_offset, inter_pitch_);
++      const pdfium::span<const uint8_t> second_row =
++          pWeights->src_end_ == pWeights->src_start_
++              ? pdfium::span<const uint8_t>()
++              : inter_buf_.subspan(first_row_offset + inter_pitch_,
++                                   inter_pitch_);
++      if (StretchExactFixedSupportVertScanline(pWeights, first_row,
++                                               second_row)) {
++        dest_bitmap_->ComposeScanline(row - dest_clip_.top, dest_scanline_);
++        continue;
++      }
++    }
+     switch (trans_method_) {
+       case TransformMethod::k1BppTo8Bpp:
+       case TransformMethod::k1BppToManyBpp:
+diff --git a/core/fxge/dib/cstretchengine.h b/core/fxge/dib/cstretchengine.h
+index ec5772bdb..2fe45e155 100644
+--- a/core/fxge/dib/cstretchengine.h
++++ b/core/fxge/dib/cstretchengine.h
+@@ -155,6 +155,10 @@ class CStretchEngine {
+   bool ContinueBoundedRows(PauseIndicatorIface* pPause);
+   void StretchHorizontalScanline(pdfium::span<const uint8_t> src_scan,
+                                  pdfium::span<uint8_t> dest_span);
++  bool StretchExactFixedSupportVertScanline(
++      const PixelWeight* weights,
++      pdfium::span<const uint8_t> first_row,
++      pdfium::span<const uint8_t> second_row);
+   void StretchBoundedVertScanline(const PixelWeight* weights);
+   pdfium::span<uint8_t> GetBoundedIntermediateRow(int source_row);
+ 
+diff --git a/core/fxge/dib/cstretchengine_unittest.cpp b/core/fxge/dib/cstretchengine_unittest.cpp
+index 8d3958577..5d0098814 100644
+--- a/core/fxge/dib/cstretchengine_unittest.cpp
++++ b/core/fxge/dib/cstretchengine_unittest.cpp
+@@ -94,6 +94,57 @@ bool RunStretch(const RetainPtr<const CFX_DIBBase>& source,
+   return true;
+ }
+ 
++void ExpectStretchMatchesWeightTableReference(
++    const RetainPtr<const CFX_DIBBase>& source,
++    const CFX_DIBitmap& output,
++    int dest_width,
++    int dest_height,
++    const FXDIB_ResampleOptions& options) {
++  CStretchEngine::WeightTable horizontal_weights;
++  CStretchEngine::WeightTable vertical_weights;
++  ASSERT_TRUE(horizontal_weights.CalculateWeights(
++      dest_width, 0, dest_width, source->GetWidth(), 0, source->GetWidth(),
++      options));
++  ASSERT_TRUE(vertical_weights.CalculateWeights(
++      dest_height, 0, dest_height, source->GetHeight(), 0,
++      source->GetHeight(), options));
++
++  const int bytes_per_pixel = source->GetBPP() / 8;
++  for (int row = 0; row < dest_height; ++row) {
++    const CStretchEngine::PixelWeight* row_weights =
++        vertical_weights.GetPixelWeight(row);
++    ASSERT_LE(row_weights->src_end_ - row_weights->src_start_, 1);
++    const pdfium::span<const uint8_t> output_scan = output.GetScanline(row);
++    for (int col = 0; col < dest_width; ++col) {
++      const CStretchEngine::PixelWeight* col_weights =
++          horizontal_weights.GetPixelWeight(col);
++      ASSERT_LE(col_weights->src_end_ - col_weights->src_start_, 1);
++      for (int channel = 0; channel < bytes_per_pixel; ++channel) {
++        uint32_t vertical_sum = 0;
++        for (int source_row = row_weights->src_start_;
++             source_row <= row_weights->src_end_; ++source_row) {
++          const pdfium::span<const uint8_t> source_scan =
++              source->GetScanline(source_row);
++          uint32_t horizontal_sum = 0;
++          for (int source_col = col_weights->src_start_;
++               source_col <= col_weights->src_end_; ++source_col) {
++            horizontal_sum +=
++                col_weights->GetWeightForPosition(source_col) *
++                source_scan[source_col * bytes_per_pixel + channel];
++          }
++          vertical_sum +=
++              row_weights->GetWeightForPosition(source_row) *
++              CStretchEngine::PixelFromFixed(horizontal_sum);
++        }
++        EXPECT_EQ(CStretchEngine::PixelFromFixed(vertical_sum),
++                  output_scan[col * bytes_per_pixel + channel])
++            << "row=" << row << " col=" << col
++            << " channel=" << channel;
++      }
++    }
++  }
++}
++
+ }  // namespace
+ 
+ TEST(CStretchEngine, OverflowInCtor) {
+@@ -237,3 +288,33 @@ TEST(CStretchEngine, SmallIntermediateKeepsCanonicalPath) {
+   EXPECT_FALSE(used_bounded_rows);
+   EXPECT_EQ(32u * 3u * 64u, intermediate_bytes);
+ }
++
++TEST(CStretchEngine, ExactFixedSupportMatchesWeightTableReference) {
++  static constexpr int kSourceWidth = 17;
++  static constexpr int kSourceHeight = 13;
++  static constexpr int kDestWidth = 29;
++  static constexpr int kDestHeight = 23;
++  FXDIB_ResampleOptions options;
++  options.bInterpolateBilinear = true;
++
++  for (FXDIB_Format format :
++       {FXDIB_Format::k8bppMask, FXDIB_Format::kBgr}) {
++    auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++    ASSERT_TRUE(source->Create(kSourceWidth, kSourceHeight, format));
++    pdfium::span<uint8_t> source_buffer = source->GetWritableBuffer();
++    for (size_t i = 0; i < source_buffer.size(); ++i) {
++      source_buffer[i] = static_cast<uint8_t>((i * 37u + i / 11u) & 0xffu);
++    }
++
++    CFX_BitmapStorer storer;
++    bool used_bounded_rows = false;
++    size_t intermediate_bytes = 0;
++    ASSERT_TRUE(RunStretch(source, format, kDestWidth, kDestHeight, options,
++                           true, &storer, &used_bounded_rows,
++                           &intermediate_bytes));
++    EXPECT_FALSE(used_bounded_rows);
++    ASSERT_TRUE(storer.GetBitmap());
++    ExpectStretchMatchesWeightTableReference(
++        source, *storer.GetBitmap(), kDestWidth, kDestHeight, options);
++  }
++}
