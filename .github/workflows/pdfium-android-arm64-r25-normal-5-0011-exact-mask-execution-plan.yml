@@ -920,7 +920,7 @@ jobs:
               core/fpdfapi/page/cpdf_pageimagecache.cpp
           grep -q 'source_.Reset()' \
               core/fpdfapi/page/cpdf_pageimagecache.cpp
-          grep -q 'CanonicalRowCache::Create(image)' \
+          grep -q 'CanonicalRowCache::Create(image, track_mask_coverage)' \
               core/fpdfapi/page/cpdf_pageimagecache.cpp
           grep -q 'reference_bitmap->GetBuffer()' \
               core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
