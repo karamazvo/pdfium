@@ -1,0 +1,1118 @@
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 77dcddad6..0d0848cb9 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -37,6 +37,7 @@
+ #include "core/fxcodec/scanlinedecoder.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/check_op.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/compiler_specific.h"
+ #include "core/fxcrt/data_vector.h"
+ #include "core/fxcrt/fx_safe_types.h"
+@@ -122,7 +123,7 @@ bool CPDF_DIB::Load() {
+     return false;
+   }
+ 
+-  if (CreateDecoder(0) == LoadState::kFail) {
++  if (CreateDecoder(0, nullptr) == LoadState::kFail) {
+     return false;
+   }
+ 
+@@ -183,7 +184,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     bool bStdCS,
+     CPDF_ColorSpace::Family GroupFamily,
+     bool bLoadMask,
+-    const CFX_Size& max_size_required) {
++    const CFX_Size& max_size_required,
++    CancelIndicatorIface* cancel) {
+   std_cs_ = bStdCS;
+   has_mask_ = bHasMask;
+   group_family_ = GroupFamily;
+@@ -204,7 +206,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+                              GetHeight() / max_size_required.height))));
+   }
+ 
+-  LoadState iCreatedDecoder = CreateDecoder(resolution_levels_to_skip);
++  LoadState iCreatedDecoder =
++      CreateDecoder(resolution_levels_to_skip, cancel);
+   if (iCreatedDecoder == LoadState::kFail) {
+     return LoadState::kFail;
+   }
+@@ -213,7 +216,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     return LoadState::kFail;
+   }
+ 
+-  LoadState iLoadedMask = has_mask_ ? StartLoadMask() : LoadState::kSuccess;
++  LoadState iLoadedMask =
++      has_mask_ ? StartLoadMask(cancel) : LoadState::kSuccess;
+   if (iCreatedDecoder == LoadState::kContinue ||
+       iLoadedMask == LoadState::kContinue) {
+     return LoadState::kContinue;
+@@ -438,7 +442,9 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
+   return true;
+ }
+ 
+-CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
++CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(
++    uint8_t resolution_levels_to_skip,
++    CancelIndicatorIface* cancel) {
+   ByteString decoder = stream_acc_->GetImageDecoder();
+   if (decoder.IsEmpty()) {
+     return LoadState::kSuccess;
+@@ -449,7 +455,7 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
+   }
+ 
+   if (decoder == "JPXDecode") {
+-    cached_bitmap_ = LoadJpxBitmap(resolution_levels_to_skip);
++    cached_bitmap_ = LoadJpxBitmap(resolution_levels_to_skip, cancel);
+     return cached_bitmap_ ? LoadState::kSuccess : LoadState::kFail;
+   }
+ 
+@@ -606,7 +612,8 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+ }
+ 
+ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+-    uint8_t resolution_levels_to_skip) {
++    uint8_t resolution_levels_to_skip,
++    CancelIndicatorIface* cancel) {
+   std::unique_ptr<CJPX_Decoder> decoder =
+       CJPX_Decoder::Create(stream_acc_->GetSpan(),
+                            ColorSpaceOptionFromColorSpace(color_space_.Get()),
+@@ -618,7 +625,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+   SetWidth(GetWidth() >> resolution_levels_to_skip);
+   SetHeight(GetHeight() >> resolution_levels_to_skip);
+ 
+-  if (!decoder->StartDecode()) {
++  if (!decoder->StartDecode(cancel)) {
+     return nullptr;
+   }
+ 
+@@ -661,13 +668,13 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+   result_bitmap->Clear(0xFFFFFFFF);
+   if (!decoder->Decode(result_bitmap->GetWritableBuffer(),
+                        result_bitmap->GetPitch(), conversion.swap_rgb(),
+-                       components_)) {
++                       components_, cancel)) {
+     return nullptr;
+   }
+ 
+   if (conversion.convert_argb_to_rgb()) {
+     result_bitmap = ConvertArgbJpxBitmapToRgb(result_bitmap, image_info.width,
+-                                              image_info.height);
++                                              image_info.height, cancel);
+     if (!result_bitmap) {
+       return nullptr;
+     }
+@@ -676,6 +683,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+              bpc_ < 8) {
+     int scale = 8 - bpc_;
+     for (uint32_t row = 0; row < image_info.height; ++row) {
++      if (cancel && cancel->IsCancelled()) {
++        return nullptr;
++      }
+       pdfium::span<uint8_t> scanline =
+           result_bitmap->GetWritableScanline(row).first(image_info.width);
+       for (auto& pixel : scanline) {
+@@ -694,7 +704,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+     RetainPtr<CFX_DIBitmap> argb_bitmap,
+     uint32_t width,
+-    uint32_t height) {
++    uint32_t height,
++    CancelIndicatorIface* cancel) {
+   DCHECK_EQ(3u, components_);
+   auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+   if (!rgb_bitmap->Create(width, height, FXDIB_Format::kBgr)) {
+@@ -708,6 +719,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+     jpx_inline_data_.height = height;
+     jpx_inline_data_.data.reserve(width * height);
+     for (uint32_t row = 0; row < height; ++row) {
++      if (cancel && cancel->IsCancelled()) {
++        jpx_inline_data_.data.clear();
++        return nullptr;
++      }
+       auto src =
+           argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(width);
+       auto dest =
+@@ -730,6 +745,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+ 
+   // TODO(thestig): Is there existing code that does this already?
+   for (uint32_t row = 0; row < height; ++row) {
++    if (cancel && cancel->IsCancelled()) {
++      return nullptr;
++    }
+     auto src =
+         argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(width);
+     auto dest = rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
+@@ -784,7 +802,7 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
+   return !stream_acc_->GetSpan().empty();
+ }
+ 
+-CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
++CPDF_DIB::LoadState CPDF_DIB::StartLoadMask(CancelIndicatorIface* cancel) {
+   matte_color_ = 0XFFFFFFFF;
+ 
+   if (!jpx_inline_data_.data.empty()) {
+@@ -797,13 +815,15 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
+     dict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
+ 
+     return StartLoadMaskDIB(pdfium::MakeRetain<CPDF_Stream>(
+-        jpx_inline_data_.data, std::move(dict)));
++                                jpx_inline_data_.data, std::move(dict)),
++                            cancel);
+   }
+ 
+   RetainPtr<const CPDF_Stream> mask(dict_->GetStreamFor("SMask"));
+   if (!mask) {
+     mask = ToStream(dict_->GetDirectObjectFor("Mask"));
+-    return mask ? StartLoadMaskDIB(std::move(mask)) : LoadState::kSuccess;
++    return mask ? StartLoadMaskDIB(std::move(mask), cancel)
++                : LoadState::kSuccess;
+   }
+ 
+   RetainPtr<const CPDF_Array> pMatte = mask->GetDict()->GetArrayFor("Matte");
+@@ -818,7 +838,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
+         ArgbEncode(0, FXSYS_roundf(rgb.red * 255),
+                    FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
+   }
+-  return StartLoadMaskDIB(std::move(mask));
++  return StartLoadMaskDIB(std::move(mask), cancel);
+ }
+ 
+ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
+@@ -851,11 +871,13 @@ bool CPDF_DIB::IsJBigImage() const {
+ }
+ 
+ CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
+-    RetainPtr<const CPDF_Stream> mask_stream) {
++    RetainPtr<const CPDF_Stream> mask_stream,
++    CancelIndicatorIface* cancel) {
+   mask_ = pdfium::MakeRetain<CPDF_DIB>(document_, std::move(mask_stream));
+   LoadState ret =
+       mask_->StartLoadDIBBase(false, nullptr, nullptr, true,
+-                              CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
++                              CPDF_ColorSpace::Family::kUnknown, false, {0, 0},
++                              cancel);
+   if (ret == LoadState::kContinue) {
+     if (status_ == LoadState::kFail) {
+       status_ = LoadState::kContinue;
+diff --git a/core/fpdfapi/page/cpdf_dib.h b/core/fpdfapi/page/cpdf_dib.h
+index ab1870548..5980f5a34 100644
+--- a/core/fpdfapi/page/cpdf_dib.h
++++ b/core/fpdfapi/page/cpdf_dib.h
+@@ -23,6 +23,7 @@ class CPDF_Dictionary;
+ class CPDF_Document;
+ class CPDF_Stream;
+ class CPDF_StreamAcc;
++class CancelIndicatorIface;
+ 
+ struct DIB_COMP_DATA {
+   float decode_min_;
+@@ -60,7 +61,8 @@ class CPDF_DIB final : public CFX_DIBBase {
+                              bool bStdCS,
+                              CPDF_ColorSpace::Family GroupFamily,
+                              bool bLoadMask,
+-                             const CFX_Size& max_size_required);
++                             const CFX_Size& max_size_required,
++                             CancelIndicatorIface* cancel);
+   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
+   RetainPtr<CPDF_DIB> DetachMask();
+ 
+@@ -80,20 +82,25 @@ class CPDF_DIB final : public CFX_DIBBase {
+   bool LoadInternal(const CPDF_Dictionary* pFormResources,
+                     const CPDF_Dictionary* pPageResources);
+   bool ContinueInternal();
+-  LoadState StartLoadMask();
+-  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream);
++  LoadState StartLoadMask(CancelIndicatorIface* cancel);
++  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream,
++                             CancelIndicatorIface* cancel);
+   bool ContinueToLoadMask();
+   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
+   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                      const CPDF_Dictionary* pPageResources);
+   bool GetDecodeAndMaskArray();
+-  RetainPtr<CFX_DIBitmap> LoadJpxBitmap(uint8_t resolution_levels_to_skip);
++  RetainPtr<CFX_DIBitmap> LoadJpxBitmap(
++      uint8_t resolution_levels_to_skip,
++      CancelIndicatorIface* cancel);
+   RetainPtr<CFX_DIBitmap> ConvertArgbJpxBitmapToRgb(
+       RetainPtr<CFX_DIBitmap> argb_bitmap,
+       uint32_t width,
+-      uint32_t height);
++      uint32_t height,
++      CancelIndicatorIface* cancel);
+   void LoadPalette();
+-  LoadState CreateDecoder(uint8_t resolution_levels_to_skip);
++  LoadState CreateDecoder(uint8_t resolution_levels_to_skip,
++                          CancelIndicatorIface* cancel);
+   bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+                         const CPDF_Dictionary* pParams,
+                         uint8_t resolution_levels_to_skip);
+diff --git a/core/fpdfapi/page/cpdf_image.cpp b/core/fpdfapi/page/cpdf_image.cpp
+index 5067b0996..fc1ce6282 100644
+--- a/core/fpdfapi/page/cpdf_image.cpp
++++ b/core/fpdfapi/page/cpdf_image.cpp
+@@ -362,11 +362,13 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
+                                   bool bStdCS,
+                                   CPDF_ColorSpace::Family GroupFamily,
+                                   bool bLoadMask,
+-                                  const CFX_Size& max_size_required) {
++                                  const CFX_Size& max_size_required,
++                                  CancelIndicatorIface* cancel) {
+   RetainPtr<CPDF_DIB> source = CreateNewDIB();
+   CPDF_DIB::LoadState ret =
+       source->StartLoadDIBBase(true, pFormResource, pPageResource, bStdCS,
+-                               GroupFamily, bLoadMask, max_size_required);
++                               GroupFamily, bLoadMask, max_size_required,
++                               cancel);
+   if (ret == CPDF_DIB::LoadState::kFail) {
+     dibbase_.Reset();
+     return false;
+diff --git a/core/fpdfapi/page/cpdf_image.h b/core/fpdfapi/page/cpdf_image.h
+index 175cfc162..b926e9d0e 100644
+--- a/core/fpdfapi/page/cpdf_image.h
++++ b/core/fpdfapi/page/cpdf_image.h
+@@ -21,6 +21,7 @@ class CPDF_Dictionary;
+ class CPDF_Document;
+ class CPDF_Page;
+ class CPDF_Stream;
++class CancelIndicatorIface;
+ class PauseIndicatorIface;
+ class IFX_SeekableReadStream;
+ 
+@@ -66,7 +67,8 @@ class CPDF_Image final : public Retainable {
+                         bool bStdCS,
+                         CPDF_ColorSpace::Family GroupFamily,
+                         bool bLoadMask,
+-                        const CFX_Size& max_size_required);
++                        const CFX_Size& max_size_required,
++                        CancelIndicatorIface* cancel);
+ 
+   // Returns whether to Continue() or not.
+   bool Continue(PauseIndicatorIface* pPause);
+diff --git a/core/fpdfapi/page/cpdf_imageloader.cpp b/core/fpdfapi/page/cpdf_imageloader.cpp
+index a8387d9f9..d144da717 100644
+--- a/core/fpdfapi/page/cpdf_imageloader.cpp
++++ b/core/fpdfapi/page/cpdf_imageloader.cpp
+@@ -27,18 +27,19 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
+                              bool bStdCS,
+                              CPDF_ColorSpace::Family eFamily,
+                              bool bLoadMask,
+-                             const CFX_Size& max_size_required) {
++                             const CFX_Size& max_size_required,
++                             CancelIndicatorIface* cancel) {
+   cache_ = pPageImageCache;
+   image_object_ = pImage;
+   bool should_continue;
+   if (cache_) {
+     should_continue = cache_->StartGetCachedBitmap(
+         image_object_->GetImage(), pFormResource, pPageResource, bStdCS,
+-        eFamily, bLoadMask, max_size_required);
++        eFamily, bLoadMask, max_size_required, cancel);
+   } else {
+     should_continue = image_object_->GetImage()->StartLoadDIBBase(
+         pFormResource, pPageResource, bStdCS, eFamily, bLoadMask,
+-        max_size_required);
++        max_size_required, cancel);
+   }
+   if (!should_continue) {
+     Finish();
+diff --git a/core/fpdfapi/page/cpdf_imageloader.h b/core/fpdfapi/page/cpdf_imageloader.h
+index 50eb0cefd..f14a54f76 100644
+--- a/core/fpdfapi/page/cpdf_imageloader.h
++++ b/core/fpdfapi/page/cpdf_imageloader.h
+@@ -12,6 +12,7 @@
+ #include "core/fxcrt/unowned_ptr.h"
+ 
+ class CFX_DIBBase;
++class CancelIndicatorIface;
+ class CPDF_Dictionary;
+ class CPDF_ImageObject;
+ class CPDF_PageImageCache;
+@@ -30,7 +31,8 @@ class CPDF_ImageLoader {
+              bool bStdCS,
+              CPDF_ColorSpace::Family eFamily,
+              bool bLoadMask,
+-             const CFX_Size& max_size_required);
++             const CFX_Size& max_size_required,
++             CancelIndicatorIface* cancel);
+   bool Continue(PauseIndicatorIface* pPause);
+ 
+   RetainPtr<CFX_DIBBase> TranslateImage(
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index 7ccbb04fb..baf6f857a 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -345,7 +345,8 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+     bool bStdCS,
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+-    const CFX_Size& max_size_required) {
++    const CFX_Size& max_size_required,
++    CancelIndicatorIface* cancel) {
+   // A cross-document image may have come from the embedder.
+   if (page_->GetDocument() != pImage->GetDocument()) {
+     return false;
+@@ -361,7 +362,7 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+   }
+   CPDF_DIB::LoadState ret = cur_image_cache_entry_->StartGetCachedBitmap(
+       this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
+-      max_size_required);
++      max_size_required, cancel);
+   if (ret == CPDF_DIB::LoadState::kContinue) {
+     return true;
+   }
+@@ -443,7 +444,8 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     bool bStdCS,
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+-    const CFX_Size& max_size_required) {
++    const CFX_Size& max_size_required,
++    CancelIndicatorIface* cancel) {
+   if (cached_bitmap_ && IsCacheValid(max_size_required)) {
+     cur_bitmap_ = cached_bitmap_;
+     cur_mask_ = cached_mask_;
+@@ -464,7 +466,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+   cur_bitmap_ = image_->CreateNewDIB();
+   CPDF_DIB::LoadState ret = cur_bitmap_.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
+       true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
+-      max_size_required);
++      max_size_required, cancel);
+   cached_set_max_size_required_ =
+       (max_size_required.width != 0 && max_size_required.height != 0);
+   if (ret == CPDF_DIB::LoadState::kContinue) {
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.h b/core/fpdfapi/page/cpdf_pageimagecache.h
+index eb06742f9..ec09e33da 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.h
++++ b/core/fpdfapi/page/cpdf_pageimagecache.h
+@@ -19,6 +19,7 @@
+ #include "core/fxcrt/unowned_ptr.h"
+ 
+ class CPDF_Dictionary;
++class CancelIndicatorIface;
+ class CPDF_Image;
+ class CPDF_Page;
+ class CPDF_Stream;
+@@ -40,7 +41,8 @@ class CPDF_PageImageCache {
+                             bool bStdCS,
+                             CPDF_ColorSpace::Family eFamily,
+                             bool bLoadMask,
+-                            const CFX_Size& max_size_required);
++                            const CFX_Size& max_size_required,
++                            CancelIndicatorIface* cancel);
+ 
+   bool Continue(PauseIndicatorIface* pPause);
+ 
+@@ -68,7 +70,8 @@ class CPDF_PageImageCache {
+         bool bStdCS,
+         CPDF_ColorSpace::Family eFamily,
+         bool bLoadMask,
+-        const CFX_Size& max_size_required);
++        const CFX_Size& max_size_required,
++        CancelIndicatorIface* cancel);
+ 
+     // Returns whether to Continue() or not.
+     bool Continue(PauseIndicatorIface* pPause,
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+index 6ef263c8a..edbf5fee4 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+@@ -19,12 +19,22 @@
+ #include "core/fpdfapi/parser/cpdf_parser.h"
+ #include "core/fpdfapi/render/cpdf_docrenderdata.h"
+ #include "core/fxcrt/cfx_fileaccess_stream.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ #include "testing/utils/path_service.h"
+ 
+ namespace pdfium {
+ 
++namespace {
++
++class AlwaysCancelled final : public CancelIndicatorIface {
++ public:
++  bool IsCancelled() const override { return true; }
++};
++
++}  // namespace
++
+ using CPDFPageImageCacheTest = TestWithPageModule;
+ 
+ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+@@ -59,10 +69,20 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+     CPDF_ImageObject* image = page_obj->AsImage();
+     ASSERT_TRUE(image);
+ 
++    // A cancelled synchronous JPX decode is abandoned before publication and
++    // does not prevent a later canonical decode of the same image.
++    AlwaysCancelled cancel;
++    RetainPtr<CPDF_DIB> cancelled_dib = image->GetImage()->CreateNewDIB();
++    EXPECT_EQ(CPDF_DIB::LoadState::kFail,
++              cancelled_dib->StartLoadDIBBase(
++                  true, nullptr, page->GetMutablePageResources(), true,
++                  CPDF_ColorSpace::Family::kICCBased, false, {50, 50},
++                  &cancel));
++
+     // Render with small scale.
+     bool should_continue = page_image_cache->StartGetCachedBitmap(
+         image->GetImage(), nullptr, page->GetMutablePageResources(), true,
+-        CPDF_ColorSpace::Family::kICCBased, false, {50, 50});
++        CPDF_ColorSpace::Family::kICCBased, false, {50, 50}, nullptr);
+     while (should_continue) {
+       should_continue = page_image_cache->Continue(nullptr);
+     }
+@@ -72,7 +92,7 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+     RetainPtr<CPDF_DIB> reference_dib = image->GetImage()->CreateNewDIB();
+     CPDF_DIB::LoadState reference_state = reference_dib->StartLoadDIBBase(
+         true, nullptr, page->GetMutablePageResources(), true,
+-        CPDF_ColorSpace::Family::kICCBased, false, {50, 50});
++        CPDF_ColorSpace::Family::kICCBased, false, {50, 50}, nullptr);
+     while (reference_state == CPDF_DIB::LoadState::kContinue) {
+       reference_state = reference_dib->ContinueLoadDIBBase(nullptr);
+     }
+@@ -103,7 +123,7 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+     // And render with large scale.
+     should_continue = page_image_cache->StartGetCachedBitmap(
+         image->GetImage(), nullptr, page->GetMutablePageResources(), true,
+-        CPDF_ColorSpace::Family::kICCBased, false, {100, 100});
++        CPDF_ColorSpace::Family::kICCBased, false, {100, 100}, nullptr);
+     while (should_continue) {
+       should_continue = page_image_cache->Continue(nullptr);
+     }
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+index b0beae5d5..9bd08f1f2 100644
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -75,7 +75,8 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+           std_cs_, render_status_->GetGroupFamily(),
+           render_status_->GetLoadMask(),
+           {render_status_->GetRenderDevice()->GetWidth(),
+-           render_status_->GetRenderDevice()->GetHeight()})) {
++           render_status_->GetRenderDevice()->GetHeight()},
++          render_status_)) {
+     return false;
+   }
+   mode_ = Mode::kDefault;
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 7877d7312..074ef3266 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -73,6 +73,7 @@
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/fx_system.h"
+ #include "core/fxcrt/notreached.h"
++#include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxcrt/span.h"
+ #include "core/fxcrt/stl_util.h"
+ #include "core/fxcrt/unowned_ptr.h"
+@@ -107,6 +108,19 @@ constexpr uint32_t kVeloceFeatureRenderProgramExecutor = 0x00000001u;
+ int g_CurrentRecursionDepth = 0;
+ std::atomic<bool> g_skip_rasterization{false};
+ 
++class CancelOnlyPause final : public PauseIndicatorIface {
++ public:
++  explicit CancelOnlyPause(const CancelIndicatorIface* cancel)
++      : cancel_(cancel) {}
++
++  bool NeedToPauseNow() override {
++    return cancel_ && cancel_->IsCancelled();
++  }
++
++ private:
++  UnownedPtr<const CancelIndicatorIface> const cancel_;
++};
++
+ CFX_FillRenderOptions GetFillOptionsForDrawPathWithBlend(
+     const CPDF_RenderOptions::Options& options,
+     const CPDF_PathObject* path_obj,
+@@ -1334,6 +1348,11 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+   image_renderer_ = std::make_unique<CPDF_ImageRenderer>(this);
+   if (!image_renderer_->Start(pObj->AsImage(), mtObj2Device,
+                               /*bStdCS=*/false)) {
++    if (ShouldCancelRender()) {
++      stopped_ = true;
++      image_renderer_.reset();
++      return false;
++    }
+     if (!image_renderer_->GetResult()) {
+       DrawObjWithBackground(pObj, mtObj2Device);
+     }
+@@ -2410,7 +2429,17 @@ bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
+   }
+   CPDF_ImageRenderer render(this);
+   if (render.Start(pImageObj, mtObj2Device, std_cs_)) {
+-    render.Continue(nullptr);
++    CancelOnlyPause cancel_pause(this);
++    while (render.Continue(&cancel_pause)) {
++      if (ShouldCancelRender()) {
++        stopped_ = true;
++        return true;
++      }
++    }
++  }
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return true;
+   }
+   return render.GetResult();
+ }
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 65c2f19b7..311bdeeb9 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -19,6 +19,7 @@
+ #include "core/fpdfapi/page/cpdf_transparency.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/unowned_ptr.h"
+ #include "core/fxge/dib/fx_dib.h"
+@@ -46,7 +47,7 @@ class PauseIndicatorIface;
+ class VeloceRenderProgram;
+ struct VeloceRenderCallbacks;
+ 
+-class CPDF_RenderStatus {
++class CPDF_RenderStatus : public CancelIndicatorIface {
+  public:
+   CPDF_RenderStatus(CPDF_RenderContext* context, CFX_RenderDevice* pDevice);
+   ~CPDF_RenderStatus();
+@@ -105,6 +106,7 @@ class CPDF_RenderStatus {
+   CFX_RenderDevice* GetRenderDevice() const { return device_; }
+   const CPDF_RenderOptions& GetRenderOptions() const { return options_; }
+   bool ShouldCancelRender() const;
++  bool IsCancelled() const override { return ShouldCancelRender(); }
+   uint32_t GetRenderFeatureFlags() const;
+ 
+   // Attempts one exact ordered render-program replay for the holder. Returns
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index 94003318c..898738e21 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -16,6 +16,7 @@
+ 
+ #include "core/fxcodec/jpx/jpx_decode_utils.h"
+ #include "core/fxcrt/check_op.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/numerics/safe_conversions.h"
+ #include "core/fxcrt/ptr_util.h"
+@@ -47,6 +48,13 @@ struct OpjImageRgbData {
+ 
+ void fx_ignore_callback(const char* msg, void* client_data) {}
+ 
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++OPJ_BOOL IsJpxDecodeCancelled(void* client_data) {
++  auto* cancel = static_cast<CancelIndicatorIface*>(client_data);
++  return cancel && cancel->IsCancelled() ? OPJ_TRUE : OPJ_FALSE;
++}
++#endif
++
+ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
+   if (!data || !data->src_data || data->src_size <= 0) {
+     return nullptr;
+@@ -508,7 +516,17 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+   return true;
+ }
+ 
+-bool CJPX_Decoder::StartDecode() {
++bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  if (cancel &&
++      !opj_set_decode_cancel_callback(codec_.get(), IsJpxDecodeCancelled,
++                                      cancel)) {
++    return false;
++  }
++#endif
++  if (cancel && cancel->IsCancelled()) {
++    return false;
++  }
+   if (!parameters_.nb_tile_to_decode) {
+     if (!opj_set_decode_area(codec_.get(), image_.get(), parameters_.DA_x0,
+                              parameters_.DA_y0, parameters_.DA_x1,
+@@ -526,6 +544,10 @@ bool CJPX_Decoder::StartDecode() {
+     return false;
+   }
+ 
++  if (cancel && cancel->IsCancelled()) {
++    return false;
++  }
++
+   stream_.reset();
+   auto components = components_span(image_.get());
+   if (image_->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
+@@ -566,7 +588,8 @@ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
+ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+                           uint32_t pitch,
+                           bool swap_rgb,
+-                          uint32_t component_count) {
++                          uint32_t component_count,
++                          CancelIndicatorIface* cancel) {
+   CHECK_LE(component_count, image_->numcomps);
+   uint32_t channel_count = component_count;
+   if (channel_count == 3 && image_->numcomps == 4) {
+@@ -613,6 +636,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+   uint32_t width = components[0].w;
+   uint32_t height = components[0].h;
+   for (uint32_t channel = 0; channel < channel_count; ++channel) {
++    if (cancel && cancel->IsCancelled()) {
++      return false;
++    }
+     uint8_t* pChannel = channel_bufs[channel];
+     const int adjust = adjust_comps[channel];
+     const opj_image_comp_t& comps = components[channel];
+@@ -626,6 +652,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+       const uint32_t src_offset = comps.sgnd ? 1 << (comps.prec - 1) : 0;
+       if (adjust < 0) {
+         for (uint32_t row = 0; row < height; ++row) {
++          if (cancel && cancel->IsCancelled()) {
++            return false;
++          }
+           uint8_t* pScanline = pChannel + row * pitch;
+           for (uint32_t col = 0; col < width; ++col) {
+             uint8_t* pPixel = pScanline + col * channel_count;
+@@ -635,6 +664,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+         }
+       } else if (adjust == 0) {
+         for (uint32_t row = 0; row < height; ++row) {
++          if (cancel && cancel->IsCancelled()) {
++            return false;
++          }
+           uint8_t* pScanline = pChannel + row * pitch;
+           for (uint32_t col = 0; col < width; ++col) {
+             uint8_t* pPixel = pScanline + col * channel_count;
+@@ -644,6 +676,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+         }
+       } else {
+         for (uint32_t row = 0; row < height; ++row) {
++          if (cancel && cancel->IsCancelled()) {
++            return false;
++          }
+           uint8_t* pScanline = pChannel + row * pitch;
+           for (uint32_t col = 0; col < width; ++col) {
+             uint8_t* pPixel = pScanline + col * channel_count;
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+index 2b456bae2..14721d290 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -20,6 +20,8 @@
+ #include "third_party/libopenjpeg/openjpeg.h"
+ #endif
+ 
++class CancelIndicatorIface;
++
+ namespace fxcodec {
+ 
+ struct DecodeData;
+@@ -54,7 +56,7 @@ class CJPX_Decoder {
+   ~CJPX_Decoder();
+ 
+   JpxImageInfo GetInfo() const;
+-  bool StartDecode();
++  bool StartDecode(CancelIndicatorIface* cancel = nullptr);
+ 
+   // `swap_rgb` can only be set when an image's color space type contains at
+   // least 3 color components. Note that this `component_count` is not
+@@ -70,7 +72,8 @@ class CJPX_Decoder {
+   bool Decode(pdfium::span<uint8_t> dest_buf,
+               uint32_t pitch,
+               bool swap_rgb,
+-              uint32_t component_count);
++              uint32_t component_count,
++              CancelIndicatorIface* cancel = nullptr);
+ 
+  private:
+   struct CodecDeleter {
+diff --git a/core/fxcrt/BUILD.gn b/core/fxcrt/BUILD.gn
+index 9fcac56c0..71cb247dd 100644
+--- a/core/fxcrt/BUILD.gn
++++ b/core/fxcrt/BUILD.gn
+@@ -30,6 +30,7 @@ source_set("fxcrt") {
+     "byteorder.h",
+     "bytestring.cpp",
+     "bytestring.h",
++    "cancelindicator_iface.h",
+     "cfx_bitstream.cpp",
+     "cfx_bitstream.h",
+     "cfx_datetime.cpp",
+diff --git a/core/fxcrt/cancelindicator_iface.h b/core/fxcrt/cancelindicator_iface.h
+new file mode 100644
+index 000000000..14439af7c
+--- /dev/null
++++ b/core/fxcrt/cancelindicator_iface.h
+@@ -0,0 +1,17 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CORE_FXCRT_CANCELINDICATOR_IFACE_H_
++#define CORE_FXCRT_CANCELINDICATOR_IFACE_H_
++
++// Cancellation is intentionally separate from PauseIndicatorIface. A pause
++// yields progressive work that must be resumable; cancellation permanently
++// abandons the current result.
++class CancelIndicatorIface {
++ public:
++  virtual ~CancelIndicatorIface() = default;
++  virtual bool IsCancelled() const = 0;
++};
++
++#endif  // CORE_FXCRT_CANCELINDICATOR_IFACE_H_
+diff --git a/core/fxge/dib/cstretchengine.cpp b/core/fxge/dib/cstretchengine.cpp
+index 2fe7c0bd7..8d0dc579c 100644
+--- a/core/fxge/dib/cstretchengine.cpp
++++ b/core/fxge/dib/cstretchengine.cpp
+@@ -290,15 +290,20 @@ bool CStretchEngine::Continue(PauseIndicatorIface* pPause) {
+     return ContinueBoundedRows(pPause);
+   }
+ 
+-  while (state_ == State::kHorizontal) {
++  if (state_ == State::kHorizontal) {
+     if (ContinueStretchHorz(pPause)) {
+       return true;
+     }
+ 
+     state_ = State::kVertical;
+-    StretchVert();
++    cur_row_ = dest_clip_.top;
++    if (!vertical_weight_table_.CalculateWeights(
++            dest_height_, dest_clip_.top, dest_clip_.bottom, src_height_,
++            src_clip_.top, src_clip_.bottom, resample_options_)) {
++      return false;
++    }
+   }
+-  return false;
++  return state_ == State::kVertical && ContinueStretchVert(pPause);
+ }
+ 
+ bool CStretchEngine::StartStretchHorz() {
+@@ -664,22 +669,23 @@ bool CStretchEngine::ContinueBoundedRows(PauseIndicatorIface* pPause) {
+   return false;
+ }
+ 
+-void CStretchEngine::StretchVert() {
++bool CStretchEngine::ContinueStretchVert(PauseIndicatorIface* pPause) {
+   if (dest_height_ == 0) {
+-    return;
+-  }
+-
+-  WeightTable table;
+-  if (!table.CalculateWeights(dest_height_, dest_clip_.top, dest_clip_.bottom,
+-                              src_height_, src_clip_.top, src_clip_.bottom,
+-                              resample_options_)) {
+-    return;
++    return false;
+   }
+ 
+   const int DestBpp = dest_bpp_ / 8;
+-  for (int row = dest_clip_.top; row < dest_clip_.bottom; ++row) {
++  int rows_until_pause = kStretchPauseRows;
++  for (; cur_row_ < dest_clip_.bottom; ++cur_row_) {
++    if (rows_until_pause == 0) {
++      if (pPause && pPause->NeedToPauseNow()) {
++        return true;
++      }
++      rows_until_pause = kStretchPauseRows;
++    }
+     unsigned char* dest_scan = dest_scanline_.data();
+-    const PixelWeight* pWeights = table.GetPixelWeight(row);
++    const PixelWeight* pWeights =
++        vertical_weight_table_.GetPixelWeight(cur_row_);
+     switch (trans_method_) {
+       case TransformMethod::k1BppTo8Bpp:
+       case TransformMethod::k1BppToManyBpp:
+@@ -763,6 +769,8 @@ void CStretchEngine::StretchVert() {
+         break;
+       }
+     }
+-    dest_bitmap_->ComposeScanline(row - dest_clip_.top, dest_scanline_);
++    dest_bitmap_->ComposeScanline(cur_row_ - dest_clip_.top, dest_scanline_);
++    --rows_until_pause;
+   }
++  return false;
+ }
+diff --git a/core/fxge/dib/cstretchengine.h b/core/fxge/dib/cstretchengine.h
+index ec5772bdb..e66297d2f 100644
+--- a/core/fxge/dib/cstretchengine.h
++++ b/core/fxge/dib/cstretchengine.h
+@@ -126,7 +126,7 @@ class CStretchEngine {
+   bool Continue(PauseIndicatorIface* pPause);
+   bool StartStretchHorz();
+   bool ContinueStretchHorz(PauseIndicatorIface* pPause);
+-  void StretchVert();
++  bool ContinueStretchVert(PauseIndicatorIface* pPause);
+ 
+   const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {
+     return resample_options_;
+diff --git a/fpdfsdk/fpdf_editimg.cpp b/fpdfsdk/fpdf_editimg.cpp
+index 80b3732fe..f341de05b 100644
+--- a/fpdfsdk/fpdf_editimg.cpp
++++ b/fpdfsdk/fpdf_editimg.cpp
+@@ -524,7 +524,7 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
+   RetainPtr<CPDF_DIB> pSource = pImg->CreateNewDIB();
+   CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
+       false, nullptr, pPage->GetPageResources().Get(), false,
+-      CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
++      CPDF_ColorSpace::Family::kUnknown, false, {0, 0}, nullptr);
+   if (ret == CPDF_DIB::LoadState::kFail) {
+     return true;
+   }
+diff --git a/fpdfsdk/fpdf_thumbnail.cpp b/fpdfsdk/fpdf_thumbnail.cpp
+index 18fe04909..11defc461 100644
+--- a/fpdfsdk/fpdf_thumbnail.cpp
++++ b/fpdfsdk/fpdf_thumbnail.cpp
+@@ -82,7 +82,7 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
+                                                  std::move(thumb_stream));
+   const CPDF_DIB::LoadState start_status = dib_source->StartLoadDIBBase(
+       false, nullptr, pdf_page->GetPageResources().Get(), false,
+-      CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
++      CPDF_ColorSpace::Family::kUnknown, false, {0, 0}, nullptr);
+   if (start_status == CPDF_DIB::LoadState::kFail) {
+     return nullptr;
+   }
+diff --git a/third_party/libopenjpeg/event.c b/third_party/libopenjpeg/event.c
+index aad9d76c9..8d70784d9 100644
+--- a/third_party/libopenjpeg/event.c
++++ b/third_party/libopenjpeg/event.c
+@@ -147,5 +147,6 @@ void opj_set_default_event_handler(opj_event_mgr_t * p_manager)
+     p_manager->error_handler = opj_default_callback;
+     p_manager->info_handler = opj_default_callback;
+     p_manager->warning_handler = opj_default_callback;
++    p_manager->cancel_handler = 00;
++    p_manager->m_cancel_data = 00;
+ }
+-
+diff --git a/third_party/libopenjpeg/event.h b/third_party/libopenjpeg/event.h
+index d880388d0..461e82588 100644
+--- a/third_party/libopenjpeg/event.h
++++ b/third_party/libopenjpeg/event.h
+@@ -60,8 +60,19 @@ typedef struct opj_event_mgr {
+     opj_msg_callback warning_handler;
+     /** Debug message callback if available, NULL otherwise */
+     opj_msg_callback info_handler;
++    /** Cooperative decode cancellation callback, NULL otherwise */
++    opj_cancel_callback cancel_handler;
++    /** Data passed to the cancellation callback */
++    void *          m_cancel_data;
+ } opj_event_mgr_t;
+ 
++static INLINE OPJ_BOOL opj_event_is_cancelled(
++        const opj_event_mgr_t* event_mgr)
++{
++    return event_mgr && event_mgr->cancel_handler &&
++           event_mgr->cancel_handler(event_mgr->m_cancel_data);
++}
++
+ 
+ #define EVT_ERROR   1   /**< Error event type */
+ #define EVT_WARNING 2   /**< Warning event type */
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
+index fc5ce62df..7429079e7 100644
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
+@@ -12010,6 +12010,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
+         }
+ 
+         if (!l_go_on ||
++                opj_event_is_cancelled(p_manager) ||
+                 ! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
+                                       p_stream, p_manager)) {
+             opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile 1/1\n");
+@@ -12124,7 +12125,8 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
+             }
+         }
+ 
+-        if (! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
++        if (opj_event_is_cancelled(p_manager) ||
++                ! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
+                                   p_stream, p_manager)) {
+             opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile %d/%d\n",
+                           l_current_tile_no + 1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
+diff --git a/third_party/libopenjpeg/openjpeg.c b/third_party/libopenjpeg/openjpeg.c
+index b8a4bfb0d..d072fa4e8 100644
+--- a/third_party/libopenjpeg/openjpeg.c
++++ b/third_party/libopenjpeg/openjpeg.c
+@@ -343,6 +343,23 @@ OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
+     return OPJ_FALSE;
+ }
+ 
++OPJ_BOOL OPJ_CALLCONV opj_set_decode_cancel_callback(
++    opj_codec_t *p_codec,
++    opj_cancel_callback callback,
++    void *client_data)
++{
++    if (!p_codec) {
++        return OPJ_FALSE;
++    }
++    opj_codec_private_t *l_codec = (opj_codec_private_t *)p_codec;
++    if (!l_codec->is_decompressor) {
++        return OPJ_FALSE;
++    }
++    l_codec->m_event_mgr.cancel_handler = callback;
++    l_codec->m_event_mgr.m_cancel_data = client_data;
++    return OPJ_TRUE;
++}
++
+ OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
+                                         opj_dparameters_t *parameters
+                                        )
+diff --git a/third_party/libopenjpeg/openjpeg.h b/third_party/libopenjpeg/openjpeg.h
+index fe2f1ee0c..e072f50f8 100644
+--- a/third_party/libopenjpeg/openjpeg.h
++++ b/third_party/libopenjpeg/openjpeg.h
+@@ -350,6 +350,9 @@ typedef enum CODEC_FORMAT {
+  * */
+ typedef void (*opj_msg_callback)(const char *msg, void *client_data);
+ 
++/** Returns OPJ_TRUE when the current decode should be abandoned. */
++typedef OPJ_BOOL (*opj_cancel_callback)(void *client_data);
++
+ /*
+ ==========================================================
+    codec typedef definitions
+@@ -1387,6 +1390,12 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec,
+ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
+         int num_threads);
+ 
++/** Installs a cooperative cancellation check for decode work. */
++OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_cancel_callback(
++    opj_codec_t *p_codec,
++    opj_cancel_callback callback,
++    void *client_data);
++
+ /**
+  * Decodes an image header.
+  *
+diff --git a/third_party/libopenjpeg/t1.c b/third_party/libopenjpeg/t1.c
+index 98dce47f5..3c6bfec70 100644
+--- a/third_party/libopenjpeg/t1.c
++++ b/third_party/libopenjpeg/t1.c
+@@ -1624,6 +1624,12 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
+ 
+     job = (opj_t1_cblk_decode_processing_job_t*) user_data;
+ 
++    if (opj_event_is_cancelled(job->p_manager)) {
++        *(job->pret) = OPJ_FALSE;
++        opj_free(job);
++        return;
++    }
++
+     cblk = job->cblk;
+ 
+     if (!job->whole_tile_decoding) {
+@@ -1921,6 +1927,11 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
+                     opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
+                     opj_t1_cblk_decode_processing_job_t* job;
+ 
++                    if (opj_event_is_cancelled(p_manager)) {
++                        *pret = OPJ_FALSE;
++                        return;
++                    }
++
+                     if (!opj_tcd_is_subband_area_of_interest(tcd,
+                             tilec->compno,
+                             resno,
+diff --git a/third_party/libopenjpeg/tcd.c b/third_party/libopenjpeg/tcd.c
+index 0957b6e1b..fc67f1e3c 100644
+--- a/third_party/libopenjpeg/tcd.c
++++ b/third_party/libopenjpeg/tcd.c
+@@ -166,12 +166,14 @@ static OPJ_BOOL opj_tcd_t2_decode(opj_tcd_t *p_tcd,
+ static OPJ_BOOL opj_tcd_t1_decode(opj_tcd_t *p_tcd,
+                                   opj_event_mgr_t *p_manager);
+ 
+-static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd);
++static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd,
++                                   opj_event_mgr_t *p_manager);
+ 
+ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd,
+                                    opj_event_mgr_t *p_manager);
+ 
+-static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd);
++static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd,
++        opj_event_mgr_t *p_manager);
+ 
+ 
+ static OPJ_BOOL opj_tcd_dc_level_shift_encode(opj_tcd_t *p_tcd);
+@@ -1722,6 +1724,9 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
+                             p_manager)) {
+         return OPJ_FALSE;
+     }
++    if (opj_event_is_cancelled(p_manager)) {
++        return OPJ_FALSE;
++    }
+     /* FIXME _ProfStop(PGROUP_T2); */
+ 
+     /*------------------TIER1-----------------*/
+@@ -1779,7 +1784,7 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
+ 
+     /* FIXME _ProfStart(PGROUP_DWT); */
+     if
+-    (! opj_tcd_dwt_decode(p_tcd)) {
++    (! opj_tcd_dwt_decode(p_tcd, p_manager)) {
+         return OPJ_FALSE;
+     }
+     /* FIXME _ProfStop(PGROUP_DWT); */
+@@ -1794,7 +1799,7 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
+ 
+     /* FIXME _ProfStart(PGROUP_DC_SHIFT); */
+     if
+-    (! opj_tcd_dc_level_shift_decode(p_tcd)) {
++    (! opj_tcd_dc_level_shift_decode(p_tcd, p_manager)) {
+         return OPJ_FALSE;
+     }
+     /* FIXME _ProfStop(PGROUP_DC_SHIFT); */
+@@ -2088,7 +2093,8 @@ static OPJ_BOOL opj_tcd_t1_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
+ }
+ 
+ 
+-static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd)
++static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd,
++                                   opj_event_mgr_t *p_manager)
+ {
+     OPJ_UINT32 compno;
+     opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
+@@ -2098,6 +2104,9 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd)
+ 
+     for (compno = 0; compno < l_tile->numcomps;
+             compno++, ++l_tile_comp, ++l_img_comp, ++l_tccp) {
++        if (opj_event_is_cancelled(p_manager)) {
++            return OPJ_FALSE;
++        }
+         if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+             continue;
+         }
+@@ -2127,6 +2136,10 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
+     OPJ_SIZE_T l_samples;
+     OPJ_UINT32 i;
+ 
++    if (opj_event_is_cancelled(p_manager)) {
++        return OPJ_FALSE;
++    }
++
+     if (l_tcp->mct == 0 || p_tcd->used_component != NULL) {
+         return OPJ_TRUE;
+     }
+@@ -2270,7 +2283,8 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
+ }
+ 
+ 
+-static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
++static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd,
++        opj_event_mgr_t *p_manager)
+ {
+     OPJ_UINT32 compno;
+     opj_tcd_tilecomp_t * l_tile_comp = 00;
+@@ -2291,6 +2305,10 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
+     for (compno = 0; compno < l_tile->numcomps;
+             compno++, ++l_img_comp, ++l_tccp, ++l_tile_comp) {
+ 
++        if (opj_event_is_cancelled(p_manager)) {
++            return OPJ_FALSE;
++        }
++
+         if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+             continue;
+         }
