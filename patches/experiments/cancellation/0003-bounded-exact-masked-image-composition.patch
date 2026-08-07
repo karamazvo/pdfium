@@ -1,0 +1,463 @@
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+index 9bd08f1f2..f464dd240 100644
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -31,9 +31,12 @@
+ #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+ #include "core/fpdfapi/render/cpdf_rendercontext.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/fx_safe_types.h"
+ #include "core/fxcrt/maybe_owned.h"
++#include "core/fxcrt/pauseindicator_iface.h"
++#include "core/fxcrt/unowned_ptr.h"
+ #include "core/fxcrt/zip.h"
+ #include "core/fxge/cfx_defaultrenderdevice.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
+@@ -48,6 +51,19 @@
+ 
+ namespace {
+ 
++class CancelOnlyPause final : public PauseIndicatorIface {
++ public:
++  explicit CancelOnlyPause(const CancelIndicatorIface* cancel)
++      : cancel_(cancel) {}
++
++  bool NeedToPauseNow() override {
++    return cancel_ && cancel_->IsCancelled();
++  }
++
++ private:
++  UnownedPtr<const CancelIndicatorIface> const cancel_;
++};
++
+ bool IsImageValueTooBig(int val) {
+   // Likely large enough for any real rendering need, but sufficiently small
+   // that operations like val1 + val2 or -val will not overflow.
+@@ -283,9 +299,17 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
+     mask_status.Initialize(nullptr, nullptr);
+ 
+     CPDF_ImageRenderer mask_renderer(&mask_status);
++    CancelOnlyPause cancel_pause(render_status_);
+     if (mask_renderer.Start(std::move(pDIBBase), 0xffffffff, mtNewMatrix,
+                             resample_options_, true)) {
+-      mask_renderer.Continue(nullptr);
++      while (mask_renderer.Continue(&cancel_pause)) {
++        if (render_status_->IsCancelled()) {
++          return nullptr;
++        }
++      }
++    }
++    if (render_status_->IsCancelled()) {
++      return nullptr;
+     }
+     if (loader_->MatteColor() != 0xffffffff) {
+       const int matte_r = FXARGB_R(loader_->MatteColor());
+@@ -293,6 +317,9 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
+       const int matte_b = FXARGB_B(loader_->MatteColor());
+       RetainPtr<CFX_DIBitmap> dest_bitmap = bitmap_device.GetBitmap();
+       for (int row = 0; row < rect.Height(); row++) {
++        if ((row % 32) == 0 && render_status_->IsCancelled()) {
++          return nullptr;
++        }
+         auto mask_scan = mask_bitmap->GetScanline(row).first(
+             static_cast<size_t>(rect.Width()));
+         auto dest_scan =
+@@ -392,8 +419,16 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
+   bitmap_status.SetStdCS(true);
+   bitmap_status.Initialize(nullptr, nullptr);
+   CPDF_ImageRenderer bitmap_renderer(&bitmap_status);
++  CancelOnlyPause cancel_pause(render_status_);
+   if (bitmap_renderer.Start(dibbase_, 0, new_matrix, resample_options_, true)) {
+-    bitmap_renderer.Continue(nullptr);
++    while (bitmap_renderer.Continue(&cancel_pause)) {
++      if (render_status_->IsCancelled()) {
++        return false;
++      }
++    }
++  }
++  if (render_status_->IsCancelled()) {
++    return false;
+   }
+   RetainPtr<const CFX_DIBitmap> mask_bitmap =
+       CalculateDrawImage(bitmap_device, loader_->GetMask(), new_matrix, rect);
+@@ -401,10 +436,17 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
+     return true;
+   }
+ 
+-  if (render_status_->GetRenderDevice()->SetBitsWithMask(
++  const auto masked_result =
++      render_status_->GetRenderDevice()->SetBitsWithMaskAndCancel(
+           bitmap_device.GetBitmap(), mask_bitmap, rect.left, rect.top, alpha_,
+-          blend_type_)) {
+-    return false;
++          blend_type_, render_status_);
++  switch (masked_result) {
++    case RenderDeviceDriverIface::SetBitsWithMaskResult::kSuccess:
++    case RenderDeviceDriverIface::SetBitsWithMaskResult::kCancelled:
++    case RenderDeviceDriverIface::SetBitsWithMaskResult::kFailure:
++      return false;
++    case RenderDeviceDriverIface::SetBitsWithMaskResult::kUnsupported:
++      break;
+   }
+   bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
+   bitmap_device.GetBitmap()->MultiplyAlpha(alpha_);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 074ef3266..ff0e8c8b0 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -1307,6 +1307,12 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+       return true;
+     }
+ 
++    if (ShouldCancelRender()) {
++      stopped_ = true;
++      image_renderer_.reset();
++      return false;
++    }
++
+     if (!image_renderer_->GetResult()) {
+       DrawObjWithBackground(pObj, mtObj2Device);
+     }
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index c90c548dd..2f7f9a940 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -14,6 +14,7 @@
+ #include <utility>
+ 
+ #include "build/build_config.h"
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/check_op.h"
+ #include "core/fxcrt/compiler_specific.h"
+@@ -1823,6 +1824,20 @@ bool CFX_AggDeviceDriver::SetBitsWithMask(
+     int dest_top,
+     float alpha,
+     BlendMode blend_type) {
++  return SetBitsWithMaskAndCancel(std::move(bitmap), std::move(mask),
++                                  dest_left, dest_top, alpha, blend_type,
++                                  nullptr) == SetBitsWithMaskResult::kSuccess;
++}
++
++RenderDeviceDriverIface::SetBitsWithMaskResult
++CFX_AggDeviceDriver::SetBitsWithMaskAndCancel(
++    RetainPtr<const CFX_DIBBase> bitmap,
++    RetainPtr<const CFX_DIBBase> mask,
++    int dest_left,
++    int dest_top,
++    float alpha,
++    BlendMode blend_type,
++    const CancelIndicatorIface* cancel) {
+   // The canonical path first turns this opaque bitmap into BGRA using the
+   // mask, then composites it. For the exact common case below, the existing
+   // scanline compositor can consume the same mask as coverage directly.
+@@ -1832,10 +1847,10 @@ bool CFX_AggDeviceDriver::SetBitsWithMask(
+       bitmap->GetWidth() != mask->GetWidth() ||
+       bitmap->GetHeight() != mask->GetHeight() || group_knockout_ ||
+       (clip_rgn_ && clip_rgn_->GetMask())) {
+-    return false;
++    return SetBitsWithMaskResult::kUnsupported;
+   }
+   if (bitmap_->GetBuffer().empty()) {
+-    return true;
++    return SetBitsWithMaskResult::kSuccess;
+   }
+ 
+   const FX_RECT image_rect(dest_left, dest_top,
+@@ -1848,13 +1863,34 @@ bool CFX_AggDeviceDriver::SetBitsWithMask(
+     draw_rect.Intersect(clip_rgn_->GetBox());
+   }
+   if (draw_rect.IsEmpty()) {
+-    return true;
++    return SetBitsWithMaskResult::kSuccess;
++  }
++
++  constexpr int kMaxCompositeRows = 32;
++  constexpr int kMaxCompositePixels = 32 * 1024;
++  const int rows_for_pixel_budget =
++      std::max(1, kMaxCompositePixels / draw_rect.Width());
++  const int rows_per_chunk =
++      std::min(kMaxCompositeRows, rows_for_pixel_budget);
++  bool changed_destination = false;
++  for (int chunk_top = draw_rect.top; chunk_top < draw_rect.bottom;
++       chunk_top += rows_per_chunk) {
++    if (cancel && cancel->IsCancelled()) {
++      return SetBitsWithMaskResult::kCancelled;
++    }
++    const int chunk_bottom =
++        std::min(draw_rect.bottom, chunk_top + rows_per_chunk);
++    const int chunk_height = chunk_bottom - chunk_top;
++    if (!bitmap_->CompositeBitmap(
++            draw_rect.left, chunk_top, draw_rect.Width(), chunk_height,
++            bitmap, draw_rect.left - dest_left, chunk_top - dest_top,
++            blend_type, &image_rect, mask, rgb_byte_order_)) {
++      return changed_destination ? SetBitsWithMaskResult::kFailure
++                                 : SetBitsWithMaskResult::kUnsupported;
++    }
++    changed_destination = true;
+   }
+-
+-  return bitmap_->CompositeBitmap(
+-      draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
+-      std::move(bitmap), draw_rect.left - dest_left, draw_rect.top - dest_top,
+-      blend_type, &image_rect, std::move(mask), rgb_byte_order_);
++  return SetBitsWithMaskResult::kSuccess;
+ }
+ 
+ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 2d4391c02..db51800d9 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -131,6 +131,14 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                        int dest_top,
+                        float alpha,
+                        BlendMode blend_type) override;
++  SetBitsWithMaskResult SetBitsWithMaskAndCancel(
++      RetainPtr<const CFX_DIBBase> bitmap,
++      RetainPtr<const CFX_DIBBase> mask,
++      int dest_left,
++      int dest_top,
++      float alpha,
++      BlendMode blend_type,
++      const CancelIndicatorIface* cancel) override;
+ 
+   void Clear(uint32_t color);
+ 
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index 5d49558ef..741dc3ae2 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -8,6 +8,7 @@
+ #include <array>
+ #include <ranges>
+ 
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
+@@ -17,6 +18,89 @@
+ #include "core/fxge/dib/fx_dib.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
++namespace {
++
++class CancelOnSecondCheck final : public CancelIndicatorIface {
++ public:
++  bool IsCancelled() const override { return ++checks_ >= 2; }
++
++ private:
++  mutable int checks_ = 0;
++};
++
++}  // namespace
++
++TEST(CFXDefaultRenderDeviceTest, BoundedMaskedBitsMatchCanonicalComposite) {
++  constexpr int kWidth = 79;
++  constexpr int kHeight = 96;
++  auto canonical_source = pdfium::MakeRetain<CFX_DIBitmap>();
++  auto direct_source = pdfium::MakeRetain<CFX_DIBitmap>();
++  auto canonical_mask = pdfium::MakeRetain<CFX_DIBitmap>();
++  auto direct_mask = pdfium::MakeRetain<CFX_DIBitmap>();
++  ASSERT_TRUE(canonical_source->Create(kWidth, kHeight,
++                                       FXDIB_Format::kBgrx));
++  ASSERT_TRUE(direct_source->Create(kWidth, kHeight, FXDIB_Format::kBgrx));
++  ASSERT_TRUE(canonical_mask->Create(kWidth, kHeight,
++                                     FXDIB_Format::k8bppMask));
++  ASSERT_TRUE(direct_mask->Create(kWidth, kHeight,
++                                  FXDIB_Format::k8bppMask));
++  canonical_source->Clear(0xff2850a0);
++  direct_source->Clear(0xff2850a0);
++  for (int row = 0; row < kHeight; ++row) {
++    auto canonical_row = canonical_mask->GetWritableScanline(row).first(
++        static_cast<size_t>(kWidth));
++    auto direct_row = direct_mask->GetWritableScanline(row).first(
++        static_cast<size_t>(kWidth));
++    for (int col = 0; col < kWidth; ++col) {
++      const uint8_t coverage = static_cast<uint8_t>((row * 17 + col * 29) % 256);
++      canonical_row[col] = coverage;
++      direct_row[col] = coverage;
++    }
++  }
++
++  CFX_DefaultRenderDevice canonical;
++  CFX_DefaultRenderDevice direct;
++  ASSERT_TRUE(canonical.Create(kWidth, kHeight, FXDIB_Format::kBgra));
++  ASSERT_TRUE(direct.Create(kWidth, kHeight, FXDIB_Format::kBgra));
++  canonical.GetBitmap()->Clear(0xffc86432);
++  direct.GetBitmap()->Clear(0xffc86432);
++  ASSERT_TRUE(canonical_source->MultiplyAlphaMask(canonical_mask));
++  ASSERT_TRUE(canonical.SetDIBits(canonical_source, 0, 0));
++  EXPECT_EQ(RenderDeviceDriverIface::SetBitsWithMaskResult::kSuccess,
++            direct.SetBitsWithMaskAndCancel(direct_source, direct_mask, 0, 0,
++                                            1.0f, BlendMode::kNormal,
++                                            nullptr));
++  EXPECT_TRUE(std::ranges::equal(canonical.GetBitmap()->GetBuffer(),
++                                 direct.GetBitmap()->GetBuffer()));
++}
++
++TEST(CFXDefaultRenderDeviceTest, BoundedMaskedBitsObserveCancellation) {
++  constexpr int kWidth = 79;
++  constexpr int kHeight = 96;
++  auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++  auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
++  ASSERT_TRUE(source->Create(kWidth, kHeight, FXDIB_Format::kBgrx));
++  ASSERT_TRUE(mask->Create(kWidth, kHeight, FXDIB_Format::k8bppMask));
++  source->Clear(0xff2850a0);
++  mask->Clear(0x80808080);
++
++  CFX_DefaultRenderDevice device;
++  CFX_DefaultRenderDevice untouched;
++  ASSERT_TRUE(device.Create(kWidth, kHeight, FXDIB_Format::kBgra));
++  ASSERT_TRUE(untouched.Create(kWidth, kHeight, FXDIB_Format::kBgra));
++  device.GetBitmap()->Clear(0xffc86432);
++  untouched.GetBitmap()->Clear(0xffc86432);
++  CancelOnSecondCheck cancel;
++  EXPECT_EQ(RenderDeviceDriverIface::SetBitsWithMaskResult::kCancelled,
++            device.SetBitsWithMaskAndCancel(source, mask, 0, 0, 1.0f,
++                                            BlendMode::kNormal, &cancel));
++  EXPECT_FALSE(std::ranges::equal(device.GetBitmap()->GetScanline(0),
++                                  untouched.GetBitmap()->GetScanline(0)));
++  EXPECT_TRUE(std::ranges::equal(
++      device.GetBitmap()->GetScanline(kHeight - 1),
++      untouched.GetBitmap()->GetScanline(kHeight - 1)));
++}
++
+ TEST(CFXDefaultRenderDeviceTest, GetClipBoxDefault) {
+   CFX_DefaultRenderDevice device;
+   ASSERT_TRUE(device.Create(/*width=*/16, /*height=*/16, FXDIB_Format::kBgra));
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index c5bc04eff..8b60bc33d 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -1178,6 +1178,20 @@ bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                                          left, top, alpha, blend_type);
+ }
+ 
++RenderDeviceDriverIface::SetBitsWithMaskResult
++CFX_RenderDevice::SetBitsWithMaskAndCancel(
++    RetainPtr<const CFX_DIBBase> bitmap,
++    RetainPtr<const CFX_DIBBase> mask,
++    int left,
++    int top,
++    float alpha,
++    BlendMode blend_type,
++    const CancelIndicatorIface* cancel) {
++  return device_driver_->SetBitsWithMaskAndCancel(
++      std::move(bitmap), std::move(mask), left, top, alpha, blend_type,
++      cancel);
++}
++
+ #if defined(PDF_USE_SKIA)
+ bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
+                                    const CFX_Matrix& matrix,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 5465fd769..fad6934c0 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -23,6 +23,7 @@ class CFX_DIBBase;
+ class CFX_DIBitmap;
+ class CFX_Font;
+ class CFX_GraphStateData;
++class CancelIndicatorIface;
+ class PauseIndicatorIface;
+ class TextCharPos;
+ struct CFX_Color;
+@@ -230,6 +231,14 @@ class CFX_RenderDevice {
+                        int top,
+                        float alpha,
+                        BlendMode blend_type);
++  RenderDeviceDriverIface::SetBitsWithMaskResult SetBitsWithMaskAndCancel(
++      RetainPtr<const CFX_DIBBase> bitmap,
++      RetainPtr<const CFX_DIBBase> mask,
++      int left,
++      int top,
++      float alpha,
++      BlendMode blend_type,
++      const CancelIndicatorIface* cancel);
+ 
+ #if defined(PDF_USE_SKIA)
+   bool DrawShading(const CPDF_ShadingPattern& pattern,
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index 16db9d1c2..e8e3e0cc4 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -8,6 +8,7 @@
+ 
+ #include <utility>
+ 
++#include "core/fxcrt/cancelindicator_iface.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+@@ -157,6 +158,27 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
+   return false;
+ }
+ 
++RenderDeviceDriverIface::SetBitsWithMaskResult
++RenderDeviceDriverIface::SetBitsWithMaskAndCancel(
++    RetainPtr<const CFX_DIBBase> bitmap,
++    RetainPtr<const CFX_DIBBase> mask,
++    int left,
++    int top,
++    float alpha,
++    BlendMode blend_type,
++    const CancelIndicatorIface* cancel) {
++  if (cancel && cancel->IsCancelled()) {
++    return SetBitsWithMaskResult::kCancelled;
++  }
++  const bool success = SetBitsWithMask(std::move(bitmap), std::move(mask), left,
++                                       top, alpha, blend_type);
++  if (cancel && cancel->IsCancelled()) {
++    return SetBitsWithMaskResult::kCancelled;
++  }
++  return success ? SetBitsWithMaskResult::kSuccess
++                 : SetBitsWithMaskResult::kUnsupported;
++}
++
+ #if defined(PDF_USE_SKIA)
+ bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
+                                           const CFX_Matrix& matrix,
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 0ee001c9d..064cab6da 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -24,6 +24,7 @@ class CFX_Font;
+ class CFX_GraphStateData;
+ class CFX_Matrix;
+ class CFX_Path;
++class CancelIndicatorIface;
+ class CPDF_ShadingPattern;
+ class PauseIndicatorIface;
+ class TextCharPos;
+@@ -71,6 +72,13 @@ enum class DeviceType : bool {
+ 
+ class RenderDeviceDriverIface {
+  public:
++  enum class SetBitsWithMaskResult {
++    kUnsupported,
++    kSuccess,
++    kCancelled,
++    kFailure,
++  };
++
+   class OrderedPathBatchContext {
+    public:
+     virtual ~OrderedPathBatchContext();
+@@ -226,6 +234,14 @@ class RenderDeviceDriverIface {
+                                int top,
+                                float alpha,
+                                BlendMode blend_type);
++  virtual SetBitsWithMaskResult SetBitsWithMaskAndCancel(
++      RetainPtr<const CFX_DIBBase> bitmap,
++      RetainPtr<const CFX_DIBBase> mask,
++      int left,
++      int top,
++      float alpha,
++      BlendMode blend_type,
++      const CancelIndicatorIface* cancel);
+ #if defined(PDF_USE_SKIA)
+   virtual bool DrawShading(const CPDF_ShadingPattern& pattern,
+                            const CFX_Matrix& matrix,
