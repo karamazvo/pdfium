@@ -1,0 +1,333 @@
+diff --git a/core/fxge/BUILD.gn b/core/fxge/BUILD.gn
+index 625129b3b..e67f95cbe 100644
+--- a/core/fxge/BUILD.gn
++++ b/core/fxge/BUILD.gn
+@@ -258,6 +258,7 @@ pdfium_unittest_source_set("unittests") {
+     "dib/cfx_cmyk_to_srgb_unittest.cpp",
+     "dib/cfx_dibbase_unittest.cpp",
+     "dib/cfx_dibitmap_unittest.cpp",
++    "dib/cfx_imagetransformer_unittest.cpp",
+     "dib/cfx_scanlinecompositor_unittest.cpp",
+     "dib/cstretchengine_unittest.cpp",
+     "dib/fx_dib_unittest.cpp",
+diff --git a/core/fxge/dib/cfx_dibbase.cpp b/core/fxge/dib/cfx_dibbase.cpp
+index ee2c21cfe..cf6245f0d 100644
+--- a/core/fxge/dib/cfx_dibbase.cpp
++++ b/core/fxge/dib/cfx_dibbase.cpp
+@@ -1096,7 +1096,8 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix& mtDest,
+   RetainPtr<const CFX_DIBBase> holder(this);
+   CFX_ImageTransformer transformer(holder, mtDest, FXDIB_ResampleOptions(),
+                                    nullptr);
+-  transformer.Continue(nullptr);
++  while (transformer.Continue(nullptr)) {
++  }
+   *result_left = transformer.result().left;
+   *result_top = transformer.result().top;
+   return transformer.DetachBitmap();
+diff --git a/core/fxge/dib/cfx_imagetransformer.cpp b/core/fxge/dib/cfx_imagetransformer.cpp
+index 3c513b8c6..8a3eabdb9 100644
+--- a/core/fxge/dib/cfx_imagetransformer.cpp
++++ b/core/fxge/dib/cfx_imagetransformer.cpp
+@@ -8,6 +8,7 @@
+ 
+ #include <math.h>
+ 
++#include <algorithm>
+ #include <array>
+ #include <iterator>
+ #include <memory>
+@@ -18,6 +19,7 @@
+ #include "core/fxcrt/fx_system.h"
+ #include "core/fxcrt/notreached.h"
+ #include "core/fxcrt/numerics/safe_conversions.h"
++#include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxcrt/stl_util.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ #include "core/fxge/dib/cfx_imagestretcher.h"
+@@ -27,6 +29,8 @@ namespace {
+ 
+ constexpr int kBase = 256;
+ constexpr float kFix16 = 0.05f;
++constexpr int kMaxTransformRowsPerContinue = 32;
++constexpr int kTransformPixelsPerContinue = 32 * 1024;
+ constexpr uint8_t kOpaqueAlpha = 0xff;
+ 
+ uint8_t BilinearInterpolate(const uint8_t* buf,
+@@ -110,9 +114,11 @@ void DoBilinearLoop(const CFX_ImageTransformer::CalcData& calc_data,
+                     const FX_RECT& result_rect,
+                     const FX_RECT& clip_rect,
+                     int increment,
++                    int start_row,
++                    int end_row,
+                     const F& func) {
+   CFX_BilinearMatrix matrix_fix(calc_data.matrix);
+-  for (int row = 0; row < result_rect.Height(); row++) {
++  for (int row = start_row; row < end_row; ++row) {
+     uint8_t* dest = calc_data.bitmap->GetWritableScanline(row).data();
+     for (int col = 0; col < result_rect.Width(); col++) {
+       CFX_ImageTransformer::BilinearData d;
+@@ -227,8 +233,11 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
+     return false;
+   }
+ 
+-  if (stretcher_->Continue(pPause)) {
+-    return true;
++  if (!stretcher_complete_) {
++    if (stretcher_->Continue(pPause)) {
++      return true;
++    }
++    stretcher_complete_ = true;
+   }
+ 
+   switch (type_) {
+@@ -241,8 +250,7 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
+       ContinueRotate(pPause);
+       return false;
+     case StretchType::kOther:
+-      ContinueOther(pPause);
+-      return false;
++      return ContinueOther(pPause);
+   }
+ }
+ 
+@@ -252,53 +260,86 @@ void CFX_ImageTransformer::ContinueRotate(PauseIndicatorIface* pPause) {
+   }
+ }
+ 
+-void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
++bool CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
+   if (!storer_.GetBitmap()) {
+-    return;
++    return false;
+   }
+ 
+-  auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
+-  // TODO(crbug.com/42271020): Consider adding support for
+-  // `FXDIB_Format::kBgraPremul`
+-  FXDIB_Format dest_format = stretcher_->source()->IsMaskFormat()
+-                                 ? FXDIB_Format::k8bppMask
+-                                 : FXDIB_Format::kBgra;
+-  if (!pTransformed->Create(result_.Width(), result_.Height(), dest_format)) {
+-    return;
++  if (pPause && pPause->NeedToPauseNow()) {
++    return true;
+   }
+ 
+-  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, result_.left, result_.top);
+-  result2stretch.Concat(dest_to_stretch_);
+-  result2stretch.Translate(-stretch_clip_.left, -stretch_clip_.top);
++  // Keep partial affine output private. The storer continues to own the
++  // completed stretch until every transformed row is available.
++  if (!transformed_bitmap_) {
++    transformed_bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
++    // TODO(crbug.com/42271020): Consider adding support for
++    // `FXDIB_Format::kBgraPremul`
++    const FXDIB_Format dest_format = stretcher_->source()->IsMaskFormat()
++                                         ? FXDIB_Format::k8bppMask
++                                         : FXDIB_Format::kBgra;
++    if (!transformed_bitmap_->Create(result_.Width(), result_.Height(),
++                                     dest_format)) {
++      transformed_bitmap_.Reset();
++      return false;
++    }
++
++    result_to_stretch_ =
++        CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f, result_.left, result_.top);
++    result_to_stretch_.Concat(dest_to_stretch_);
++    result_to_stretch_.Translate(-stretch_clip_.left, -stretch_clip_.top);
++  }
++
++  const int rows_for_pixel_budget =
++      std::max(1, kTransformPixelsPerContinue / result_.Width());
++  const int end_row =
++      std::min(result_.Height(),
++               next_transform_row_ +
++                   std::min(kMaxTransformRowsPerContinue,
++                            rows_for_pixel_budget));
+ 
+-  CalcData calc_data = {pTransformed.Get(), result2stretch,
++  const FXDIB_Format dest_format = transformed_bitmap_->GetFormat();
++  CalcData calc_data = {transformed_bitmap_.Get(), result_to_stretch_,
+                         storer_.GetBitmap()->GetBuffer().data(),
+                         storer_.GetBitmap()->GetPitch()};
+   if (storer_.GetBitmap()->IsMaskFormat()) {
+-    CalcAlpha(calc_data);
++    CalcAlpha(calc_data, next_transform_row_, end_row);
+   } else {
+     const int src_bytes_per_pixel = storer_.GetBitmap()->GetBPP() / 8;
+     if (src_bytes_per_pixel == 1) {
+-      CalcMono(calc_data);
++      CalcMono(calc_data, next_transform_row_, end_row);
+     } else {
+-      CalcColor(calc_data, dest_format, src_bytes_per_pixel);
++      CalcColor(calc_data, dest_format, src_bytes_per_pixel,
++                next_transform_row_, end_row);
+     }
+   }
+-  storer_.Replace(std::move(pTransformed));
++  next_transform_row_ = end_row;
++  if (next_transform_row_ < result_.Height()) {
++    return true;
++  }
++
++  storer_.Replace(std::move(transformed_bitmap_));
++  type_ = StretchType::kNormal;
++  return false;
+ }
+ 
+ RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
+   return storer_.Detach();
+ }
+ 
+-void CFX_ImageTransformer::CalcAlpha(const CalcData& calc_data) {
++void CFX_ImageTransformer::CalcAlpha(const CalcData& calc_data,
++                                     int start_row,
++                                     int end_row) {
+   auto func = [&calc_data](const BilinearData& data, uint8_t* dest) {
+     *dest = BilinearInterpolate(calc_data.buf, data, 1, 0);
+   };
+-  DoBilinearLoop(calc_data, result_, stretch_clip_, 1, func);
++  DoBilinearLoop(calc_data, result_, stretch_clip_, 1, start_row, end_row,
++                 func);
+ }
+ 
+-void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
++void CFX_ImageTransformer::CalcMono(const CalcData& calc_data,
++                                    int start_row,
++                                    int end_row) {
+   std::array<uint32_t, 256> argb;
+   if (storer_.GetBitmap()->HasPalette()) {
+     pdfium::span<const uint32_t> palette =
+@@ -314,12 +355,15 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
+     uint8_t idx = BilinearInterpolate(calc_data.buf, data, 1, 0);
+     *reinterpret_cast<uint32_t*>(dest) = argb[idx];
+   };
+-  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel, func);
++  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
++                 start_row, end_row, func);
+ }
+ 
+ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
+                                      FXDIB_Format dest_format,
+-                                     int src_bytes_per_pixel) {
++                                     int src_bytes_per_pixel,
++                                     int start_row,
++                                     int end_row) {
+   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
+          dest_format == FXDIB_Format::kBgra);
+   const int dest_bytes_per_pixel = calc_data.bitmap->GetBPP() / 8;
+@@ -335,7 +379,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
+       *reinterpret_cast<uint32_t*>(dest) = ArgbEncode(kOpaqueAlpha, r, g, b);
+     };
+     DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
+-                   func);
++                   start_row, end_row, func);
+     return;
+   }
+ 
+@@ -353,7 +397,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
+       *reinterpret_cast<uint32_t*>(dest) = ArgbEncode(alpha, r, g, b);
+     };
+     DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
+-                   func);
++                   start_row, end_row, func);
+     return;
+   }
+ 
+@@ -369,5 +413,6 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
+         BilinearInterpolate(calc_data.buf, data, src_bytes_per_pixel, 3);
+     *reinterpret_cast<uint32_t*>(dest) = FXCMYK_TODIB(CmykEncode(c, m, y, k));
+   };
+-  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel, func);
++  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
++                 start_row, end_row, func);
+ }
+diff --git a/core/fxge/dib/cfx_imagetransformer.h b/core/fxge/dib/cfx_imagetransformer.h
+index 6faae91c5..1124fbb59 100644
+--- a/core/fxge/dib/cfx_imagetransformer.h
++++ b/core/fxge/dib/cfx_imagetransformer.h
+@@ -59,22 +59,28 @@ class CFX_ImageTransformer {
+   };
+ 
+   void ContinueRotate(PauseIndicatorIface* pPause);
+-  void ContinueOther(PauseIndicatorIface* pPause);
++  bool ContinueOther(PauseIndicatorIface* pPause);
+ 
+-  void CalcAlpha(const CalcData& calc_data);
+-  void CalcMono(const CalcData& calc_data);
++  void CalcAlpha(const CalcData& calc_data, int start_row, int end_row);
++  void CalcMono(const CalcData& calc_data, int start_row, int end_row);
+   void CalcColor(const CalcData& calc_data,
+                  FXDIB_Format format,
+-                 int src_bytes_per_pixel);
++                 int src_bytes_per_pixel,
++                 int start_row,
++                 int end_row);
+ 
+   RetainPtr<const CFX_DIBBase> const src_;
+   const CFX_Matrix matrix_;
+   FX_RECT stretch_clip_;
+   FX_RECT result_;
+   CFX_Matrix dest_to_stretch_;
++  CFX_Matrix result_to_stretch_;
+   std::unique_ptr<CFX_ImageStretcher> stretcher_;
+   CFX_BitmapStorer storer_;
++  RetainPtr<CFX_DIBitmap> transformed_bitmap_;
+   const FXDIB_ResampleOptions resample_options_;
++  int next_transform_row_ = 0;
++  bool stretcher_complete_ = false;
+   StretchType type_ = StretchType::kNone;
+ };
+ 
+diff --git a/core/fxge/dib/cfx_imagetransformer_unittest.cpp b/core/fxge/dib/cfx_imagetransformer_unittest.cpp
+new file mode 100644
+index 000000000..2cc3f3f38
+--- /dev/null
++++ b/core/fxge/dib/cfx_imagetransformer_unittest.cpp
+@@ -0,0 +1,46 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "core/fxge/dib/cfx_imagetransformer.h"
++
++#include <algorithm>
++#include <cstddef>
++#include <cstdint>
++
++#include "core/fxge/dib/cfx_dibitmap.h"
++#include "testing/gtest/include/gtest/gtest.h"
++
++TEST(CFXImageTransformer, AffineTransformContinuesInBoundedExactChunks) {
++  auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++  ASSERT_TRUE(source->Create(64, 64, FXDIB_Format::kBgra));
++  auto source_buffer = source->GetWritableBuffer();
++  for (size_t i = 0; i < source_buffer.size(); ++i) {
++    source_buffer[i] = static_cast<uint8_t>((i * 29u + i / 17u) & 0xffu);
++  }
++
++  const CFX_Matrix matrix(512.0f, 32.0f, 16.0f, -512.0f, 0.0f, 512.0f);
++  CFX_ImageTransformer transformer(source, matrix, FXDIB_ResampleOptions(),
++                                   nullptr);
++  int continuation_count = 0;
++  while (transformer.Continue(nullptr)) {
++    ++continuation_count;
++  }
++
++  EXPECT_GT(continuation_count, 1);
++  RetainPtr<CFX_DIBitmap> result = transformer.DetachBitmap();
++  ASSERT_TRUE(result);
++  EXPECT_EQ(transformer.result().Width(), result->GetWidth());
++  EXPECT_EQ(transformer.result().Height(), result->GetHeight());
++  EXPECT_FALSE(result->GetBuffer().empty());
++
++  int result_left = 0;
++  int result_top = 0;
++  RetainPtr<CFX_DIBitmap> synchronous_result =
++      source->TransformTo(matrix, &result_left, &result_top);
++  ASSERT_TRUE(synchronous_result);
++  EXPECT_EQ(transformer.result().left, result_left);
++  EXPECT_EQ(transformer.result().top, result_top);
++  EXPECT_TRUE(std::ranges::equal(result->GetBuffer(),
++                                 synchronous_result->GetBuffer()));
++}
