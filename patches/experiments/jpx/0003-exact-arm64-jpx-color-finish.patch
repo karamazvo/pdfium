@@ -1,0 +1,226 @@
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index 898738e21..9c5e12bf8 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -9,11 +9,16 @@
+ #include <string.h>
+
+ #include <algorithm>
++#include <cstdint>
+ #include <limits>
+ #include <optional>
+ #include <utility>
+ #include <vector>
+
++#if defined(__ARM_NEON)
++#include <arm_neon.h>
++#endif
++
+ #include "core/fxcodec/jpx/jpx_decode_utils.h"
+ #include "core/fxcrt/check_op.h"
+ #include "core/fxcrt/cancelindicator_iface.h"
+@@ -33,6 +38,104 @@ namespace fxcodec {
+
+ namespace {
+
++#if defined(__ARM_NEON)
++uint8x16_t LoadJpx8BitChannel(const OPJ_INT32* source, int32_t offset) {
++  const int32x4_t voffset = vdupq_n_s32(offset);
++  const int32x4_t samples0 = vaddq_s32(vld1q_s32(source), voffset);
++  const int32x4_t samples1 = vaddq_s32(vld1q_s32(source + 4), voffset);
++  const int32x4_t samples2 = vaddq_s32(vld1q_s32(source + 8), voffset);
++  const int32x4_t samples3 = vaddq_s32(vld1q_s32(source + 12), voffset);
++  const int16x8_t low =
++      vcombine_s16(vmovn_s32(samples0), vmovn_s32(samples1));
++  const int16x8_t high =
++      vcombine_s16(vmovn_s32(samples2), vmovn_s32(samples3));
++  return vreinterpretq_u8_s8(
++      vcombine_s8(vmovn_s16(low), vmovn_s16(high)));
++}
++
++std::optional<bool> TryPackJpx8BitComponents(
++    pdfium::span<uint8_t> dest_buf,
++    uint32_t pitch,
++    bool swap_rgb,
++    uint32_t channel_count,
++    pdfium::span<opj_image_comp_t> components,
++    CancelIndicatorIface* cancel) {
++  if ((channel_count != 3 && channel_count != 4) ||
++      components.size() < channel_count) {
++    return std::nullopt;
++  }
++  for (uint32_t channel = 0; channel < channel_count; ++channel) {
++    if (!components[channel].data || components[channel].prec != 8) {
++      return std::nullopt;
++    }
++  }
++
++  const uint32_t width = components[0].w;
++  const uint32_t height = components[0].h;
++  const int32_t offset0 = components[0].sgnd ? 128 : 0;
++  const int32_t offset1 = components[1].sgnd ? 128 : 0;
++  const int32_t offset2 = components[2].sgnd ? 128 : 0;
++  const int32_t offset3 =
++      channel_count == 4 && components[3].sgnd ? 128 : 0;
++  UNSAFE_TODO({
++    for (uint32_t row = 0; row < height; ++row) {
++      if (cancel && cancel->IsCancelled()) {
++        return false;
++      }
++
++      uint8_t* const output_row = dest_buf.data() + row * pitch;
++      const size_t source_row = static_cast<size_t>(row) * width;
++      uint32_t col = 0;
++      for (; col + 16 <= width; col += 16) {
++        const OPJ_INT32* const source0 =
++            components[0].data + source_row + col;
++        const OPJ_INT32* const source1 =
++            components[1].data + source_row + col;
++        const OPJ_INT32* const source2 =
++            components[2].data + source_row + col;
++        const uint8x16_t channel0 = LoadJpx8BitChannel(source0, offset0);
++        const uint8x16_t channel1 = LoadJpx8BitChannel(source1, offset1);
++        const uint8x16_t channel2 = LoadJpx8BitChannel(source2, offset2);
++
++        if (channel_count == 3) {
++          uint8x16x3_t output;
++          output.val[0] = swap_rgb ? channel2 : channel0;
++          output.val[1] = channel1;
++          output.val[2] = swap_rgb ? channel0 : channel2;
++          vst3q_u8(output_row + col * 3, output);
++          continue;
++        }
++
++        const OPJ_INT32* const source3 =
++            components[3].data + source_row + col;
++        uint8x16x4_t output;
++        output.val[0] = swap_rgb ? channel2 : channel0;
++        output.val[1] = channel1;
++        output.val[2] = swap_rgb ? channel0 : channel2;
++        output.val[3] = LoadJpx8BitChannel(source3, offset3);
++        vst4q_u8(output_row + col * 4, output);
++      }
++
++      for (; col < width; ++col) {
++        for (uint32_t channel = 0; channel < channel_count; ++channel) {
++          uint32_t output_channel = channel;
++          if (swap_rgb && channel == 0) {
++            output_channel = 2;
++          } else if (swap_rgb && channel == 2) {
++            output_channel = 0;
++          }
++          const opj_image_comp_t& component = components[channel];
++          const int32_t offset = component.sgnd ? 128 : 0;
++          output_row[col * channel_count + output_channel] =
++              static_cast<uint8_t>(component.data[source_row + col] + offset);
++        }
++      }
++    }
++  });
++  return true;
++}
++#endif  // defined(__ARM_NEON)
++
+ // Used with std::unique_ptr to call opj_image_data_free on raw memory.
+ struct OpjImageDataDeleter {
+   inline void operator()(void* ptr) const { opj_image_data_free(ptr); }
+@@ -608,19 +711,10 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+     return false;
+   }
+
+-  // Initialize `channel_bufs` and `adjust_comps` to store information from all
+-  // the channels of the JPX image. They will contain more information besides
+-  // the color component data if `image_->numcomps` > `component_count`.
+-  // Currently only the color component data is used for rendering.
+-  // TODO(crbug.com/42270756): Make full use of the component information.
+   std::ranges::fill(dest_buf.first(image_->comps[0].h * pitch), 0xff);
+-  std::vector<uint8_t*> channel_bufs(image_->numcomps);
+-  std::vector<int> adjust_comps(image_->numcomps);
+   const pdfium::span<opj_image_comp_t> components =
+       components_span(image_.get());
+   for (size_t i = 0; i < components.size(); i++) {
+-    channel_bufs[i] = dest_buf.subspan(i).data();
+-    adjust_comps[i] = components[i].prec - 8;
+     if (i > 0) {
+       if (components[i].dx != components[i - 1].dx ||
+           components[i].dy != components[i - 1].dy ||
+@@ -629,6 +723,26 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+       }
+     }
+   }
++
++#if defined(__ARM_NEON)
++  const std::optional<bool> packed = TryPackJpx8BitComponents(
++      dest_buf, pitch, swap_rgb, channel_count, components, cancel);
++  if (packed.has_value()) {
++    return packed.value();
++  }
++#endif
++
++  // Initialize `channel_bufs` and `adjust_comps` to store information from all
++  // the channels of the JPX image. They will contain more information besides
++  // the color component data if `image_->numcomps` > `component_count`.
++  // Currently only the color component data is used for rendering.
++  // TODO(crbug.com/42270756): Make full use of the component information.
++  std::vector<uint8_t*> channel_bufs(image_->numcomps);
++  std::vector<int> adjust_comps(image_->numcomps);
++  for (size_t i = 0; i < components.size(); ++i) {
++    channel_bufs[i] = dest_buf.subspan(i).data();
++    adjust_comps[i] = components[i].prec - 8;
++  }
+   if (swap_rgb) {
+     std::swap(channel_bufs[0], channel_bufs[2]);
+   }
+diff --git a/third_party/libopenjpeg/mct.c b/third_party/libopenjpeg/mct.c
+index 2446efbc5..d2034c463 100644
+--- a/third_party/libopenjpeg/mct.c
++++ b/third_party/libopenjpeg/mct.c
+@@ -48,6 +48,10 @@
+ #if defined(__SSE4_1__) && !defined(_M_IX86) && !defined(__i386)
+ #include <smmintrin.h>
+ #endif
++#ifdef __ARM_NEON
++#define USE_NEON
++#include <arm_neon.h>
++#endif
+
+ #include "opj_includes.h"
+
+@@ -325,6 +329,37 @@ void opj_mct_decode_real(
+         c2 += 4;
+     }
+     n &= 7;
++#elif defined(USE_NEON)
++    {
++        const float32x4_t vrv = vdupq_n_f32(1.402f);
++        const float32x4_t vgu = vdupq_n_f32(0.34413f);
++        const float32x4_t vgv = vdupq_n_f32(0.71414f);
++        const float32x4_t vbu = vdupq_n_f32(1.772f);
++        for (i = 0; i < (n >> 3); ++i) {
++            float32x4_t vy = vld1q_f32(c0);
++            float32x4_t vu = vld1q_f32(c1);
++            float32x4_t vv = vld1q_f32(c2);
++            vst1q_f32(c0, vaddq_f32(vy, vmulq_f32(vv, vrv)));
++            vst1q_f32(c1, vsubq_f32(vsubq_f32(vy, vmulq_f32(vu, vgu)),
++                                    vmulq_f32(vv, vgv)));
++            vst1q_f32(c2, vaddq_f32(vy, vmulq_f32(vu, vbu)));
++            c0 += 4;
++            c1 += 4;
++            c2 += 4;
++
++            vy = vld1q_f32(c0);
++            vu = vld1q_f32(c1);
++            vv = vld1q_f32(c2);
++            vst1q_f32(c0, vaddq_f32(vy, vmulq_f32(vv, vrv)));
++            vst1q_f32(c1, vsubq_f32(vsubq_f32(vy, vmulq_f32(vu, vgu)),
++                                    vmulq_f32(vv, vgv)));
++            vst1q_f32(c2, vaddq_f32(vy, vmulq_f32(vu, vbu)));
++            c0 += 4;
++            c1 += 4;
++            c2 += 4;
++        }
++        n &= 7;
++    }
+ #endif
+     for (i = 0; i < n; ++i) {
+         OPJ_FLOAT32 y = c0[i];
