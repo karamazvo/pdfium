@@ -1,0 +1,703 @@
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 0d0848cb9..d7e723877 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -625,10 +625,80 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+   SetWidth(GetWidth() >> resolution_levels_to_skip);
+   SetHeight(GetHeight() >> resolution_levels_to_skip);
+ 
+-  if (!decoder->StartDecode(cancel)) {
++  struct FusedOutputState {
++    const CPDF_ColorSpace* pdf_colorspace = nullptr;
++    uint32_t component_count = 0;
++    int minimum_width = 0;
++    int minimum_height = 0;
++    std::optional<JpxDecodeConversion> conversion;
++    RetainPtr<CFX_DIBitmap> bitmap;
++  } fused_state = {color_space_.Get(), components_, GetWidth(), GetHeight()};
++
++  CJPX_Decoder::OutputSink fused_sink;
++  fused_sink.context = &fused_state;
++  fused_sink.callback = [](void* context,
++                           const CJPX_Decoder::JpxImageInfo& image_info,
++                           CJPX_Decoder::OutputSinkBuffer* output) {
++    auto* state = static_cast<FusedOutputState*>(context);
++    if (static_cast<int>(image_info.width) < state->minimum_width ||
++        static_cast<int>(image_info.height) < state->minimum_height) {
++      return CJPX_Decoder::OutputSinkResult::kFallback;
++    }
++
++    auto maybe_conversion =
++        JpxDecodeConversion::Create(image_info, state->pdf_colorspace);
++    if (!maybe_conversion.has_value()) {
++      return CJPX_Decoder::OutputSinkResult::kFallback;
++    }
++    JpxDecodeConversion conversion = std::move(maybe_conversion.value());
++    const int output_components =
++        conversion.jpx_components_count().value_or(
++            pdfium::checked_cast<int>(state->component_count));
++    if (output_components != 3 || conversion.convert_argb_to_rgb() ||
++        conversion.format() != FXDIB_Format::kBgr ||
++        conversion.width() != image_info.width) {
++      return CJPX_Decoder::OutputSinkResult::kFallback;
++    }
++
++    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
++    if (!bitmap->Create(image_info.width, image_info.height,
++                        conversion.format())) {
++      return CJPX_Decoder::OutputSinkResult::kError;
++    }
++    bitmap->Clear(0xFFFFFFFF);
++    pdfium::span<uint8_t> buffer = bitmap->GetWritableBuffer();
++    output->data = buffer.data();
++    output->data_size = buffer.size();
++    output->pitch = bitmap->GetPitch();
++    output->channel_count = 3;
++    output->swap_rgb = conversion.swap_rgb();
++    state->conversion.emplace(std::move(conversion));
++    state->bitmap = std::move(bitmap);
++    return CJPX_Decoder::OutputSinkResult::kReady;
++  };
++
++  if (!decoder->StartDecode(&fused_sink, cancel)) {
+     return nullptr;
+   }
+ 
++  if (decoder->used_output_sink()) {
++    CHECK(fused_state.conversion.has_value());
++    CHECK(fused_state.bitmap);
++    const JpxDecodeConversion& conversion = fused_state.conversion.value();
++    if (conversion.override_colorspace().has_value()) {
++      color_space_ = conversion.override_colorspace().value();
++    }
++    if (conversion.jpx_components_count().has_value()) {
++      DCHECK_EQ(0u, components_);
++      components_ = conversion.jpx_components_count().value();
++      if (components_ <= 0) {
++        return nullptr;
++      }
++    }
++    bpc_ = 8;
++    return fused_state.bitmap;
++  }
++
+   CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
+   if (static_cast<int>(image_info.width) < GetWidth() ||
+       static_cast<int>(image_info.height) < GetHeight()) {
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index 898738e21..82c044852 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -9,6 +9,7 @@
+ #include <string.h>
+ 
+ #include <algorithm>
++#include <atomic>
+ #include <limits>
+ #include <optional>
+ #include <utility>
+@@ -23,6 +24,10 @@
+ #include "core/fxcrt/span.h"
+ #include "core/fxge/calculate_pitch.h"
+ 
++#if defined(__ANDROID__)
++#include <android/log.h>
++#endif
++
+ #if defined(USE_SYSTEM_LIBOPENJPEG2)
+ #include <stdlib.h>
+ #else
+@@ -517,14 +522,38 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+ }
+ 
+ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
++  return StartDecode(nullptr, cancel);
++}
++
++bool CJPX_Decoder::StartDecode(OutputSink* output_sink,
++                               CancelIndicatorIface* cancel) {
++  used_output_sink_ = false;
++  output_sink_ = output_sink;
+ #if !defined(USE_SYSTEM_LIBOPENJPEG2)
+   if (cancel &&
+       !opj_set_decode_cancel_callback(codec_.get(), IsJpxDecodeCancelled,
+                                       cancel)) {
++    output_sink_ = nullptr;
+     return false;
+   }
++  const bool install_output_sink =
++      output_sink_ && !parameters_.nb_tile_to_decode &&
++      CanAttemptFusedOutput();
++  if (!opj_set_decode_output_callback(
++          codec_.get(), install_output_sink ? BeginFusedOutput : nullptr,
++          install_output_sink ? this : nullptr)) {
++    output_sink_ = nullptr;
++    return false;
++  }
++#endif
++  const auto clear_output_sink = [this]() {
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++    opj_set_decode_output_callback(codec_.get(), nullptr, nullptr);
+ #endif
++    output_sink_ = nullptr;
++  };
+   if (cancel && cancel->IsCancelled()) {
++    clear_output_sink();
+     return false;
+   }
+   if (!parameters_.nb_tile_to_decode) {
+@@ -532,32 +561,42 @@ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
+                              parameters_.DA_y0, parameters_.DA_x1,
+                              parameters_.DA_y1)) {
+       image_.reset();
++      clear_output_sink();
+       return false;
+     }
+     if (!(opj_decode(codec_.get(), stream_.get(), image_.get()) &&
+           opj_end_decompress(codec_.get(), stream_.get()))) {
+       image_.reset();
++      clear_output_sink();
+       return false;
+     }
+   } else if (!opj_get_decoded_tile(codec_.get(), stream_.get(), image_.get(),
+                                    parameters_.tile_index)) {
++    clear_output_sink();
+     return false;
+   }
+ 
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  used_output_sink_ = opj_decode_output_was_used(codec_.get());
++#endif
++  clear_output_sink();
++
+   if (cancel && cancel->IsCancelled()) {
+     return false;
+   }
+ 
+   stream_.reset();
+   auto components = components_span(image_.get());
+-  if (image_->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
+-      components[0].dx == components[0].dy && components[1].dx != 1) {
+-    image_->color_space = OPJ_CLRSPC_SYCC;
+-  } else if (image_->numcomps <= 2) {
+-    image_->color_space = OPJ_CLRSPC_GRAY;
+-  }
+-  if (image_->color_space == OPJ_CLRSPC_SYCC) {
+-    color_sycc_to_rgb(image_.get());
++  if (!used_output_sink_) {
++    if (image_->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
++        components[0].dx == components[0].dy && components[1].dx != 1) {
++      image_->color_space = OPJ_CLRSPC_SYCC;
++    } else if (image_->numcomps <= 2) {
++      image_->color_space = OPJ_CLRSPC_GRAY;
++    }
++    if (image_->color_space == OPJ_CLRSPC_SYCC) {
++      color_sycc_to_rgb(image_.get());
++    }
+   }
+ 
+   // TODO(crbug.com/346606150): Investigate if it makes sense to use the data in
+@@ -575,9 +614,75 @@ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
+     image_->icc_profile_buf = nullptr;
+     image_->icc_profile_len = 0;
+   }
++
++#if defined(__ANDROID__)
++  if (used_output_sink_) {
++    static std::atomic_flag logged = ATOMIC_FLAG_INIT;
++    if (!logged.test_and_set(std::memory_order_relaxed)) {
++      __android_log_print(
++          ANDROID_LOG_INFO, "PdfJpxFused",
++          "revision=r25-jpx-3-0004 event=exact_fused_output width=%u "
++          "height=%u channels=3",
++          components[0].w, components[0].h);
++    }
++  }
++#endif
++  return true;
++}
++
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++bool CJPX_Decoder::CanAttemptFusedOutput() const {
++  const auto components = components_span(image_.get());
++  if (color_space_option_ == ColorSpaceOption::kIndexed ||
++      components.size() != 3 ||
++      (image_->color_space != OPJ_CLRSPC_SRGB &&
++       image_->color_space != OPJ_CLRSPC_UNKNOWN &&
++       image_->color_space != OPJ_CLRSPC_UNSPECIFIED)) {
++    return false;
++  }
++  for (const auto& component : components) {
++    if (component.prec != 8 || component.sgnd || component.dx != 1 ||
++        component.dy != 1) {
++      return false;
++    }
++  }
+   return true;
+ }
+ 
++// static
++OPJ_INT32 CJPX_Decoder::BeginFusedOutput(
++    void* client_data,
++    OPJ_UINT32 width,
++    OPJ_UINT32 height,
++    OPJ_UINT32 component_count,
++    opj_decode_output_buffer_t* output) {
++  auto* decoder = static_cast<CJPX_Decoder*>(client_data);
++  if (!decoder || !decoder->output_sink_ ||
++      !decoder->output_sink_->callback || !output) {
++    return OPJ_DECODE_OUTPUT_FALLBACK;
++  }
++
++  OutputSinkBuffer sink_output;
++  const JpxImageInfo image_info = {width, height, component_count,
++                                   decoder->image_->color_space};
++  const OutputSinkResult result = decoder->output_sink_->callback(
++      decoder->output_sink_->context, image_info, &sink_output);
++  if (result == OutputSinkResult::kFallback) {
++    return OPJ_DECODE_OUTPUT_FALLBACK;
++  }
++  if (result == OutputSinkResult::kError) {
++    return OPJ_DECODE_OUTPUT_ERROR;
++  }
++
++  output->data = sink_output.data;
++  output->data_size = sink_output.data_size;
++  output->pitch = sink_output.pitch;
++  output->channel_count = sink_output.channel_count;
++  output->swap_rgb = sink_output.swap_rgb ? OPJ_TRUE : OPJ_FALSE;
++  return OPJ_DECODE_OUTPUT_READY;
++}
++#endif
++
+ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
+   const auto components = components_span(image_.get());
+   return {components[0].w, components[0].h,
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+index 14721d290..326893a25 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -9,6 +9,7 @@
+ 
+ #include <stdint.h>
+ 
++#include <cstddef>
+ #include <memory>
+ 
+ #include "core/fxcrt/raw_span.h"
+@@ -45,6 +46,30 @@ class CJPX_Decoder {
+     COLOR_SPACE colorspace;
+   };
+ 
++  struct OutputSinkBuffer {
++    uint8_t* data = nullptr;
++    size_t data_size = 0;
++    uint32_t pitch = 0;
++    uint32_t channel_count = 0;
++    bool swap_rgb = false;
++  };
++
++  enum class OutputSinkResult {
++    kFallback,
++    kReady,
++    kError,
++  };
++
++  using OutputSinkCallback = OutputSinkResult (*)(
++      void* context,
++      const JpxImageInfo& image_info,
++      OutputSinkBuffer* output);
++
++  struct OutputSink {
++    OutputSinkCallback callback = nullptr;
++    void* context = nullptr;
++  };
++
+   static std::unique_ptr<CJPX_Decoder> Create(
+       pdfium::span<const uint8_t> src_span,
+       CJPX_Decoder::ColorSpaceOption option,
+@@ -57,6 +82,8 @@ class CJPX_Decoder {
+ 
+   JpxImageInfo GetInfo() const;
+   bool StartDecode(CancelIndicatorIface* cancel = nullptr);
++  bool StartDecode(OutputSink* output_sink, CancelIndicatorIface* cancel);
++  bool used_output_sink() const { return used_output_sink_; }
+ 
+   // `swap_rgb` can only be set when an image's color space type contains at
+   // least 3 color components. Note that this `component_count` is not
+@@ -97,6 +124,16 @@ class CJPX_Decoder {
+             uint8_t resolution_levels_to_skip,
+             bool strict_mode);
+ 
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  static OPJ_INT32 BeginFusedOutput(
++      void* client_data,
++      OPJ_UINT32 width,
++      OPJ_UINT32 height,
++      OPJ_UINT32 component_count,
++      opj_decode_output_buffer_t* output);
++  bool CanAttemptFusedOutput() const;
++#endif
++
+   const ColorSpaceOption color_space_option_;
+   pdfium::raw_span<const uint8_t> src_data_;
+   std::unique_ptr<DecodeData> decode_data_;
+@@ -104,6 +141,8 @@ class CJPX_Decoder {
+   std::unique_ptr<opj_stream_t, StreamDeleter> stream_;
+   std::unique_ptr<opj_image_t, ImageDeleter> image_;
+   opj_dparameters_t parameters_ = {};
++  OutputSink* output_sink_ = nullptr;
++  bool used_output_sink_ = false;
+ };
+ 
+ }  // namespace fxcodec
+diff --git a/third_party/libopenjpeg/event.c b/third_party/libopenjpeg/event.c
+index 8d70784d9..0e10dcbf3 100644
+--- a/third_party/libopenjpeg/event.c
++++ b/third_party/libopenjpeg/event.c
+@@ -149,4 +149,7 @@ void opj_set_default_event_handler(opj_event_mgr_t * p_manager)
+     p_manager->warning_handler = opj_default_callback;
+     p_manager->cancel_handler = 00;
+     p_manager->m_cancel_data = 00;
++    p_manager->decode_output_handler = 00;
++    p_manager->m_decode_output_data = 00;
++    p_manager->m_decode_output_used = OPJ_FALSE;
+ }
+diff --git a/third_party/libopenjpeg/event.h b/third_party/libopenjpeg/event.h
+index 461e82588..177313635 100644
+--- a/third_party/libopenjpeg/event.h
++++ b/third_party/libopenjpeg/event.h
+@@ -64,6 +64,12 @@ typedef struct opj_event_mgr {
+     opj_cancel_callback cancel_handler;
+     /** Data passed to the cancellation callback */
+     void *          m_cancel_data;
++    /** Optional caller-owned destination for exact fused color output */
++    opj_decode_output_callback decode_output_handler;
++    /** Data passed to the output callback */
++    void *          m_decode_output_data;
++    /** Whether the latest decode completed through the output callback */
++    OPJ_BOOL         m_decode_output_used;
+ } opj_event_mgr_t;
+ 
+ static INLINE OPJ_BOOL opj_event_is_cancelled(
+diff --git a/third_party/libopenjpeg/jp2.c b/third_party/libopenjpeg/jp2.c
+index b85c5cdd4..905854539 100644
+--- a/third_party/libopenjpeg/jp2.c
++++ b/third_party/libopenjpeg/jp2.c
+@@ -1649,17 +1649,33 @@ OPJ_BOOL opj_jp2_decode(void *p_jp2,
+                         opj_event_mgr_t * p_manager)
+ {
+     opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    opj_decode_output_callback saved_output_handler = NULL;
+     if (!p_image) {
+         return OPJ_FALSE;
+     }
+ 
++    /* A direct destination cannot precede a JP2 palette or channel mapping. */
++    if (p_manager && p_manager->decode_output_handler &&
++            !jp2->ignore_pclr_cmap_cdef &&
++            (jp2->color.jp2_pclr || jp2->color.jp2_cdef)) {
++        saved_output_handler = p_manager->decode_output_handler;
++        p_manager->decode_output_handler = NULL;
++    }
++
+     /* J2K decoding */
+     if (! opj_j2k_decode(jp2->j2k, p_stream, p_image, p_manager)) {
++        if (saved_output_handler) {
++            p_manager->decode_output_handler = saved_output_handler;
++        }
+         opj_event_msg(p_manager, EVT_ERROR,
+                       "Failed to decode the codestream in the JP2 file\n");
+         return OPJ_FALSE;
+     }
+ 
++    if (saved_output_handler) {
++        p_manager->decode_output_handler = saved_output_handler;
++    }
++
+     return opj_jp2_apply_color_postprocessing(jp2, p_image, p_manager);
+ }
+ 
+diff --git a/third_party/libopenjpeg/openjpeg.c b/third_party/libopenjpeg/openjpeg.c
+index d072fa4e8..58d8f814b 100644
+--- a/third_party/libopenjpeg/openjpeg.c
++++ b/third_party/libopenjpeg/openjpeg.c
+@@ -360,6 +360,34 @@ OPJ_BOOL OPJ_CALLCONV opj_set_decode_cancel_callback(
+     return OPJ_TRUE;
+ }
+ 
++OPJ_BOOL OPJ_CALLCONV opj_set_decode_output_callback(
++    opj_codec_t *p_codec,
++    opj_decode_output_callback callback,
++    void *client_data)
++{
++    if (!p_codec) {
++        return OPJ_FALSE;
++    }
++    opj_codec_private_t *l_codec = (opj_codec_private_t *)p_codec;
++    if (!l_codec->is_decompressor) {
++        return OPJ_FALSE;
++    }
++    l_codec->m_event_mgr.decode_output_handler = callback;
++    l_codec->m_event_mgr.m_decode_output_data = client_data;
++    l_codec->m_event_mgr.m_decode_output_used = OPJ_FALSE;
++    return OPJ_TRUE;
++}
++
++OPJ_BOOL OPJ_CALLCONV opj_decode_output_was_used(opj_codec_t *p_codec)
++{
++    if (!p_codec) {
++        return OPJ_FALSE;
++    }
++    opj_codec_private_t *l_codec = (opj_codec_private_t *)p_codec;
++    return l_codec->is_decompressor &&
++           l_codec->m_event_mgr.m_decode_output_used;
++}
++
+ OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
+                                         opj_dparameters_t *parameters
+                                        )
+diff --git a/third_party/libopenjpeg/openjpeg.h b/third_party/libopenjpeg/openjpeg.h
+index e072f50f8..398f193f0 100644
+--- a/third_party/libopenjpeg/openjpeg.h
++++ b/third_party/libopenjpeg/openjpeg.h
+@@ -353,6 +353,30 @@ typedef void (*opj_msg_callback)(const char *msg, void *client_data);
+ /** Returns OPJ_TRUE when the current decode should be abandoned. */
+ typedef OPJ_BOOL (*opj_cancel_callback)(void *client_data);
+ 
++/** Final interleaved destination for an exact decoder-owned color finish. */
++typedef struct opj_decode_output_buffer {
++    OPJ_BYTE *data;
++    OPJ_SIZE_T data_size;
++    OPJ_UINT32 pitch;
++    OPJ_UINT32 channel_count;
++    OPJ_BOOL swap_rgb;
++} opj_decode_output_buffer_t;
++
++#define OPJ_DECODE_OUTPUT_ERROR (-1)
++#define OPJ_DECODE_OUTPUT_FALLBACK 0
++#define OPJ_DECODE_OUTPUT_READY 1
++
++/**
++ * Supplies a caller-owned destination after exact decoded dimensions are
++ * known. Returning FALLBACK preserves the canonical component pipeline.
++ */
++typedef OPJ_INT32 (*opj_decode_output_callback)(
++    void *client_data,
++    OPJ_UINT32 width,
++    OPJ_UINT32 height,
++    OPJ_UINT32 component_count,
++    opj_decode_output_buffer_t *output);
++
+ /*
+ ==========================================================
+    codec typedef definitions
+@@ -1396,6 +1420,16 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_cancel_callback(
+     opj_cancel_callback callback,
+     void *client_data);
+ 
++/** Installs an optional exact fused decode destination. */
++OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_output_callback(
++    opj_codec_t *p_codec,
++    opj_decode_output_callback callback,
++    void *client_data);
++
++/** Returns whether the most recent decode completed through that destination. */
++OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode_output_was_used(
++    opj_codec_t *p_codec);
++
+ /**
+  * Decodes an image header.
+  *
+diff --git a/third_party/libopenjpeg/tcd.c b/third_party/libopenjpeg/tcd.c
+index fc67f1e3c..c0ee11f5e 100644
+--- a/third_party/libopenjpeg/tcd.c
++++ b/third_party/libopenjpeg/tcd.c
+@@ -172,6 +172,16 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd,
+ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd,
+                                    opj_event_mgr_t *p_manager);
+ 
++typedef enum opj_tcd_fused_output_result {
++    OPJ_TCD_FUSED_OUTPUT_NOT_USED,
++    OPJ_TCD_FUSED_OUTPUT_USED,
++    OPJ_TCD_FUSED_OUTPUT_ERROR
++} opj_tcd_fused_output_result_t;
++
++static opj_tcd_fused_output_result_t opj_tcd_try_fused_output(
++    opj_tcd_t *p_tcd,
++    opj_event_mgr_t *p_manager);
++
+ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd,
+         opj_event_mgr_t *p_manager);
+ 
+@@ -1789,20 +1799,27 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
+     }
+     /* FIXME _ProfStop(PGROUP_DWT); */
+ 
+-    /*----------------MCT-------------------*/
+-    /* FIXME _ProfStart(PGROUP_MCT); */
+-    if
+-    (! opj_tcd_mct_decode(p_tcd, p_manager)) {
+-        return OPJ_FALSE;
+-    }
+-    /* FIXME _ProfStop(PGROUP_MCT); */
++    {
++        opj_tcd_fused_output_result_t fused_output =
++            opj_tcd_try_fused_output(p_tcd, p_manager);
++        if (fused_output == OPJ_TCD_FUSED_OUTPUT_ERROR) {
++            return OPJ_FALSE;
++        }
++        if (fused_output == OPJ_TCD_FUSED_OUTPUT_NOT_USED) {
++            /*----------------MCT-------------------*/
++            /* FIXME _ProfStart(PGROUP_MCT); */
++            if (! opj_tcd_mct_decode(p_tcd, p_manager)) {
++                return OPJ_FALSE;
++            }
++            /* FIXME _ProfStop(PGROUP_MCT); */
+ 
+-    /* FIXME _ProfStart(PGROUP_DC_SHIFT); */
+-    if
+-    (! opj_tcd_dc_level_shift_decode(p_tcd, p_manager)) {
+-        return OPJ_FALSE;
++            /* FIXME _ProfStart(PGROUP_DC_SHIFT); */
++            if (! opj_tcd_dc_level_shift_decode(p_tcd, p_manager)) {
++                return OPJ_FALSE;
++            }
++            /* FIXME _ProfStop(PGROUP_DC_SHIFT); */
++        }
+     }
+-    /* FIXME _ProfStop(PGROUP_DC_SHIFT); */
+ 
+ 
+     /*---------------TILE-------------------*/
+@@ -2128,6 +2145,130 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd,
+     return OPJ_TRUE;
+ }
+ 
++static OPJ_BYTE opj_tcd_fused_unsigned_8bit_sample(OPJ_FLOAT32 value)
++{
++    if (value > (OPJ_FLOAT32)INT_MAX) {
++        return 255U;
++    }
++    if (value < INT_MIN) {
++        return 0U;
++    }
++    return (OPJ_BYTE)opj_int64_clamp((OPJ_INT64)opj_lrintf(value) + 128,
++                                     0, 255);
++}
++
++static opj_tcd_fused_output_result_t opj_tcd_try_fused_output(
++    opj_tcd_t *p_tcd,
++    opj_event_mgr_t *p_manager)
++{
++    opj_tcd_tile_t *tile;
++    opj_tcd_resolution_t *resolution;
++    opj_decode_output_buffer_t output;
++    OPJ_UINT32 width;
++    OPJ_UINT32 height;
++    OPJ_UINT32 component;
++    OPJ_UINT32 row;
++    OPJ_INT32 callback_result;
++    OPJ_FLOAT32 *c0;
++    OPJ_FLOAT32 *c1;
++    OPJ_FLOAT32 *c2;
++
++    if (!p_manager || !p_manager->decode_output_handler ||
++            !p_tcd->whole_tile_decoding || p_tcd->used_component ||
++            p_tcd->cp->tw != 1U || p_tcd->cp->th != 1U ||
++            p_tcd->cp->tx0 != 0U || p_tcd->cp->ty0 != 0U ||
++            p_tcd->image->x0 != 0U || p_tcd->image->y0 != 0U ||
++            p_tcd->image->x1 != p_tcd->cp->tdx ||
++            p_tcd->image->y1 != p_tcd->cp->tdy ||
++            p_tcd->tcd_tileno != 0U || p_tcd->image->numcomps != 3U ||
++            p_tcd->tcp->mct != 1U) {
++        return OPJ_TCD_FUSED_OUTPUT_NOT_USED;
++    }
++
++    tile = p_tcd->tcd_image->tiles;
++    for (component = 0; component < 3U; ++component) {
++        opj_image_comp_t *image_component = &p_tcd->image->comps[component];
++        opj_tcd_tilecomp_t *tile_component = &tile->comps[component];
++        opj_tccp_t *coding_component = &p_tcd->tcp->tccps[component];
++        if (image_component->prec != 8U || image_component->sgnd ||
++                coding_component->qmfbid != 0U ||
++                coding_component->m_dc_level_shift != 128 ||
++                tile_component->minimum_num_resolutions == 0U ||
++                image_component->resno_decoded !=
++                tile_component->minimum_num_resolutions - 1U ||
++                !tile_component->data) {
++            return OPJ_TCD_FUSED_OUTPUT_NOT_USED;
++        }
++    }
++
++    resolution = tile->comps[0].resolutions +
++                 tile->comps[0].minimum_num_resolutions - 1U;
++    width = (OPJ_UINT32)(resolution->x1 - resolution->x0);
++    height = (OPJ_UINT32)(resolution->y1 - resolution->y0);
++    if (width == 0U || height == 0U || width > SIZE_MAX / height ||
++            width > UINT32_MAX / 3U) {
++        return OPJ_TCD_FUSED_OUTPUT_NOT_USED;
++    }
++    for (component = 1; component < 3U; ++component) {
++        opj_tcd_tilecomp_t *tile_component = &tile->comps[component];
++        opj_tcd_resolution_t *component_resolution =
++            tile_component->resolutions +
++            tile_component->minimum_num_resolutions - 1U;
++        OPJ_UINT32 component_width =
++            (OPJ_UINT32)(component_resolution->x1 - component_resolution->x0);
++        OPJ_UINT32 component_height =
++            (OPJ_UINT32)(component_resolution->y1 - component_resolution->y0);
++        if (component_width != width || component_height != height) {
++            return OPJ_TCD_FUSED_OUTPUT_NOT_USED;
++        }
++    }
++
++    memset(&output, 0, sizeof(output));
++    callback_result = p_manager->decode_output_handler(
++        p_manager->m_decode_output_data, width, height, 3U, &output);
++    if (callback_result == OPJ_DECODE_OUTPUT_FALLBACK) {
++        return OPJ_TCD_FUSED_OUTPUT_NOT_USED;
++    }
++    if (callback_result != OPJ_DECODE_OUTPUT_READY || !output.data ||
++            output.channel_count != 3U || output.pitch < width * 3U ||
++            height > output.data_size / output.pitch) {
++        return OPJ_TCD_FUSED_OUTPUT_ERROR;
++    }
++
++    c0 = (OPJ_FLOAT32 *)tile->comps[0].data;
++    c1 = (OPJ_FLOAT32 *)tile->comps[1].data;
++    c2 = (OPJ_FLOAT32 *)tile->comps[2].data;
++    for (row = 0; row < height; ++row) {
++        OPJ_UINT32 col = 0;
++        OPJ_BYTE *destination = output.data + (OPJ_SIZE_T)row * output.pitch;
++        while (col < width) {
++            OPJ_UINT32 end = opj_uint_min(col + 256U, width);
++            if (opj_event_is_cancelled(p_manager)) {
++                return OPJ_TCD_FUSED_OUTPUT_ERROR;
++            }
++            for (; col < end; ++col) {
++                OPJ_SIZE_T index = (OPJ_SIZE_T)row * width + col;
++                OPJ_FLOAT32 y = c0[index];
++                OPJ_FLOAT32 u = c1[index];
++                OPJ_FLOAT32 v = c2[index];
++                OPJ_BYTE red = opj_tcd_fused_unsigned_8bit_sample(
++                                   y + v * 1.402f);
++                OPJ_BYTE green = opj_tcd_fused_unsigned_8bit_sample(
++                                     y - u * 0.34413f - v * 0.71414f);
++                OPJ_BYTE blue = opj_tcd_fused_unsigned_8bit_sample(
++                                    y + u * 1.772f);
++                OPJ_BYTE *pixel = destination + (OPJ_SIZE_T)col * 3U;
++                pixel[output.swap_rgb ? 2U : 0U] = red;
++                pixel[1] = green;
++                pixel[output.swap_rgb ? 0U : 2U] = blue;
++            }
++        }
++    }
++
++    p_manager->m_decode_output_used = OPJ_TRUE;
++    return OPJ_TCD_FUSED_OUTPUT_USED;
++}
++
+ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
+ {
+     opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
