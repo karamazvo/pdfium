@@ -1,0 +1,203 @@
+diff --git a/third_party/BUILD.gn b/third_party/BUILD.gn
+index 548d3656..e0d60767 100644
+--- a/third_party/BUILD.gn
++++ b/third_party/BUILD.gn
+@@ -434,6 +434,12 @@ source_set("fx_libopenjpeg") {
+     "libopenjpeg/tgt.c",
+     "libopenjpeg/thread.c",
+   ]
++  if (is_android) {
++    defines = [
++      "MUTEX_pthread",
++      "PDFIUM_OPENJPEG_EXPLICIT_THREADS",
++    ]
++  }
+   deps = [ "../core/fxcrt" ]
+ }
+ 
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
+index fc5ce62d..6d68711d 100644
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
+@@ -6800,6 +6800,9 @@ OPJ_BOOL opj_j2k_set_threads(void *p_j2k, OPJ_UINT32 num_threads)
+ 
+ static int opj_j2k_get_default_thread_count(void)
+ {
++#if defined(PDFIUM_OPENJPEG_EXPLICIT_THREADS)
++    return 0;
++#else
+     const char* num_threads_str = getenv("OPJ_NUM_THREADS");
+     int num_cpus;
+     int num_threads;
+@@ -6821,6 +6824,7 @@ static int opj_j2k_get_default_thread_count(void)
+         num_threads = 2 * num_cpus;
+     }
+     return num_threads;
++#endif
+ }
+ 
+ /* ----------------------------------------------------------------------- */
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+index 14721d29..8832201f 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -31,6 +31,7 @@ class CJPX_Decoder {
+   // Calculated as log2(2^32 / 1), where 2^32 is the largest image dimension and
+   // 1 is the smallest required size.
+   static constexpr uint8_t kMaxResolutionsToSkip = 32;
++  static constexpr uint32_t kMaxDecodeThreads = 2;
+ 
+   enum class ColorSpaceOption {
+     kNone,
+@@ -49,7 +50,8 @@ class CJPX_Decoder {
+       pdfium::span<const uint8_t> src_span,
+       CJPX_Decoder::ColorSpaceOption option,
+       uint8_t resolution_levels_to_skip,
+-      bool strict_mode);
++      bool strict_mode,
++      uint32_t decode_threads = kMaxDecodeThreads);
+ 
+   static void Sycc420ToRgbForTesting(opj_image_t* img);
+ 
+@@ -95,7 +97,8 @@ class CJPX_Decoder {
+   // worked out in OpenJPEG.
+   bool Init(pdfium::span<const uint8_t> src_data,
+             uint8_t resolution_levels_to_skip,
+-            bool strict_mode);
++            bool strict_mode,
++            uint32_t decode_threads);
+ 
+   const ColorSpaceOption color_space_option_;
+   pdfium::raw_span<const uint8_t> src_data_;
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index 898738e2..a317ae88 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -440,10 +440,12 @@ std::unique_ptr<CJPX_Decoder> CJPX_Decoder::Create(
+     pdfium::span<const uint8_t> src_span,
+     CJPX_Decoder::ColorSpaceOption option,
+     uint8_t resolution_levels_to_skip,
+-    bool strict_mode) {
++    bool strict_mode,
++    uint32_t decode_threads) {
+   // Private ctor.
+   auto decoder = pdfium::WrapUnique(new CJPX_Decoder(option));
+-  if (!decoder->Init(src_span, resolution_levels_to_skip, strict_mode)) {
++  if (!decoder->Init(src_span, resolution_levels_to_skip, strict_mode,
++                     decode_threads)) {
+     return nullptr;
+   }
+   return decoder;
+@@ -461,10 +463,12 @@ CJPX_Decoder::~CJPX_Decoder() = default;
+ 
+ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+                         uint8_t resolution_levels_to_skip,
+-                        bool strict_mode) {
++                        bool strict_mode,
++                        uint32_t decode_threads) {
+   static constexpr uint8_t kJP2Header[] = {0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50,
+                                            0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
+   if (src_data.size() < sizeof(kJP2Header) ||
++      decode_threads > kMaxDecodeThreads ||
+       resolution_levels_to_skip > kMaxResolutionsToSkip) {
+     return false;
+   }
+@@ -498,6 +502,9 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+   opj_set_info_handler(codec_.get(), fx_ignore_callback, nullptr);
+   opj_set_warning_handler(codec_.get(), fx_ignore_callback, nullptr);
+   opj_set_error_handler(codec_.get(), fx_ignore_callback, nullptr);
++  // OpenJPEG falls back to its serial pool if bounded worker creation fails.
++  (void)opj_codec_set_threads(codec_.get(),
++                              static_cast<int>(decode_threads));
+   if (!opj_setup_decoder(codec_.get(), &parameters_)) {
+     return false;
+   }
+diff --git a/core/fxcodec/jpx/jpx_unittest.cpp b/core/fxcodec/jpx/jpx_unittest.cpp
+index f54528a1..5b5b9d25 100644
+--- a/core/fxcodec/jpx/jpx_unittest.cpp
++++ b/core/fxcodec/jpx/jpx_unittest.cpp
+@@ -8,13 +8,20 @@
+ #include <algorithm>
+ #include <array>
+ #include <limits>
++#include <optional>
++#include <string>
+ #include <type_traits>
++#include <utility>
++#include <vector>
+ 
+ #include "core/fxcodec/jpx/cjpx_decoder.h"
+ #include "core/fxcodec/jpx/jpx_decode_utils.h"
+ #include "core/fxcrt/fx_memcpy_wrappers.h"
+ #include "core/fxcrt/fx_memory.h"
++#include "core/fxge/calculate_pitch.h"
+ #include "testing/gtest/include/gtest/gtest.h"
++#include "testing/utils/file_util.h"
++#include "testing/utils/path_service.h"
+ #include "third_party/libopenjpeg/opj_malloc.h"
+ 
+ namespace fxcodec {
+@@ -31,8 +38,63 @@ constexpr auto kStreamData = std::to_array<const uint8_t>({
+     // clang-format on
+ });
+ 
++struct DecodedJpx {
++  CJPX_Decoder::JpxImageInfo info;
++  uint32_t pitch;
++  std::vector<uint8_t> pixels;
++};
++
++std::optional<DecodedJpx> DecodeJpxWithThreads(
++    pdfium::span<const uint8_t> encoded,
++    uint32_t decode_threads) {
++  std::unique_ptr<CJPX_Decoder> decoder = CJPX_Decoder::Create(
++      encoded, CJPX_Decoder::ColorSpaceOption::kNormal,
++      /*resolution_levels_to_skip=*/0, /*strict_mode=*/true, decode_threads);
++  if (!decoder || !decoder->StartDecode()) {
++    return std::nullopt;
++  }
++
++  const CJPX_Decoder::JpxImageInfo info = decoder->GetInfo();
++  const std::optional<uint32_t> pitch =
++      fxge::CalculatePitch32(8 * info.channels, info.width);
++  if (!pitch.has_value()) {
++    return std::nullopt;
++  }
++
++  std::vector<uint8_t> pixels(info.height * pitch.value());
++  if (!decoder->Decode(pixels, pitch.value(), /*swap_rgb=*/false,
++                       info.channels)) {
++    return std::nullopt;
++  }
++  return DecodedJpx{info, pitch.value(), std::move(pixels)};
++}
++
+ }  // namespace
+ 
++TEST(fxcodec, BoundedParallelDecodeMatchesSerialBytes) {
++  constexpr std::array<const char*, 3> kFixtures = {
++      "RGB.jp2", "RGB-alpha.jp2", "gray.jp2"};
++  for (const char* fixture : kFixtures) {
++    const std::string file_path = PathService::GetTestFilePath(fixture);
++    ASSERT_FALSE(file_path.empty()) << fixture;
++    const std::vector<uint8_t> encoded = GetFileContents(file_path.c_str());
++    ASSERT_FALSE(encoded.empty()) << fixture;
++
++    const std::optional<DecodedJpx> serial =
++        DecodeJpxWithThreads(encoded, /*decode_threads=*/0);
++    const std::optional<DecodedJpx> parallel = DecodeJpxWithThreads(
++        encoded, CJPX_Decoder::kMaxDecodeThreads);
++    ASSERT_TRUE(serial.has_value()) << fixture;
++    ASSERT_TRUE(parallel.has_value()) << fixture;
++    EXPECT_EQ(serial->info.width, parallel->info.width) << fixture;
++    EXPECT_EQ(serial->info.height, parallel->info.height) << fixture;
++    EXPECT_EQ(serial->info.channels, parallel->info.channels) << fixture;
++    EXPECT_EQ(serial->info.colorspace, parallel->info.colorspace) << fixture;
++    EXPECT_EQ(serial->pitch, parallel->pitch) << fixture;
++    EXPECT_EQ(serial->pixels, parallel->pixels) << fixture;
++  }
++}
++
+ TEST(fxcodec, DecodeDataNullDecodeData) {
+   uint8_t buffer[16];
+   DecodeData* ptr = nullptr;
