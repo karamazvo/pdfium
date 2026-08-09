@@ -1,0 +1,749 @@
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 0d0848cb9..37c4100e4 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -107,6 +107,82 @@ CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
+   return CJPX_Decoder::ColorSpaceOption::kNormal;
+ }
+ 
++class SourceWindowDIB final : public CFX_DIBBase {
++ public:
++  static RetainPtr<CFX_DIBBase> Create(RetainPtr<CFX_DIBitmap> window,
++                                       int full_width,
++                                       int full_height,
++                                       int window_left,
++                                       int window_top,
++                                       const FX_RECT& required_window) {
++    if (!window || window->GetBPP() < 8 || full_width <= 0 ||
++        full_height <= 0 || window_left < 0 || window_top < 0 ||
++        window_left + window->GetWidth() > full_width ||
++        window_top + window->GetHeight() > full_height ||
++        window_left > required_window.left ||
++        window_top > required_window.top ||
++        window_left + window->GetWidth() < required_window.right ||
++        window_top + window->GetHeight() < required_window.bottom) {
++      return nullptr;
++    }
++    std::optional<uint32_t> pitch =
++        fxge::CalculatePitch32(window->GetBPP(), full_width);
++    if (!pitch.has_value()) {
++      return nullptr;
++    }
++    return pdfium::MakeRetain<SourceWindowDIB>(
++        std::move(window), full_width, full_height, window_left, window_top,
++        pitch.value());
++  }
++
++  SourceWindowDIB(RetainPtr<CFX_DIBitmap> window,
++                  int full_width,
++                  int full_height,
++                  int window_left,
++                  int window_top,
++                  uint32_t pitch)
++      : window_(std::move(window)),
++        window_left_(window_left),
++        window_top_(window_top),
++        row_(pitch) {
++    SetFormat(window_->GetFormat());
++    SetWidth(full_width);
++    SetHeight(full_height);
++    SetPitch(pitch);
++    SetPalette(window_->GetPaletteSpan());
++  }
++
++  pdfium::span<const uint8_t> GetScanline(int line) const override {
++    std::ranges::fill(row_, 0);
++    if (line < window_top_ || line >= window_top_ + window_->GetHeight()) {
++      return row_;
++    }
++    const size_t bytes_per_pixel = static_cast<size_t>(GetBPP() / 8);
++    const size_t destination_offset =
++        static_cast<size_t>(window_left_) * bytes_per_pixel;
++    const size_t copy_bytes =
++        static_cast<size_t>(window_->GetWidth()) * bytes_per_pixel;
++    const auto source =
++        window_->GetScanline(line - window_top_).first(copy_bytes);
++    fxcrt::spancpy(pdfium::span(row_).subspan(destination_offset, copy_bytes),
++                   source);
++    return row_;
++  }
++
++  size_t GetEstimatedImageMemoryBurden() const override {
++    return CFX_DIBBase::GetEstimatedImageMemoryBurden() + row_.size() +
++           window_->GetEstimatedImageMemoryBurden();
++  }
++
++ private:
++  ~SourceWindowDIB() override = default;
++
++  RetainPtr<CFX_DIBitmap> const window_;
++  const int window_left_;
++  const int window_top_;
++  mutable DataVector<uint8_t> row_;
++};
++
+ }  // namespace
+ 
+ CPDF_DIB::CPDF_DIB(CPDF_Document* doc, RetainPtr<const CPDF_Stream> pStream)
+@@ -185,11 +261,13 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     CPDF_ColorSpace::Family GroupFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required,
+-    CancelIndicatorIface* cancel) {
++    CancelIndicatorIface* cancel,
++    const std::optional<FX_RECT>& source_clip) {
+   std_cs_ = bStdCS;
+   has_mask_ = bHasMask;
+   group_family_ = GroupFamily;
+   load_mask_ = bLoadMask;
++  source_clip_ = source_clip;
+ 
+   if (!stream_->IsInline()) {
+     pFormResources = nullptr;
+@@ -276,8 +354,8 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
+     iDecodeStatus = Jbig2Decoder::StartDecode(
+         jbig_2context_.get(), document_->GetOrCreateCodecContext(), GetWidth(),
+         GetHeight(), pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
+-        cached_bitmap_->GetWritableBuffer(), cached_bitmap_->GetPitch(), pPause,
+-        reject_large_regions_when_fuzzing);
++        cached_bitmap_.AsRaw<CFX_DIBitmap>()->GetWritableBuffer(),
++        cached_bitmap_->GetPitch(), pPause, reject_large_regions_when_fuzzing);
+   } else {
+     iDecodeStatus = Jbig2Decoder::ContinueDecode(jbig_2context_.get(), pPause);
+   }
+@@ -461,7 +539,7 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(
+ 
+   if (decoder == "JBIG2Decode") {
+     cached_bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
+-    if (!cached_bitmap_->Create(
++    if (!cached_bitmap_.AsRaw<CFX_DIBitmap>()->Create(
+             GetWidth(), GetHeight(),
+             image_mask_ ? FXDIB_Format::k1bppMask : FXDIB_Format::k1bppRgb)) {
+       cached_bitmap_.Reset();
+@@ -611,7 +689,7 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+   return true;
+ }
+ 
+-RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
++RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+     uint8_t resolution_levels_to_skip,
+     CancelIndicatorIface* cancel) {
+   std::unique_ptr<CJPX_Decoder> decoder =
+@@ -622,10 +700,30 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+     return nullptr;
+   }
+ 
+-  SetWidth(GetWidth() >> resolution_levels_to_skip);
+-  SetHeight(GetHeight() >> resolution_levels_to_skip);
++  const int full_width = GetWidth();
++  const int full_height = GetHeight();
++  const CJPX_Decoder::JpxImageInfo full_info = decoder->GetInfo();
++  bool uses_source_clip = false;
++  if (source_clip_.has_value() && full_info.width == full_width &&
++      full_info.height == full_height &&
++      (full_info.channels == 1 || full_info.channels == 3 ||
++       full_info.channels == 4) &&
++      *source_clip_ != FX_RECT(0, 0, full_width, full_height)) {
++    uses_source_clip = decoder->SetDecodeArea(
++        source_clip_->left, source_clip_->top, source_clip_->right,
++        source_clip_->bottom);
++  }
++
++  SetWidth(full_width >> resolution_levels_to_skip);
++  SetHeight(full_height >> resolution_levels_to_skip);
+ 
+   if (!decoder->StartDecode(cancel)) {
++    if (uses_source_clip && !(cancel && cancel->IsCancelled())) {
++      source_clip_.reset();
++      SetWidth(full_width);
++      SetHeight(full_height);
++      return LoadJpxBitmap(resolution_levels_to_skip, cancel);
++    }
+     return nullptr;
+   }
+ 
+@@ -698,7 +796,30 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+   // color space types.
+ 
+   bpc_ = 8;
+-  return result_bitmap;
++  if (!uses_source_clip) {
++    return result_bitmap;
++  }
++
++  RetainPtr<CFX_DIBBase> source_window = SourceWindowDIB::Create(
++      std::move(result_bitmap), GetWidth(), GetHeight(), image_info.x_offset,
++      image_info.y_offset,
++      FX_RECT(source_clip_->left >> resolution_levels_to_skip,
++              source_clip_->top >> resolution_levels_to_skip,
++              (source_clip_->right + (1 << resolution_levels_to_skip) - 1) >>
++                  resolution_levels_to_skip,
++              (source_clip_->bottom + (1 << resolution_levels_to_skip) - 1) >>
++                  resolution_levels_to_skip));
++  if (source_window) {
++    uses_source_clip_ = true;
++    return source_window;
++  }
++  if (cancel && cancel->IsCancelled()) {
++    return nullptr;
++  }
++  source_clip_.reset();
++  SetWidth(full_width);
++  SetHeight(full_height);
++  return LoadJpxBitmap(resolution_levels_to_skip, cancel);
+ }
+ 
+ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+diff --git a/core/fpdfapi/page/cpdf_dib.h b/core/fpdfapi/page/cpdf_dib.h
+index 5980f5a34..6ebc3b85e 100644
+--- a/core/fpdfapi/page/cpdf_dib.h
++++ b/core/fpdfapi/page/cpdf_dib.h
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <memory>
++#include <optional>
+ #include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+@@ -52,6 +53,7 @@ class CPDF_DIB final : public CFX_DIBBase {
+ 
+   RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return color_space_; }
+   uint32_t GetMatteColor() const { return matte_color_; }
++  bool UsesSourceClip() const { return uses_source_clip_; }
+   bool IsJBigImage() const;
+ 
+   bool Load();
+@@ -62,7 +64,9 @@ class CPDF_DIB final : public CFX_DIBBase {
+                              CPDF_ColorSpace::Family GroupFamily,
+                              bool bLoadMask,
+                              const CFX_Size& max_size_required,
+-                             CancelIndicatorIface* cancel);
++                             CancelIndicatorIface* cancel,
++                             const std::optional<FX_RECT>& source_clip =
++                                 std::nullopt);
+   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
+   RetainPtr<CPDF_DIB> DetachMask();
+ 
+@@ -90,7 +94,7 @@ class CPDF_DIB final : public CFX_DIBBase {
+   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                      const CPDF_Dictionary* pPageResources);
+   bool GetDecodeAndMaskArray();
+-  RetainPtr<CFX_DIBitmap> LoadJpxBitmap(
++  RetainPtr<CFX_DIBBase> LoadJpxBitmap(
+       uint8_t resolution_levels_to_skip,
+       CancelIndicatorIface* cancel);
+   RetainPtr<CFX_DIBitmap> ConvertArgbJpxBitmapToRgb(
+@@ -134,11 +138,13 @@ class CPDF_DIB final : public CFX_DIBBase {
+   bool do_bpc_check_ = true;
+   bool color_key_ = false;
+   bool has_mask_ = false;
++  bool uses_source_clip_ = false;
+   bool std_cs_ = false;
+   std::vector<DIB_COMP_DATA> comp_data_;
+   mutable DataVector<uint8_t> line_buf_;
+   mutable DataVector<uint8_t> mask_buf_;
+-  RetainPtr<CFX_DIBitmap> cached_bitmap_;
++  RetainPtr<CFX_DIBBase> cached_bitmap_;
++  std::optional<FX_RECT> source_clip_;
+   // Note: Must not create a cycle between CPDF_DIB instances.
+   RetainPtr<CPDF_DIB> mask_;
+   RetainPtr<CPDF_StreamAcc> global_acc_;
+diff --git a/core/fpdfapi/page/cpdf_image.cpp b/core/fpdfapi/page/cpdf_image.cpp
+index fc1ce6282..7468bcba9 100644
+--- a/core/fpdfapi/page/cpdf_image.cpp
++++ b/core/fpdfapi/page/cpdf_image.cpp
+@@ -363,12 +363,13 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
+                                   CPDF_ColorSpace::Family GroupFamily,
+                                   bool bLoadMask,
+                                   const CFX_Size& max_size_required,
+-                                  CancelIndicatorIface* cancel) {
++                                  CancelIndicatorIface* cancel,
++                                  const std::optional<FX_RECT>& source_clip) {
+   RetainPtr<CPDF_DIB> source = CreateNewDIB();
+   CPDF_DIB::LoadState ret =
+       source->StartLoadDIBBase(true, pFormResource, pPageResource, bStdCS,
+                                GroupFamily, bLoadMask, max_size_required,
+-                               cancel);
++                               cancel, source_clip);
+   if (ret == CPDF_DIB::LoadState::kFail) {
+     dibbase_.Reset();
+     return false;
+diff --git a/core/fpdfapi/page/cpdf_image.h b/core/fpdfapi/page/cpdf_image.h
+index b926e9d0e..8c24111f2 100644
+--- a/core/fpdfapi/page/cpdf_image.h
++++ b/core/fpdfapi/page/cpdf_image.h
+@@ -9,6 +9,8 @@
+ 
+ #include <stdint.h>
+ 
++#include <optional>
++
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/span.h"
+@@ -68,7 +70,9 @@ class CPDF_Image final : public Retainable {
+                         CPDF_ColorSpace::Family GroupFamily,
+                         bool bLoadMask,
+                         const CFX_Size& max_size_required,
+-                        CancelIndicatorIface* cancel);
++                        CancelIndicatorIface* cancel,
++                        const std::optional<FX_RECT>& source_clip =
++                            std::nullopt);
+ 
+   // Returns whether to Continue() or not.
+   bool Continue(PauseIndicatorIface* pPause);
+diff --git a/core/fpdfapi/page/cpdf_imageloader.cpp b/core/fpdfapi/page/cpdf_imageloader.cpp
+index d144da717..cbff5f6fc 100644
+--- a/core/fpdfapi/page/cpdf_imageloader.cpp
++++ b/core/fpdfapi/page/cpdf_imageloader.cpp
+@@ -28,18 +28,19 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
+                              CPDF_ColorSpace::Family eFamily,
+                              bool bLoadMask,
+                              const CFX_Size& max_size_required,
+-                             CancelIndicatorIface* cancel) {
++                             CancelIndicatorIface* cancel,
++                             const std::optional<FX_RECT>& source_clip) {
+   cache_ = pPageImageCache;
+   image_object_ = pImage;
+   bool should_continue;
+   if (cache_) {
+     should_continue = cache_->StartGetCachedBitmap(
+         image_object_->GetImage(), pFormResource, pPageResource, bStdCS,
+-        eFamily, bLoadMask, max_size_required, cancel);
++        eFamily, bLoadMask, max_size_required, cancel, source_clip);
+   } else {
+     should_continue = image_object_->GetImage()->StartLoadDIBBase(
+         pFormResource, pPageResource, bStdCS, eFamily, bLoadMask,
+-        max_size_required, cancel);
++        max_size_required, cancel, source_clip);
+   }
+   if (!should_continue) {
+     Finish();
+diff --git a/core/fpdfapi/page/cpdf_imageloader.h b/core/fpdfapi/page/cpdf_imageloader.h
+index f14a54f76..e614bea06 100644
+--- a/core/fpdfapi/page/cpdf_imageloader.h
++++ b/core/fpdfapi/page/cpdf_imageloader.h
+@@ -7,6 +7,8 @@
+ #ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_
+ #define CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_
+ 
++#include <optional>
++
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/unowned_ptr.h"
+@@ -32,7 +34,8 @@ class CPDF_ImageLoader {
+              CPDF_ColorSpace::Family eFamily,
+              bool bLoadMask,
+              const CFX_Size& max_size_required,
+-             CancelIndicatorIface* cancel);
++             CancelIndicatorIface* cancel,
++             const std::optional<FX_RECT>& source_clip = std::nullopt);
+   bool Continue(PauseIndicatorIface* pPause);
+ 
+   RetainPtr<CFX_DIBBase> TranslateImage(
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index baf6f857a..531cff8ce 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -346,7 +346,8 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required,
+-    CancelIndicatorIface* cancel) {
++    CancelIndicatorIface* cancel,
++    const std::optional<FX_RECT>& source_clip) {
+   // A cross-document image may have come from the embedder.
+   if (page_->GetDocument() != pImage->GetDocument()) {
+     return false;
+@@ -360,9 +361,10 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+   } else {
+     cur_image_cache_entry_ = std::make_unique<Entry>(std::move(pImage));
+   }
++  cur_entry_old_size_ = cur_image_cache_entry_->EstimateSize();
+   CPDF_DIB::LoadState ret = cur_image_cache_entry_->StartGetCachedBitmap(
+       this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
+-      max_size_required, cancel);
++      max_size_required, cancel, source_clip);
+   if (ret == CPDF_DIB::LoadState::kContinue) {
+     return true;
+   }
+@@ -372,9 +374,10 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+     image_cache_[pStream] = cur_image_cache_entry_.Release();
+   }
+ 
+-  if (ret == CPDF_DIB::LoadState::kFail) {
+-    cache_size_ += cur_image_cache_entry_->EstimateSize();
+-  }
++  CHECK(cache_size_ >= cur_entry_old_size_);
++  cache_size_ -= cur_entry_old_size_;
++  cache_size_ += cur_image_cache_entry_->EstimateSize();
++  cur_entry_old_size_ = 0;
+ 
+   return false;
+ }
+@@ -390,7 +393,10 @@ bool CPDF_PageImageCache::Continue(PauseIndicatorIface* pPause) {
+     image_cache_[cur_image_cache_entry_->GetImage()->GetStream()] =
+         cur_image_cache_entry_.Release();
+   }
++  CHECK(cache_size_ >= cur_entry_old_size_);
++  cache_size_ -= cur_entry_old_size_;
+   cache_size_ += cur_image_cache_entry_->EstimateSize();
++  cur_entry_old_size_ = 0;
+   return false;
+ }
+ 
+@@ -445,7 +451,8 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required,
+-    CancelIndicatorIface* cancel) {
++    CancelIndicatorIface* cancel,
++    const std::optional<FX_RECT>& source_clip) {
+   if (cached_bitmap_ && IsCacheValid(max_size_required)) {
+     cur_bitmap_ = cached_bitmap_;
+     cur_mask_ = cached_mask_;
+@@ -465,8 +472,8 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+ 
+   cur_bitmap_ = image_->CreateNewDIB();
+   CPDF_DIB::LoadState ret = cur_bitmap_.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
+-      true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
+-      max_size_required, cancel);
++      true, pFormResources, pPageResources, bStdCS, eFamily,
++      bLoadMask && !cached_mask_, max_size_required, cancel, source_clip);
+   cached_set_max_size_required_ =
+       (max_size_required.width != 0 && max_size_required.height != 0);
+   if (ret == CPDF_DIB::LoadState::kContinue) {
+@@ -500,9 +507,24 @@ bool CPDF_PageImageCache::Entry::Continue(
+ 
+ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+     CPDF_PageImageCache* pPageImageCache) {
+-  matte_color_ = cur_bitmap_.AsRaw<CPDF_DIB>()->GetMatteColor();
+-  cur_mask_ = cur_bitmap_.AsRaw<CPDF_DIB>()->DetachMask();
++  CPDF_DIB* dib = cur_bitmap_.AsRaw<CPDF_DIB>();
++  transient_source_clip_ = dib->UsesSourceClip();
++  matte_color_ = dib->GetMatteColor();
++  cur_mask_ = dib->DetachMask();
++  if (!cur_mask_ && transient_source_clip_) {
++    cur_mask_ = cached_mask_;
++  }
+   time_count_ = pPageImageCache->GetTimeCount();
++  if (transient_source_clip_) {
++    if (cur_mask_ && !cached_mask_) {
++      cached_mask_ = MakeCachedImage(cur_mask_, /*realize_hint=*/true,
++                                     /*track_mask_coverage=*/true);
++      cur_mask_ = cached_mask_;
++    }
++    CalcSize();
++    transient_source_clip_ = false;
++    return;
++  }
+   if (cur_bitmap_->GetPitch() * cur_bitmap_->GetHeight() < kHugeImageSize) {
+     cached_bitmap_ = MakeCachedImage(cur_bitmap_, /*realize_hint=*/true);
+     cur_bitmap_.Reset();
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.h b/core/fpdfapi/page/cpdf_pageimagecache.h
+index ec09e33da..b0050ac84 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.h
++++ b/core/fpdfapi/page/cpdf_pageimagecache.h
+@@ -12,6 +12,7 @@
+ #include <functional>
+ #include <map>
+ #include <memory>
++#include <optional>
+ 
+ #include "core/fpdfapi/page/cpdf_dib.h"
+ #include "core/fxcrt/maybe_owned.h"
+@@ -42,7 +43,9 @@ class CPDF_PageImageCache {
+                             CPDF_ColorSpace::Family eFamily,
+                             bool bLoadMask,
+                             const CFX_Size& max_size_required,
+-                            CancelIndicatorIface* cancel);
++                            CancelIndicatorIface* cancel,
++                            const std::optional<FX_RECT>& source_clip =
++                                std::nullopt);
+ 
+   bool Continue(PauseIndicatorIface* pPause);
+ 
+@@ -71,7 +74,8 @@ class CPDF_PageImageCache {
+         CPDF_ColorSpace::Family eFamily,
+         bool bLoadMask,
+         const CFX_Size& max_size_required,
+-        CancelIndicatorIface* cancel);
++        CancelIndicatorIface* cancel,
++        const std::optional<FX_RECT>& source_clip);
+ 
+     // Returns whether to Continue() or not.
+     bool Continue(PauseIndicatorIface* pPause,
+@@ -94,6 +98,7 @@ class CPDF_PageImageCache {
+     RetainPtr<CFX_DIBBase> cached_bitmap_;
+     RetainPtr<CFX_DIBBase> cached_mask_;
+     bool cached_set_max_size_required_ = false;
++    bool transient_source_clip_ = false;
+   };
+ 
+   void ClearImageCacheEntry(const CPDF_Stream* pStream);
+@@ -104,6 +109,7 @@ class CPDF_PageImageCache {
+   MaybeOwned<Entry> cur_image_cache_entry_;
+   uint32_t time_count_ = 0;
+   uint32_t cache_size_ = 0;
++  uint32_t cur_entry_old_size_ = 0;
+   bool cur_find_cache_ = false;
+ };
+ 
+diff --git a/core/fpdfapi/render/cpdf_imagerenderer.cpp b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+index f464dd240..3f1701191 100644
+--- a/core/fpdfapi/render/cpdf_imagerenderer.cpp
++++ b/core/fpdfapi/render/cpdf_imagerenderer.cpp
+@@ -44,6 +44,7 @@
+ #include "core/fxge/dib/cfx_dibbase.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ #include "core/fxge/dib/cfx_imagestretcher.h"
++#include "core/fxge/dib/cstretchengine.h"
+ 
+ #if BUILDFLAG(IS_WIN)
+ #include "core/fxge/dib/cfx_imagetransformer.h"
+@@ -81,10 +82,43 @@ CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
+ CPDF_ImageRenderer::~CPDF_ImageRenderer() = default;
+ 
+ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+-  if (!GetUnitRect().has_value()) {
++  std::optional<FX_RECT> image_rect = GetUnitRect();
++  if (!image_rect.has_value()) {
+     return false;
+   }
+ 
++  std::optional<FX_RECT> source_clip;
++  std::optional<DecoderArray> decoder_array = GetDecoderArray(
++      image_object_->GetImage()->GetStream()->GetDict());
++  const bool is_jpx = decoder_array.has_value() && !decoder_array->empty() &&
++                      decoder_array->back().first == "JPXDecode";
++  if (is_jpx && fabs(image_matrix_.b) < 0.5f && image_matrix_.a != 0 &&
++      fabs(image_matrix_.c) < 0.5f && image_matrix_.d != 0) {
++    FX_RECT destination_clip = *image_rect;
++    destination_clip.Intersect(
++        render_status_->GetRenderDevice()->GetClipBox());
++    if (!destination_clip.IsEmpty()) {
++      int destination_width = image_rect->Width();
++      int destination_height = image_rect->Height();
++      if (image_matrix_.a < 0) {
++        destination_width = -destination_width;
++      }
++      if (image_matrix_.d > 0) {
++        destination_height = -destination_height;
++      }
++      destination_clip.Offset(-image_rect->left, -image_rect->top);
++      RetainPtr<CPDF_Image> image = image_object_->GetImage();
++      FX_RECT required_source = CStretchEngine::CalculateSourceClip(
++          image->GetPixelWidth(), image->GetPixelHeight(), destination_width,
++          destination_height, destination_clip);
++      const FX_RECT full_source(0, 0, image->GetPixelWidth(),
++                                image->GetPixelHeight());
++      if (!required_source.IsEmpty() && required_source != full_source) {
++        source_clip = required_source;
++      }
++    }
++  }
++
+   if (!loader_->Start(
+           image_object_, render_status_->GetContext()->GetPageCache(),
+           render_status_->GetFormResource(), render_status_->GetPageResource(),
+@@ -92,7 +126,7 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
+           render_status_->GetLoadMask(),
+           {render_status_->GetRenderDevice()->GetWidth(),
+            render_status_->GetRenderDevice()->GetHeight()},
+-          render_status_)) {
++          render_status_, source_clip)) {
+     return false;
+   }
+   mode_ = Mode::kDefault;
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index a317ae88c..97d53aea3 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -585,9 +585,42 @@ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
+   return true;
+ }
+ 
++bool CJPX_Decoder::SetDecodeArea(uint32_t left,
++                                 uint32_t top,
++                                 uint32_t right,
++                                 uint32_t bottom) {
++  if (!image_ || image_->x0 != 0 || image_->y0 != 0 || left >= right ||
++      top >= bottom || right > image_->x1 || bottom > image_->y1) {
++    return false;
++  }
++
++  const auto components = components_span(image_.get());
++  if (components.empty()) {
++    return false;
++  }
++  const opj_image_comp_t& first = components.front();
++  if (first.dx != 1 || first.dy != 1 || first.x0 != 0 || first.y0 != 0) {
++    return false;
++  }
++  for (const opj_image_comp_t& component : components) {
++    if (component.dx != first.dx || component.dy != first.dy ||
++        component.x0 != first.x0 || component.y0 != first.y0 ||
++        component.w != first.w || component.h != first.h) {
++      return false;
++    }
++  }
++
++  parameters_.DA_x0 = left;
++  parameters_.DA_y0 = top;
++  parameters_.DA_x1 = right;
++  parameters_.DA_y1 = bottom;
++  return true;
++}
++
+ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
+   const auto components = components_span(image_.get());
+-  return {components[0].w, components[0].h,
++  return {components[0].w, components[0].h, components[0].x0,
++          components[0].y0,
+           pdfium::checked_cast<uint32_t>(components.size()),
+           image_->color_space};
+ }
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+index 8832201f2..71ea9ba8f 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -42,6 +42,8 @@ class CJPX_Decoder {
+   struct JpxImageInfo {
+     uint32_t width;
+     uint32_t height;
++    uint32_t x_offset;
++    uint32_t y_offset;
+     uint32_t channels;
+     COLOR_SPACE colorspace;
+   };
+@@ -58,6 +60,10 @@ class CJPX_Decoder {
+   ~CJPX_Decoder();
+ 
+   JpxImageInfo GetInfo() const;
++  bool SetDecodeArea(uint32_t left,
++                     uint32_t top,
++                     uint32_t right,
++                     uint32_t bottom);
+   bool StartDecode(CancelIndicatorIface* cancel = nullptr);
+ 
+   // `swap_rgb` can only be set when an image's color space type contains at
+diff --git a/core/fxge/dib/cstretchengine.cpp b/core/fxge/dib/cstretchengine.cpp
+index 8d0dc579c..2d9370460 100644
+--- a/core/fxge/dib/cstretchengine.cpp
++++ b/core/fxge/dib/cstretchengine.cpp
+@@ -58,6 +58,41 @@ bool CStretchEngine::UseInterpolateBilinear(
+              static_cast<long long>(src_width) * src_height / abs(dest_width);
+ }
+ 
++// static
++FX_RECT CStretchEngine::CalculateSourceClip(
++    int source_width,
++    int source_height,
++    int destination_width,
++    int destination_height,
++    const FX_RECT& destination_clip) {
++  if (destination_width == 0 || destination_height == 0) {
++    return FX_RECT();
++  }
++
++  const double scale_x = static_cast<double>(source_width) / destination_width;
++  const double scale_y =
++      static_cast<double>(source_height) / destination_height;
++  const double base_x = destination_width > 0 ? 0.0 : destination_width;
++  const double base_y = destination_height > 0 ? 0.0 : destination_height;
++  double source_left = scale_x * (destination_clip.left + base_x);
++  double source_right = scale_x * (destination_clip.right + base_x);
++  double source_top = scale_y * (destination_clip.top + base_y);
++  double source_bottom = scale_y * (destination_clip.bottom + base_y);
++  if (source_left > source_right) {
++    std::swap(source_left, source_right);
++  }
++  if (source_top > source_bottom) {
++    std::swap(source_top, source_bottom);
++  }
++
++  FX_RECT result(static_cast<int>(floor(source_left)),
++                 static_cast<int>(floor(source_top)),
++                 static_cast<int>(ceil(source_right)),
++                 static_cast<int>(ceil(source_bottom)));
++  result.Intersect(0, 0, source_width, source_height);
++  return result;
++}
++
+ CStretchEngine::WeightTable::WeightTable() = default;
+ 
+ CStretchEngine::WeightTable::~WeightTable() = default;
+@@ -246,26 +281,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
+       resample_options_ = options;
+     }
+   }
+-  double scale_x = static_cast<float>(src_width_) / dest_width_;
+-  double scale_y = static_cast<float>(src_height_) / dest_height_;
+-  double base_x = dest_width_ > 0 ? 0.0f : dest_width_;
+-  double base_y = dest_height_ > 0 ? 0.0f : dest_height_;
+-  double src_left = scale_x * (clip_rect.left + base_x);
+-  double src_right = scale_x * (clip_rect.right + base_x);
+-  double src_top = scale_y * (clip_rect.top + base_y);
+-  double src_bottom = scale_y * (clip_rect.bottom + base_y);
+-  if (src_left > src_right) {
+-    std::swap(src_left, src_right);
+-  }
+-  if (src_top > src_bottom) {
+-    std::swap(src_top, src_bottom);
+-  }
+-  src_clip_.left = static_cast<int>(floor(src_left));
+-  src_clip_.right = static_cast<int>(ceil(src_right));
+-  src_clip_.top = static_cast<int>(floor(src_top));
+-  src_clip_.bottom = static_cast<int>(ceil(src_bottom));
+-  FX_RECT src_rect(0, 0, src_width_, src_height_);
+-  src_clip_.Intersect(src_rect);
++  src_clip_ = CalculateSourceClip(src_width_, src_height_, dest_width_,
++                                  dest_height_, clip_rect);
+ 
+   switch (src_bpp_) {
+     case 1:
+diff --git a/core/fxge/dib/cstretchengine.h b/core/fxge/dib/cstretchengine.h
+index e66297d2f..6cb31b8a0 100644
+--- a/core/fxge/dib/cstretchengine.h
++++ b/core/fxge/dib/cstretchengine.h
+@@ -45,6 +45,15 @@ class CStretchEngine {
+                                      int src_width,
+                                      int src_height);
+ 
++  // Returns the exact source rows and columns consumed when `destination_clip`
++  // is stretched. Keeping this calculation here gives decoders and the
++  // stretcher one coordinate contract.
++  static FX_RECT CalculateSourceClip(int source_width,
++                                     int source_height,
++                                     int destination_width,
++                                     int destination_height,
++                                     const FX_RECT& destination_clip);
++
+   template <typename T>
+   static bool IsValidDestinationDimension(T value) {
+     // Note: Negate `kMaxImageDimension` in this check, and not the dimension
+diff --git a/core/fxge/dib/cstretchengine_unittest.cpp b/core/fxge/dib/cstretchengine_unittest.cpp
+index 8d3958577..1db76adbb 100644
+--- a/core/fxge/dib/cstretchengine_unittest.cpp
++++ b/core/fxge/dib/cstretchengine_unittest.cpp
+@@ -113,6 +113,18 @@ TEST(CStretchEngine, OverflowInCtor) {
+   EXPECT_FALSE(engine.GetResampleOptionsForTest().bLossy);
+ }
+ 
++TEST(CStretchEngine, CalculateSourceClip) {
++  EXPECT_EQ(FX_RECT(200, 400, 600, 1200),
++            CStretchEngine::CalculateSourceClip(
++                1000, 2000, 500, 1000, FX_RECT(100, 200, 300, 600)));
++  EXPECT_EQ(FX_RECT(400, 400, 800, 1200),
++            CStretchEngine::CalculateSourceClip(
++                1000, 2000, -500, 1000, FX_RECT(100, 200, 300, 600)));
++  EXPECT_TRUE(CStretchEngine::CalculateSourceClip(
++                  1000, 2000, 0, 1000, FX_RECT(100, 200, 300, 600))
++                  .IsEmpty());
++}
++
+ TEST(CStretchEngine, WeightRounding) {
+   FXDIB_ResampleOptions options;
+   ExecuteStretchTests(options);
