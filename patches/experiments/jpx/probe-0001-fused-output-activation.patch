@@ -1,0 +1,106 @@
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -531,6 +531,7 @@ bool CJPX_Decoder::StartDecode(OutputSink* output_sink,
+   used_output_sink_ = false;
+   output_sink_ = output_sink;
+ #if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  fused_output_callback_result_ = FusedOutputCallbackResult::kNotCalled;
+   if (cancel &&
+       !opj_set_decode_cancel_callback(codec_.get(), IsJpxDecodeCancelled,
+                                       cancel)) {
+@@ -540,6 +541,7 @@ bool CJPX_Decoder::StartDecode(OutputSink* output_sink,
+   const bool install_output_sink =
+       output_sink_ && !parameters_.nb_tile_to_decode &&
+       CanAttemptFusedOutput();
++  fused_output_candidate_ = install_output_sink;
+   if (!opj_set_decode_output_callback(
+           codec_.get(), install_output_sink ? BeginFusedOutput : nullptr,
+           install_output_sink ? this : nullptr)) {
+@@ -617,6 +619,40 @@ bool CJPX_Decoder::StartDecode(OutputSink* output_sink,
+   }
+ 
+ #if defined(__ANDROID__)
++  if (output_sink) {
++    static std::atomic<uint32_t> probe_ordinal = 0;
++    const uint32_t ordinal =
++        probe_ordinal.fetch_add(1, std::memory_order_relaxed);
++    if (ordinal < 64 || (ordinal & 127u) == 0) {
++      const char* callback_result = "not_called";
++      switch (fused_output_callback_result_) {
++        case FusedOutputCallbackResult::kNotCalled:
++          break;
++        case FusedOutputCallbackResult::kFallback:
++          callback_result = "fallback";
++          break;
++        case FusedOutputCallbackResult::kError:
++          callback_result = "error";
++          break;
++        case FusedOutputCallbackResult::kReady:
++          callback_result = "ready";
++          break;
++      }
++      const auto probe_components = components_span(image_.get());
++      const opj_image_comp_t* first =
++          probe_components.empty() ? nullptr : &probe_components.front();
++      __android_log_print(
++          ANDROID_LOG_INFO, "PdfJpxFusedProbe",
++          "revision=r25-jpx-probe-0001 event=decode_result ordinal=%u "
++          "candidate=%d callback=%s used=%d reduce=%u colorspace=%d "
++          "components=%zu firstPrec=%u firstSigned=%u firstDx=%u firstDy=%u",
++          ordinal, fused_output_candidate_ ? 1 : 0, callback_result,
++          used_output_sink_ ? 1 : 0, parameters_.cp_reduce,
++          static_cast<int>(image_->color_space), probe_components.size(),
++          first ? first->prec : 0, first ? first->sgnd : 0,
++          first ? first->dx : 0, first ? first->dy : 0);
++    }
++  }
+   if (used_output_sink_) {
+     static std::atomic_flag logged = ATOMIC_FLAG_INIT;
+     if (!logged.test_and_set(std::memory_order_relaxed)) {
+@@ -669,12 +706,16 @@ OPJ_INT32 CJPX_Decoder::BeginFusedOutput(
+   const OutputSinkResult result = decoder->output_sink_->callback(
+       decoder->output_sink_->context, image_info, &sink_output);
+   if (result == OutputSinkResult::kFallback) {
++    decoder->fused_output_callback_result_ =
++        FusedOutputCallbackResult::kFallback;
+     return OPJ_DECODE_OUTPUT_FALLBACK;
+   }
+   if (result == OutputSinkResult::kError) {
++    decoder->fused_output_callback_result_ = FusedOutputCallbackResult::kError;
+     return OPJ_DECODE_OUTPUT_ERROR;
+   }
+ 
++  decoder->fused_output_callback_result_ = FusedOutputCallbackResult::kReady;
+   output->data = sink_output.data;
+   output->data_size = sink_output.data_size;
+   output->pitch = sink_output.pitch;
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -125,6 +125,13 @@ class CJPX_Decoder {
+             bool strict_mode);
+ 
+ #if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  enum class FusedOutputCallbackResult : uint8_t {
++    kNotCalled,
++    kFallback,
++    kError,
++    kReady,
++  };
++
+   static OPJ_INT32 BeginFusedOutput(
+       void* client_data,
+       OPJ_UINT32 width,
+@@ -143,6 +150,11 @@ class CJPX_Decoder {
+   opj_dparameters_t parameters_ = {};
+   OutputSink* output_sink_ = nullptr;
+   bool used_output_sink_ = false;
++#if !defined(USE_SYSTEM_LIBOPENJPEG2)
++  bool fused_output_candidate_ = false;
++  FusedOutputCallbackResult fused_output_callback_result_ =
++      FusedOutputCallbackResult::kNotCalled;
++#endif
+ };
+ 
+ }  // namespace fxcodec
