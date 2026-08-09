@@ -999,7 +999,10 @@ jobs:
               core/fxcrt/cancelindicator_iface.h
           grep -q 'class CPDF_RenderStatus : public CancelIndicatorIface' \
               core/fpdfapi/render/cpdf_renderstatus.h
-          grep -q 'render_status_))' \
+          # JPX 0005 appends the exact source clip after the cancellation
+          # indicator. Verify the final composed call, not the superseded 0001
+          # spelling that ended with render_status_)).
+          grep -q 'render_status_, source_clip))' \
               core/fpdfapi/render/cpdf_imagerenderer.cpp
           grep -q 'opj_set_decode_cancel_callback' \
               core/fxcodec/jpx/cjpx_decoder.cpp
