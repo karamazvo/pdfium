@@ -1,0 +1,15 @@
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 37c4100e4..0ef8b9b64 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -730,5 +730,8 @@ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+   CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
+-  if (static_cast<int>(image_info.width) < GetWidth() ||
+-      static_cast<int>(image_info.height) < GetHeight()) {
++  // A clipped decode is intentionally smaller than the logical image. Its
++  // exact coverage is validated by SourceWindowDIB before publication.
++  if (!uses_source_clip &&
++      (static_cast<int>(image_info.width) < GetWidth() ||
++       static_cast<int>(image_info.height) < GetHeight())) {
+     return nullptr;
+   }
