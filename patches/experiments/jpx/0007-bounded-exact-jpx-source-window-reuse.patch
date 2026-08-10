@@ -1,0 +1,324 @@
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index 531cff8ce..b841a1c95 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -328,6 +328,9 @@ void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
+   }
+ 
+   cache_size_ -= it->second->EstimateSize();
++  if (retained_source_window_entry_ == it->second.get()) {
++    retained_source_window_entry_ = nullptr;
++  }
+ 
+   // Avoid leaving `cur_image_cache_entry_` as a dangling pointer when `it` is
+   // about to be deleted.
+@@ -338,6 +341,36 @@ void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
+   image_cache_.erase(it);
+ }
+ 
++void CPDF_PageImageCache::ClearSourceWindow(Entry* entry) {
++  if (retained_source_window_entry_ != entry) {
++    return;
++  }
++  entry->ClearSourceWindow();
++  retained_source_window_entry_ = nullptr;
++}
++
++void CPDF_PageImageCache::RetainSourceWindow(
++    Entry* entry,
++    RetainPtr<CFX_DIBBase> bitmap,
++    const FX_RECT& source_clip,
++    const CFX_Size& max_size_required) {
++  if (!bitmap || bitmap->GetEstimatedImageMemoryBurden() >
++                     kMaxRetainedSourceWindowBytes) {
++    return;
++  }
++  if (retained_source_window_entry_ &&
++      retained_source_window_entry_ != entry) {
++    Entry* old_entry = retained_source_window_entry_;
++    const uint32_t old_size = old_entry->EstimateSize();
++    old_entry->ClearSourceWindow();
++    const uint32_t removed_size = old_size - old_entry->EstimateSize();
++    CHECK(cache_size_ >= removed_size);
++    cache_size_ -= removed_size;
++  }
++  entry->SetSourceWindow(std::move(bitmap), source_clip, max_size_required);
++  retained_source_window_entry_ = entry;
++}
++
+ bool CPDF_PageImageCache::StartGetCachedBitmap(
+     RetainPtr<CPDF_Image> pImage,
+     const CPDF_Dictionary* pFormResources,
+@@ -409,6 +442,9 @@ void CPDF_PageImageCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
+ 
+   Entry* pEntry = it->second.get();
+   cache_size_ -= pEntry->EstimateSize();
++  if (retained_source_window_entry_ == pEntry) {
++    retained_source_window_entry_ = nullptr;
++  }
+   pEntry->Reset();
+   cache_size_ += pEntry->EstimateSize();
+ }
+@@ -432,6 +468,24 @@ CPDF_PageImageCache::Entry::~Entry() = default;
+ 
+ void CPDF_PageImageCache::Entry::Reset() {
+   cached_bitmap_.Reset();
++  ClearSourceWindow();
++  CalcSize();
++}
++
++void CPDF_PageImageCache::Entry::ClearSourceWindow() {
++  cached_source_window_.Reset();
++  cached_source_clip_.reset();
++  cached_source_window_max_size_required_ = {};
++  CalcSize();
++}
++
++void CPDF_PageImageCache::Entry::SetSourceWindow(
++    RetainPtr<CFX_DIBBase> bitmap,
++    const FX_RECT& source_clip,
++    const CFX_Size& max_size_required) {
++  cached_source_window_ = std::move(bitmap);
++  cached_source_clip_ = source_clip;
++  cached_source_window_max_size_required_ = max_size_required;
+   CalcSize();
+ }
+ 
+@@ -469,7 +523,14 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     }
+     return CPDF_DIB::LoadState::kSuccess;
+   }
++  if (IsSourceWindowValid(max_size_required, source_clip)) {
++    cur_bitmap_ = cached_source_window_;
++    cur_mask_ = cached_mask_;
++    return CPDF_DIB::LoadState::kSuccess;
++  }
+ 
++  pending_source_clip_ = source_clip;
++  pending_max_size_required_ = max_size_required;
+   cur_bitmap_ = image_->CreateNewDIB();
+   CPDF_DIB::LoadState ret = cur_bitmap_.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
+       true, pFormResources, pPageResources, bStdCS, eFamily,
+@@ -484,6 +545,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     ContinueGetCachedBitmap(pPageImageCache);
+   } else {
+     cur_bitmap_.Reset();
++    pending_source_clip_.reset();
+   }
+   return CPDF_DIB::LoadState::kFail;
+ }
+@@ -501,6 +563,7 @@ bool CPDF_PageImageCache::Entry::Continue(
+     ContinueGetCachedBitmap(pPageImageCache);
+   } else {
+     cur_bitmap_.Reset();
++    pending_source_clip_.reset();
+   }
+   return false;
+ }
+@@ -521,10 +584,16 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+                                      /*track_mask_coverage=*/true);
+       cur_mask_ = cached_mask_;
+     }
++    if (pending_source_clip_.has_value()) {
++      pPageImageCache->RetainSourceWindow(
++          this, cur_bitmap_, *pending_source_clip_, pending_max_size_required_);
++    }
+     CalcSize();
+     transient_source_clip_ = false;
++    pending_source_clip_.reset();
+     return;
+   }
++  pPageImageCache->ClearSourceWindow(this);
+   if (cur_bitmap_->GetPitch() * cur_bitmap_->GetHeight() < kHugeImageSize) {
+     cached_bitmap_ = MakeCachedImage(cur_bitmap_, /*realize_hint=*/true);
+     cur_bitmap_.Reset();
+@@ -539,6 +608,7 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+   cur_bitmap_ = cached_bitmap_;
+   cur_mask_ = cached_mask_;
+   CalcSize();
++  pending_source_clip_.reset();
+ }
+ 
+ void CPDF_PageImageCache::Entry::CalcSize() {
+@@ -549,6 +619,9 @@ void CPDF_PageImageCache::Entry::CalcSize() {
+   if (cached_mask_) {
+     cache_size_ += cached_mask_->GetEstimatedImageMemoryBurden();
+   }
++  if (cached_source_window_) {
++    cache_size_ += cached_source_window_->GetEstimatedImageMemoryBurden();
++  }
+ }
+ 
+ bool CPDF_PageImageCache::Entry::IsCacheValid(
+@@ -563,3 +636,28 @@ bool CPDF_PageImageCache::Entry::IsCacheValid(
+   return (cached_bitmap_->GetWidth() >= max_size_required.width) &&
+          (cached_bitmap_->GetHeight() >= max_size_required.height);
+ }
++
++bool CPDF_PageImageCache::Entry::IsSourceWindowValid(
++    const CFX_Size& max_size_required,
++    const std::optional<FX_RECT>& source_clip) const {
++  if (!cached_source_window_ || !cached_source_clip_.has_value() ||
++      !source_clip.has_value()) {
++    return false;
++  }
++  const FX_RECT& cached_clip = *cached_source_clip_;
++  const FX_RECT& required_clip = *source_clip;
++  if (required_clip.left < cached_clip.left ||
++      required_clip.top < cached_clip.top ||
++      required_clip.right > cached_clip.right ||
++      required_clip.bottom > cached_clip.bottom) {
++    return false;
++  }
++  if (cached_source_window_max_size_required_.width !=
++          max_size_required.width ||
++      cached_source_window_max_size_required_.height !=
++          max_size_required.height) {
++    return false;
++  }
++  return cached_source_window_->GetWidth() >= max_size_required.width &&
++         cached_source_window_->GetHeight() >= max_size_required.height;
++}
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.h b/core/fpdfapi/page/cpdf_pageimagecache.h
+index b0050ac84..7fe077106 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.h
++++ b/core/fpdfapi/page/cpdf_pageimagecache.h
+@@ -7,6 +7,7 @@
+ #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_
+ #define CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_
+ 
++#include <stddef.h>
+ #include <stdint.h>
+ 
+ #include <functional>
+@@ -15,6 +16,7 @@
+ #include <optional>
+ 
+ #include "core/fpdfapi/page/cpdf_dib.h"
++#include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/maybe_owned.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxcrt/unowned_ptr.h"
+@@ -84,10 +86,18 @@ class CPDF_PageImageCache {
+     RetainPtr<CFX_DIBBase> DetachBitmap();
+     RetainPtr<CFX_DIBBase> DetachMask();
+ 
++    void ClearSourceWindow();
++    void SetSourceWindow(RetainPtr<CFX_DIBBase> bitmap,
++                         const FX_RECT& source_clip,
++                         const CFX_Size& max_size_required);
++
+    private:
+     void ContinueGetCachedBitmap(CPDF_PageImageCache* pPageImageCache);
+     void CalcSize();
+     bool IsCacheValid(const CFX_Size& max_size_required) const;
++    bool IsSourceWindowValid(
++        const CFX_Size& max_size_required,
++        const std::optional<FX_RECT>& source_clip) const;
+ 
+     uint32_t time_count_ = 0;
+     uint32_t matte_color_ = 0;
+@@ -97,11 +107,23 @@ class CPDF_PageImageCache {
+     RetainPtr<CFX_DIBBase> cur_mask_;
+     RetainPtr<CFX_DIBBase> cached_bitmap_;
+     RetainPtr<CFX_DIBBase> cached_mask_;
++    RetainPtr<CFX_DIBBase> cached_source_window_;
++    std::optional<FX_RECT> cached_source_clip_;
++    std::optional<FX_RECT> pending_source_clip_;
++    CFX_Size cached_source_window_max_size_required_;
++    CFX_Size pending_max_size_required_;
+     bool cached_set_max_size_required_ = false;
+     bool transient_source_clip_ = false;
+   };
+ 
+   void ClearImageCacheEntry(const CPDF_Stream* pStream);
++  void ClearSourceWindow(Entry* entry);
++  void RetainSourceWindow(Entry* entry,
++                          RetainPtr<CFX_DIBBase> bitmap,
++                          const FX_RECT& source_clip,
++                          const CFX_Size& max_size_required);
++
++  static constexpr size_t kMaxRetainedSourceWindowBytes = 16u * 1024u * 1024u;
+ 
+   UnownedPtr<CPDF_Page> const page_;
+   std::map<RetainPtr<const CPDF_Stream>, std::unique_ptr<Entry>, std::less<>>
+@@ -110,6 +132,7 @@ class CPDF_PageImageCache {
+   uint32_t time_count_ = 0;
+   uint32_t cache_size_ = 0;
+   uint32_t cur_entry_old_size_ = 0;
++  Entry* retained_source_window_entry_ = nullptr;
+   bool cur_find_cache_ = false;
+ };
+ 
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+index edbf5fee4..011007cce 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp
+@@ -138,4 +138,67 @@ TEST_F(CPDFPageImageCacheTest, RenderBug1924) {
+   }
+ }
+ 
++TEST_F(CPDFPageImageCacheTest, ReusesContainedJpxSourceWindow) {
++  std::string file_path = PathService::GetTestFilePath("jpx_lzw.pdf");
++  ASSERT_FALSE(file_path.empty());
++  auto document =
++      std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
++                                      std::make_unique<CPDF_DocPageData>());
++  ASSERT_EQ(document->LoadDoc(
++                CFX_FileAccessStream::CreateFromFilename(file_path.c_str()),
++                nullptr),
++            CPDF_Parser::SUCCESS);
++
++  RetainPtr<CPDF_Dictionary> page_dict =
++      document->GetMutablePageDictionary(0);
++  ASSERT_TRUE(page_dict);
++  auto page =
++      pdfium::MakeRetain<CPDF_Page>(document.get(), std::move(page_dict));
++  page->AddPageImageCache();
++  page->ParseContent();
++
++  CPDF_PageObject* page_obj = page->GetPageObjectByIndex(0);
++  ASSERT_TRUE(page_obj);
++  CPDF_ImageObject* image = page_obj->AsImage();
++  ASSERT_TRUE(image);
++  CPDF_PageImageCache* cache = page->GetPageImageCache();
++
++  const FX_RECT first_clip(40, 50, 440, 450);
++  bool should_continue = cache->StartGetCachedBitmap(
++      image->GetImage(), nullptr, page->GetMutablePageResources(), true,
++      CPDF_ColorSpace::Family::kICCBased, false, {612, 792}, nullptr,
++      first_clip);
++  while (should_continue) {
++    should_continue = cache->Continue(nullptr);
++  }
++  RetainPtr<CFX_DIBBase> first = cache->DetachCurBitmap();
++  ASSERT_TRUE(first);
++
++  const FX_RECT contained_clip(80, 90, 400, 410);
++  should_continue = cache->StartGetCachedBitmap(
++      image->GetImage(), nullptr, page->GetMutablePageResources(), true,
++      CPDF_ColorSpace::Family::kICCBased, false, {612, 792}, nullptr,
++      contained_clip);
++  while (should_continue) {
++    should_continue = cache->Continue(nullptr);
++  }
++  RetainPtr<CFX_DIBBase> contained = cache->DetachCurBitmap();
++  ASSERT_TRUE(contained);
++  EXPECT_EQ(first.Get(), contained.Get());
++
++  const FX_RECT outside_clip(300, 300, 600, 700);
++  should_continue = cache->StartGetCachedBitmap(
++      image->GetImage(), nullptr, page->GetMutablePageResources(), true,
++      CPDF_ColorSpace::Family::kICCBased, false, {612, 792}, nullptr,
++      outside_clip);
++  while (should_continue) {
++    should_continue = cache->Continue(nullptr);
++  }
++  RetainPtr<CFX_DIBBase> outside = cache->DetachCurBitmap();
++  ASSERT_TRUE(outside);
++  EXPECT_NE(first.Get(), outside.Get());
++
++  page->AsPDFPage()->ClearView();
++}
++
+ }  // namespace pdfium
