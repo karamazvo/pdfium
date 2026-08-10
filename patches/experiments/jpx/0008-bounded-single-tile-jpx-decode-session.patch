@@ -1,0 +1,708 @@
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 0ef8b9b64..6c8ce58af 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -190,6 +190,29 @@ CPDF_DIB::CPDF_DIB(CPDF_Document* doc, RetainPtr<const CPDF_Stream> pStream)
+ 
+ CPDF_DIB::~CPDF_DIB() = default;
+ 
++CPDF_JpxDecodeSession::CPDF_JpxDecodeSession(
++    RetainPtr<CPDF_StreamAcc> stream_acc,
++    std::unique_ptr<fxcodec::CJPX_Decoder> decoder,
++    uint8_t resolution_levels_to_skip,
++    uint8_t color_space_option)
++    : stream_acc_(std::move(stream_acc)),
++      decoder_(std::move(decoder)),
++      resolution_levels_to_skip_(resolution_levels_to_skip),
++      color_space_option_(color_space_option) {}
++
++CPDF_JpxDecodeSession::~CPDF_JpxDecodeSession() = default;
++
++size_t CPDF_JpxDecodeSession::GetEstimatedMemoryBurden() const {
++  return decoder_ ? decoder_->GetRetainedMemoryEstimate() : 0;
++}
++
++bool CPDF_JpxDecodeSession::Matches(
++    uint8_t resolution_levels_to_skip,
++    uint8_t color_space_option) const {
++  return decoder_ && resolution_levels_to_skip_ == resolution_levels_to_skip &&
++         color_space_option_ == color_space_option;
++}
++
+ CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
+ 
+ CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
+@@ -262,12 +285,16 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     bool bLoadMask,
+     const CFX_Size& max_size_required,
+     CancelIndicatorIface* cancel,
+-    const std::optional<FX_RECT>& source_clip) {
++    const std::optional<FX_RECT>& source_clip,
++    std::unique_ptr<CPDF_JpxDecodeSession> jpx_decode_session,
++    bool retain_jpx_decode_session) {
+   std_cs_ = bStdCS;
+   has_mask_ = bHasMask;
+   group_family_ = GroupFamily;
+   load_mask_ = bLoadMask;
+   source_clip_ = source_clip;
++  jpx_decode_session_ = std::move(jpx_decode_session);
++  retain_jpx_decode_session_ = retain_jpx_decode_session;
+ 
+   if (!stream_->IsInline()) {
+     pFormResources = nullptr;
+@@ -692,17 +719,36 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+     uint8_t resolution_levels_to_skip,
+     CancelIndicatorIface* cancel) {
+-  std::unique_ptr<CJPX_Decoder> decoder =
+-      CJPX_Decoder::Create(stream_acc_->GetSpan(),
+-                           ColorSpaceOptionFromColorSpace(color_space_.Get()),
+-                           resolution_levels_to_skip, /*strict_mode=*/true);
+-  if (!decoder) {
++  const CJPX_Decoder::ColorSpaceOption color_space_option =
++      ColorSpaceOptionFromColorSpace(color_space_.Get());
++  const uint8_t encoded_color_space_option =
++      static_cast<uint8_t>(color_space_option);
++  if (!source_clip_.has_value()) {
++    jpx_decode_session_.reset();
++  }
++  if (jpx_decode_session_ &&
++      !jpx_decode_session_->Matches(resolution_levels_to_skip,
++                                    encoded_color_space_option)) {
++    jpx_decode_session_.reset();
++  }
++  if (!jpx_decode_session_) {
++    std::unique_ptr<CJPX_Decoder> decoder = CJPX_Decoder::Create(
++        stream_acc_->GetSpan(), color_space_option, resolution_levels_to_skip,
++        /*strict_mode=*/true);
++    if (decoder) {
++      jpx_decode_session_ = std::make_unique<CPDF_JpxDecodeSession>(
++          stream_acc_, std::move(decoder), resolution_levels_to_skip,
++          encoded_color_space_option);
++    }
++  }
++  if (!jpx_decode_session_) {
+     return nullptr;
+   }
++  CJPX_Decoder* const decoder = jpx_decode_session_->decoder_.get();
+ 
+   const int full_width = GetWidth();
+   const int full_height = GetHeight();
+-  const CJPX_Decoder::JpxImageInfo full_info = decoder->GetInfo();
++  const CJPX_Decoder::JpxImageInfo full_info = decoder->GetFullInfo();
+   bool uses_source_clip = false;
+   if (source_clip_.has_value() && full_info.width == full_width &&
+       full_info.height == full_height &&
+@@ -717,7 +763,13 @@ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+   SetWidth(full_width >> resolution_levels_to_skip);
+   SetHeight(full_height >> resolution_levels_to_skip);
+ 
+-  if (!decoder->StartDecode(cancel)) {
++  const bool keep_decoder = retain_jpx_decode_session_ && uses_source_clip &&
++                            decoder->CanReuseDecodeArea();
++  const bool decode_succeeded = keep_decoder
++                                    ? decoder->StartReusableDecode(cancel)
++                                    : decoder->StartDecode(cancel);
++  if (!decode_succeeded) {
++    jpx_decode_session_.reset();
+     if (uses_source_clip && !(cancel && cancel->IsCancelled())) {
+       source_clip_.reset();
+       SetWidth(full_width);
+@@ -770,6 +822,7 @@ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+   if (!decoder->Decode(result_bitmap->GetWritableBuffer(),
+                        result_bitmap->GetPitch(), conversion.swap_rgb(),
+                        components_, cancel)) {
++    jpx_decode_session_.reset();
+     return nullptr;
+   }
+ 
+@@ -799,6 +852,13 @@ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+   // color space types.
+ 
+   bpc_ = 8;
++  static constexpr size_t kMaxRetainedJpxSessionBytes =
++      16u * 1024u * 1024u;
++  if (!keep_decoder ||
++      jpx_decode_session_->GetEstimatedMemoryBurden() >
++          kMaxRetainedJpxSessionBytes) {
++    jpx_decode_session_.reset();
++  }
+   if (!uses_source_clip) {
+     return result_bitmap;
+   }
+@@ -817,14 +877,21 @@ RetainPtr<CFX_DIBBase> CPDF_DIB::LoadJpxBitmap(
+     return source_window;
+   }
+   if (cancel && cancel->IsCancelled()) {
++    jpx_decode_session_.reset();
+     return nullptr;
+   }
++  jpx_decode_session_.reset();
+   source_clip_.reset();
+   SetWidth(full_width);
+   SetHeight(full_height);
+   return LoadJpxBitmap(resolution_levels_to_skip, cancel);
+ }
+ 
++std::unique_ptr<CPDF_JpxDecodeSession>
++CPDF_DIB::DetachJpxDecodeSession() {
++  return std::move(jpx_decode_session_);
++}
++
+ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+     RetainPtr<CFX_DIBitmap> argb_bitmap,
+     uint32_t width,
+@@ -921,8 +988,12 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
+     return false;
+   }
+ 
+-  stream_acc_ = pdfium::MakeRetain<CPDF_StreamAcc>(stream_);
+-  stream_acc_->LoadAllDataImageAcc(src_size.ValueOrDie());
++  if (jpx_decode_session_) {
++    stream_acc_ = jpx_decode_session_->stream_acc_;
++  } else {
++    stream_acc_ = pdfium::MakeRetain<CPDF_StreamAcc>(stream_);
++    stream_acc_->LoadAllDataImageAcc(src_size.ValueOrDie());
++  }
+   return !stream_acc_->GetSpan().empty();
+ }
+ 
+diff --git a/core/fpdfapi/page/cpdf_dib.h b/core/fpdfapi/page/cpdf_dib.h
+index 6ebc3b85e..ef15da438 100644
+--- a/core/fpdfapi/page/cpdf_dib.h
++++ b/core/fpdfapi/page/cpdf_dib.h
+@@ -9,6 +9,7 @@
+ 
+ #include <stdint.h>
+ 
++#include <cstddef>
+ #include <memory>
+ #include <optional>
+ #include <vector>
+@@ -26,6 +27,32 @@ class CPDF_Stream;
+ class CPDF_StreamAcc;
+ class CancelIndicatorIface;
+ 
++namespace fxcodec {
++class CJPX_Decoder;
++}
++
++class CPDF_JpxDecodeSession {
++ public:
++  CPDF_JpxDecodeSession(RetainPtr<CPDF_StreamAcc> stream_acc,
++                        std::unique_ptr<fxcodec::CJPX_Decoder> decoder,
++                        uint8_t resolution_levels_to_skip,
++                        uint8_t color_space_option);
++  ~CPDF_JpxDecodeSession();
++
++  size_t GetEstimatedMemoryBurden() const;
++
++ private:
++  friend class CPDF_DIB;
++
++  bool Matches(uint8_t resolution_levels_to_skip,
++               uint8_t color_space_option) const;
++
++  RetainPtr<CPDF_StreamAcc> stream_acc_;
++  std::unique_ptr<fxcodec::CJPX_Decoder> decoder_;
++  const uint8_t resolution_levels_to_skip_;
++  const uint8_t color_space_option_;
++};
++
+ struct DIB_COMP_DATA {
+   float decode_min_;
+   float decode_step_;
+@@ -66,9 +93,13 @@ class CPDF_DIB final : public CFX_DIBBase {
+                              const CFX_Size& max_size_required,
+                              CancelIndicatorIface* cancel,
+                              const std::optional<FX_RECT>& source_clip =
+-                                 std::nullopt);
++                                 std::nullopt,
++                             std::unique_ptr<CPDF_JpxDecodeSession>
++                                 jpx_decode_session = nullptr,
++                             bool retain_jpx_decode_session = false);
+   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
+   RetainPtr<CPDF_DIB> DetachMask();
++  std::unique_ptr<CPDF_JpxDecodeSession> DetachJpxDecodeSession();
+ 
+  private:
+   CPDF_DIB(CPDF_Document* doc, RetainPtr<const CPDF_Stream> pStream);
+@@ -139,12 +170,14 @@ class CPDF_DIB final : public CFX_DIBBase {
+   bool color_key_ = false;
+   bool has_mask_ = false;
+   bool uses_source_clip_ = false;
++  bool retain_jpx_decode_session_ = false;
+   bool std_cs_ = false;
+   std::vector<DIB_COMP_DATA> comp_data_;
+   mutable DataVector<uint8_t> line_buf_;
+   mutable DataVector<uint8_t> mask_buf_;
+   RetainPtr<CFX_DIBBase> cached_bitmap_;
+   std::optional<FX_RECT> source_clip_;
++  std::unique_ptr<CPDF_JpxDecodeSession> jpx_decode_session_;
+   // Note: Must not create a cycle between CPDF_DIB instances.
+   RetainPtr<CPDF_DIB> mask_;
+   RetainPtr<CPDF_StreamAcc> global_acc_;
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index 531cff8ce..b7947c52b 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -328,6 +328,9 @@ void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
+   }
+ 
+   cache_size_ -= it->second->EstimateSize();
++  if (jpx_decode_session_owner_ == it->second.get()) {
++    jpx_decode_session_owner_ = nullptr;
++  }
+ 
+   // Avoid leaving `cur_image_cache_entry_` as a dangling pointer when `it` is
+   // about to be deleted.
+@@ -409,6 +412,7 @@ void CPDF_PageImageCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
+ 
+   Entry* pEntry = it->second.get();
+   cache_size_ -= pEntry->EstimateSize();
++  ReleaseJpxDecodeSessionOwnership(pEntry);
+   pEntry->Reset();
+   cache_size_ += pEntry->EstimateSize();
+ }
+@@ -432,9 +436,20 @@ CPDF_PageImageCache::Entry::~Entry() = default;
+ 
+ void CPDF_PageImageCache::Entry::Reset() {
+   cached_bitmap_.Reset();
++  jpx_decode_session_.reset();
+   CalcSize();
+ }
+ 
++void CPDF_PageImageCache::Entry::ClearJpxDecodeSession() {
++  jpx_decode_session_.reset();
++  CalcSize();
++}
++
++void CPDF_PageImageCache::Entry::SetJpxDecodeSession(
++    std::unique_ptr<CPDF_JpxDecodeSession> session) {
++  jpx_decode_session_ = std::move(session);
++}
++
+ RetainPtr<CFX_DIBBase> CPDF_PageImageCache::Entry::DetachBitmap() {
+   return std::move(cur_bitmap_);
+ }
+@@ -471,9 +486,11 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+   }
+ 
+   cur_bitmap_ = image_->CreateNewDIB();
++  pPageImageCache->ReleaseJpxDecodeSessionOwnership(this);
+   CPDF_DIB::LoadState ret = cur_bitmap_.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
+       true, pFormResources, pPageResources, bStdCS, eFamily,
+-      bLoadMask && !cached_mask_, max_size_required, cancel, source_clip);
++      bLoadMask && !cached_mask_, max_size_required, cancel, source_clip,
++      std::move(jpx_decode_session_), /*retain_jpx_decode_session=*/true);
+   cached_set_max_size_required_ =
+       (max_size_required.width != 0 && max_size_required.height != 0);
+   if (ret == CPDF_DIB::LoadState::kContinue) {
+@@ -484,6 +501,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     ContinueGetCachedBitmap(pPageImageCache);
+   } else {
+     cur_bitmap_.Reset();
++    CalcSize();
+   }
+   return CPDF_DIB::LoadState::kFail;
+ }
+@@ -501,6 +519,7 @@ bool CPDF_PageImageCache::Entry::Continue(
+     ContinueGetCachedBitmap(pPageImageCache);
+   } else {
+     cur_bitmap_.Reset();
++    CalcSize();
+   }
+   return false;
+ }
+@@ -516,6 +535,8 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+   }
+   time_count_ = pPageImageCache->GetTimeCount();
+   if (transient_source_clip_) {
++    pPageImageCache->AdoptJpxDecodeSession(
++        this, dib->DetachJpxDecodeSession());
+     if (cur_mask_ && !cached_mask_) {
+       cached_mask_ = MakeCachedImage(cur_mask_, /*realize_hint=*/true,
+                                      /*track_mask_coverage=*/true);
+@@ -538,6 +559,8 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+   }
+   cur_bitmap_ = cached_bitmap_;
+   cur_mask_ = cached_mask_;
++  pPageImageCache->AdoptJpxDecodeSession(
++      this, dib->DetachJpxDecodeSession());
+   CalcSize();
+ }
+ 
+@@ -549,6 +572,33 @@ void CPDF_PageImageCache::Entry::CalcSize() {
+   if (cached_mask_) {
+     cache_size_ += cached_mask_->GetEstimatedImageMemoryBurden();
+   }
++  if (jpx_decode_session_) {
++    cache_size_ += static_cast<uint32_t>(
++        jpx_decode_session_->GetEstimatedMemoryBurden());
++  }
++}
++
++void CPDF_PageImageCache::ReleaseJpxDecodeSessionOwnership(Entry* entry) {
++  if (jpx_decode_session_owner_ == entry) {
++    jpx_decode_session_owner_ = nullptr;
++  }
++}
++
++void CPDF_PageImageCache::AdoptJpxDecodeSession(
++    Entry* entry,
++    std::unique_ptr<CPDF_JpxDecodeSession> session) {
++  if (!session) {
++    return;
++  }
++  if (jpx_decode_session_owner_ && jpx_decode_session_owner_ != entry) {
++    const uint32_t old_size = jpx_decode_session_owner_->EstimateSize();
++    jpx_decode_session_owner_->ClearJpxDecodeSession();
++    const uint32_t new_size = jpx_decode_session_owner_->EstimateSize();
++    CHECK(cache_size_ >= old_size - new_size);
++    cache_size_ -= old_size - new_size;
++  }
++  entry->SetJpxDecodeSession(std::move(session));
++  jpx_decode_session_owner_ = entry;
+ }
+ 
+ bool CPDF_PageImageCache::Entry::IsCacheValid(
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.h b/core/fpdfapi/page/cpdf_pageimagecache.h
+index b0050ac84..c63e4fadc 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.h
++++ b/core/fpdfapi/page/cpdf_pageimagecache.h
+@@ -83,6 +83,9 @@ class CPDF_PageImageCache {
+ 
+     RetainPtr<CFX_DIBBase> DetachBitmap();
+     RetainPtr<CFX_DIBBase> DetachMask();
++    void ClearJpxDecodeSession();
++    void SetJpxDecodeSession(
++        std::unique_ptr<CPDF_JpxDecodeSession> session);
+ 
+    private:
+     void ContinueGetCachedBitmap(CPDF_PageImageCache* pPageImageCache);
+@@ -99,9 +102,14 @@ class CPDF_PageImageCache {
+     RetainPtr<CFX_DIBBase> cached_mask_;
+     bool cached_set_max_size_required_ = false;
+     bool transient_source_clip_ = false;
++    std::unique_ptr<CPDF_JpxDecodeSession> jpx_decode_session_;
+   };
+ 
+   void ClearImageCacheEntry(const CPDF_Stream* pStream);
++  void ReleaseJpxDecodeSessionOwnership(Entry* entry);
++  void AdoptJpxDecodeSession(
++      Entry* entry,
++      std::unique_ptr<CPDF_JpxDecodeSession> session);
+ 
+   UnownedPtr<CPDF_Page> const page_;
+   std::map<RetainPtr<const CPDF_Stream>, std::unique_ptr<Entry>, std::less<>>
+@@ -111,6 +119,7 @@ class CPDF_PageImageCache {
+   uint32_t cache_size_ = 0;
+   uint32_t cur_entry_old_size_ = 0;
+   bool cur_find_cache_ = false;
++  UnownedPtr<Entry> jpx_decode_session_owner_;
+ };
+ 
+ #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_
+diff --git a/core/fxcodec/jpx/cjpx_decoder.cpp b/core/fxcodec/jpx/cjpx_decoder.cpp
+index 70cacf0a1..9efcdffa6 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.cpp
++++ b/core/fxcodec/jpx/cjpx_decoder.cpp
+@@ -513,14 +513,63 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+   }
+ 
+   image_.reset(pTempImage);
++  const auto components = components_span(image_.get());
++  if (components.empty()) {
++    return false;
++  }
++  full_width_ = components.front().w;
++  full_height_ = components.front().h;
++  full_info_ = {full_width_,
++                full_height_,
++                components.front().x0,
++                components.front().y0,
++                pdfium::checked_cast<uint32_t>(components.size()),
++                image_->color_space};
++  decode_area_geometry_supported_ =
++      components.front().dx == 1 && components.front().dy == 1 &&
++      components.front().x0 == 0 && components.front().y0 == 0;
++  for (const opj_image_comp_t& component : components) {
++    decode_area_geometry_supported_ =
++        decode_area_geometry_supported_ &&
++        component.dx == components.front().dx &&
++        component.dy == components.front().dy &&
++        component.x0 == components.front().x0 &&
++        component.y0 == components.front().y0 &&
++        component.w == components.front().w &&
++        component.h == components.front().h;
++  }
++
++  opj_codestream_info_v2_t* codestream_info = opj_get_cstr_info(codec_.get());
++  if (codestream_info) {
++    // OpenJPEG only guarantees repeated set-area/decode sequences for a
++    // single-tile image. Restrict reuse to one-component images so no
++    // destructive JPX color conversion can carry state between windows.
++    can_reuse_decode_area_ = decode_area_geometry_supported_ &&
++                             components.size() == 1 &&
++                             codestream_info->tw == 1 &&
++                             codestream_info->th == 1 &&
++                             !parameters_.nb_tile_to_decode;
++    opj_destroy_cstr_info(&codestream_info);
++  }
+   return true;
+ }
+ 
+ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
++  return StartDecodeInternal(cancel, /*keep_open=*/false);
++}
++
++bool CJPX_Decoder::StartReusableDecode(CancelIndicatorIface* cancel) {
++  if (!can_reuse_decode_area_) {
++    return false;
++  }
++  return StartDecodeInternal(cancel, /*keep_open=*/true);
++}
++
++bool CJPX_Decoder::StartDecodeInternal(CancelIndicatorIface* cancel,
++                                       bool keep_open) {
+ #if !defined(USE_SYSTEM_LIBOPENJPEG2)
+-  if (cancel &&
+-      !opj_set_decode_cancel_callback(codec_.get(), IsJpxDecodeCancelled,
+-                                      cancel)) {
++  if (!opj_set_decode_cancel_callback(
++          codec_.get(), cancel ? IsJpxDecodeCancelled : nullptr, cancel)) {
+     return false;
+   }
+ #endif
+@@ -534,8 +583,9 @@ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
+       image_.reset();
+       return false;
+     }
+-    if (!(opj_decode(codec_.get(), stream_.get(), image_.get()) &&
+-          opj_end_decompress(codec_.get(), stream_.get()))) {
++    if (!opj_decode(codec_.get(), stream_.get(), image_.get()) ||
++        (!keep_open &&
++         !opj_end_decompress(codec_.get(), stream_.get()))) {
+       image_.reset();
+       return false;
+     }
+@@ -548,7 +598,9 @@ bool CJPX_Decoder::StartDecode(CancelIndicatorIface* cancel) {
+     return false;
+   }
+ 
+-  stream_.reset();
++  if (!keep_open) {
++    stream_.reset();
++  }
+   auto components = components_span(image_.get());
+   if (image_->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
+       components[0].dx == components[0].dy && components[1].dx != 1) {
+@@ -582,26 +634,10 @@ bool CJPX_Decoder::SetDecodeArea(uint32_t left,
+                                  uint32_t top,
+                                  uint32_t right,
+                                  uint32_t bottom) {
+-  if (!image_ || image_->x0 != 0 || image_->y0 != 0 || left >= right ||
+-      top >= bottom || right > image_->x1 || bottom > image_->y1) {
+-    return false;
+-  }
+-
+-  const auto components = components_span(image_.get());
+-  if (components.empty()) {
++  if (!image_ || !decode_area_geometry_supported_ || left >= right ||
++      top >= bottom || right > full_width_ || bottom > full_height_) {
+     return false;
+   }
+-  const opj_image_comp_t& first = components.front();
+-  if (first.dx != 1 || first.dy != 1 || first.x0 != 0 || first.y0 != 0) {
+-    return false;
+-  }
+-  for (const opj_image_comp_t& component : components) {
+-    if (component.dx != first.dx || component.dy != first.dy ||
+-        component.x0 != first.x0 || component.y0 != first.y0 ||
+-        component.w != first.w || component.h != first.h) {
+-      return false;
+-    }
+-  }
+ 
+   parameters_.DA_x0 = left;
+   parameters_.DA_y0 = top;
+@@ -610,6 +646,25 @@ bool CJPX_Decoder::SetDecodeArea(uint32_t left,
+   return true;
+ }
+ 
++size_t CJPX_Decoder::GetRetainedMemoryEstimate() const {
++  FX_SAFE_SIZE_T estimate = src_data_.size();
++  // A reusable single-tile decoder retains both the caller-owned encoded
++  // bytes and OpenJPEG's ingested tile-part data.
++  estimate += src_data_.size();
++  if (!image_) {
++    return estimate.ValueOrDefault(std::numeric_limits<size_t>::max());
++  }
++  for (const opj_image_comp_t& component : components_span(image_.get())) {
++    if (component.data) {
++      FX_SAFE_SIZE_T component_size = component.w;
++      component_size *= component.h;
++      component_size *= sizeof(*component.data);
++      estimate += component_size;
++    }
++  }
++  return estimate.ValueOrDefault(std::numeric_limits<size_t>::max());
++}
++
+ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
+   const auto components = components_span(image_.get());
+   return {components[0].w, components[0].h, components[0].x0,
+diff --git a/core/fxcodec/jpx/cjpx_decoder.h b/core/fxcodec/jpx/cjpx_decoder.h
+index 6430ac73c..587d5843d 100644
+--- a/core/fxcodec/jpx/cjpx_decoder.h
++++ b/core/fxcodec/jpx/cjpx_decoder.h
+@@ -9,6 +9,7 @@
+ 
+ #include <stdint.h>
+ 
++#include <cstddef>
+ #include <memory>
+ 
+ #include "core/fxcrt/raw_span.h"
+@@ -58,11 +59,15 @@ class CJPX_Decoder {
+   ~CJPX_Decoder();
+ 
+   JpxImageInfo GetInfo() const;
++  JpxImageInfo GetFullInfo() const { return full_info_; }
+   bool SetDecodeArea(uint32_t left,
+                      uint32_t top,
+                      uint32_t right,
+                      uint32_t bottom);
+   bool StartDecode(CancelIndicatorIface* cancel = nullptr);
++  bool StartReusableDecode(CancelIndicatorIface* cancel = nullptr);
++  bool CanReuseDecodeArea() const { return can_reuse_decode_area_; }
++  size_t GetRetainedMemoryEstimate() const;
+ 
+   // `swap_rgb` can only be set when an image's color space type contains at
+   // least 3 color components. Note that this `component_count` is not
+@@ -102,6 +107,7 @@ class CJPX_Decoder {
+   bool Init(pdfium::span<const uint8_t> src_data,
+             uint8_t resolution_levels_to_skip,
+             bool strict_mode);
++  bool StartDecodeInternal(CancelIndicatorIface* cancel, bool keep_open);
+ 
+   const ColorSpaceOption color_space_option_;
+   pdfium::raw_span<const uint8_t> src_data_;
+@@ -110,6 +116,11 @@ class CJPX_Decoder {
+   std::unique_ptr<opj_stream_t, StreamDeleter> stream_;
+   std::unique_ptr<opj_image_t, ImageDeleter> image_;
+   opj_dparameters_t parameters_ = {};
++  JpxImageInfo full_info_ = {};
++  uint32_t full_width_ = 0;
++  uint32_t full_height_ = 0;
++  bool decode_area_geometry_supported_ = false;
++  bool can_reuse_decode_area_ = false;
+ };
+ 
+ }  // namespace fxcodec
+diff --git a/core/fxcodec/jpx/jpx_unittest.cpp b/core/fxcodec/jpx/jpx_unittest.cpp
+index f54528a11..61499fc12 100644
+--- a/core/fxcodec/jpx/jpx_unittest.cpp
++++ b/core/fxcodec/jpx/jpx_unittest.cpp
+@@ -8,13 +8,21 @@
+ #include <algorithm>
+ #include <array>
+ #include <limits>
++#include <optional>
++#include <string>
+ #include <type_traits>
++#include <utility>
+ 
+ #include "core/fxcodec/jpx/cjpx_decoder.h"
+ #include "core/fxcodec/jpx/jpx_decode_utils.h"
++#include "core/fxcrt/cfx_fileaccess_stream.h"
++#include "core/fxcrt/data_vector.h"
+ #include "core/fxcrt/fx_memcpy_wrappers.h"
+ #include "core/fxcrt/fx_memory.h"
++#include "core/fxcrt/numerics/safe_conversions.h"
++#include "core/fxge/calculate_pitch.h"
+ #include "testing/gtest/include/gtest/gtest.h"
++#include "testing/utils/path_service.h"
+ #include "third_party/libopenjpeg/opj_malloc.h"
+ 
+ namespace fxcodec {
+@@ -31,6 +39,19 @@ constexpr auto kStreamData = std::to_array<const uint8_t>({
+     // clang-format on
+ });
+ 
++DataVector<uint8_t> ReadTestFile(const char* name) {
++  const std::string path = PathService::GetTestFilePath(name);
++  RetainPtr<CFX_FileAccessStream> stream =
++      CFX_FileAccessStream::CreateFromFilename(path.c_str());
++  if (!stream || stream->GetSize() <= 0) {
++    return {};
++  }
++  DataVector<uint8_t> data(
++      pdfium::checked_cast<size_t>(stream->GetSize()));
++  return stream->ReadBlockAtOffset(data, 0) ? std::move(data)
++                                             : DataVector<uint8_t>();
++}
++
+ }  // namespace
+ 
+ TEST(fxcodec, DecodeDataNullDecodeData) {
+@@ -43,6 +64,59 @@ TEST(fxcodec, DecodeDataNullDecodeData) {
+   EXPECT_FALSE(opj_seek_from_memory(1, ptr));
+ }
+ 
++TEST(fxcodec, ReuseSingleTileGrayDecodeArea) {
++  const DataVector<uint8_t> source = ReadTestFile("gray.jp2");
++  ASSERT_FALSE(source.empty());
++
++  std::unique_ptr<CJPX_Decoder> decoder = CJPX_Decoder::Create(
++      source, CJPX_Decoder::ColorSpaceOption::kNormal,
++      /*resolution_levels_to_skip=*/0, /*strict_mode=*/true);
++  ASSERT_TRUE(decoder);
++  ASSERT_TRUE(decoder->CanReuseDecodeArea());
++  const CJPX_Decoder::JpxImageInfo full = decoder->GetFullInfo();
++  ASSERT_EQ(1u, full.channels);
++  ASSERT_GT(full.width, 1u);
++  ASSERT_GT(full.height, 1u);
++
++  const uint32_t split = full.width / 2;
++  ASSERT_TRUE(decoder->SetDecodeArea(0, 0, split, full.height));
++  ASSERT_TRUE(decoder->StartReusableDecode());
++  const CJPX_Decoder::JpxImageInfo left = decoder->GetInfo();
++  const std::optional<uint32_t> left_pitch =
++      fxge::CalculatePitch32(/*bpp=*/8, left.width);
++  ASSERT_TRUE(left_pitch.has_value());
++  DataVector<uint8_t> left_pixels(left_pitch.value() * left.height);
++  ASSERT_TRUE(decoder->Decode(left_pixels, left_pitch.value(),
++                              /*swap_rgb=*/false, /*component_count=*/1));
++
++  ASSERT_TRUE(
++      decoder->SetDecodeArea(split, 0, full.width, full.height));
++  ASSERT_TRUE(decoder->StartReusableDecode());
++  const CJPX_Decoder::JpxImageInfo right = decoder->GetInfo();
++  const std::optional<uint32_t> right_pitch =
++      fxge::CalculatePitch32(/*bpp=*/8, right.width);
++  ASSERT_TRUE(right_pitch.has_value());
++  DataVector<uint8_t> reused_pixels(right_pitch.value() * right.height);
++  ASSERT_TRUE(decoder->Decode(reused_pixels, right_pitch.value(),
++                              /*swap_rgb=*/false, /*component_count=*/1));
++
++  std::unique_ptr<CJPX_Decoder> reference = CJPX_Decoder::Create(
++      source, CJPX_Decoder::ColorSpaceOption::kNormal,
++      /*resolution_levels_to_skip=*/0, /*strict_mode=*/true);
++  ASSERT_TRUE(reference);
++  ASSERT_TRUE(
++      reference->SetDecodeArea(split, 0, full.width, full.height));
++  ASSERT_TRUE(reference->StartDecode());
++  const CJPX_Decoder::JpxImageInfo reference_info = reference->GetInfo();
++  ASSERT_EQ(right.width, reference_info.width);
++  ASSERT_EQ(right.height, reference_info.height);
++  DataVector<uint8_t> reference_pixels(right_pitch.value() * right.height);
++  ASSERT_TRUE(reference->Decode(reference_pixels, right_pitch.value(),
++                                /*swap_rgb=*/false,
++                                /*component_count=*/1));
++  EXPECT_EQ(reused_pixels, reference_pixels);
++}
++
+ TEST(fxcodec, DecodeDataNullStream) {
+   DecodeData dd;
+   uint8_t buffer[16];
